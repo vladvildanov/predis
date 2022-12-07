@@ -134,7 +134,7 @@ class Commands implements OptionInterface
      */
     public function getDefault(OptionsInterface $options)
     {
-        $commands = new RedisFactory();
+        $commands = new RedisFactory($options->modules);
 
         if (isset($options->prefix)) {
             $commands->setProcessor($options->prefix);

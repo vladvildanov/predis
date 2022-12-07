@@ -33,6 +33,7 @@ class Options implements OptionsInterface
         'exceptions' => Option\Exceptions::class,
         'prefix' => Option\Prefix::class,
         'crc16' => Option\CRC16::class,
+        'modules' => Option\Modules::class
     ];
 
     /** @var array */

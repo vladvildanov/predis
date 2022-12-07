@@ -25,15 +25,22 @@ namespace Predis\Command;
 class RedisFactory extends Factory
 {
     /**
+     * @var array
+     */
+    private $modules;
+
+    /**
      *
      */
-    public function __construct()
+    public function __construct(array $modules)
     {
         $this->commands = array(
             'ECHO' => 'Predis\Command\Redis\ECHO_',
             'EVAL' => 'Predis\Command\Redis\EVAL_',
             'OBJECT' => 'Predis\Command\Redis\OBJECT_',
         );
+
+        $this->modules = $modules;
     }
 
     /**
@@ -45,13 +52,33 @@ class RedisFactory extends Factory
 
         if (isset($this->commands[$commandID]) || array_key_exists($commandID, $this->commands)) {
             $commandClass = $this->commands[$commandID];
-        } elseif (class_exists($commandClass = "Predis\Command\Redis\\$commandID")) {
+        } elseif (
+            class_exists($commandClass = "Predis\Command\Redis\\$commandID")
+            || null !== $commandClass = $this->findModuleCommand($commandID)
+        ) {
             $this->commands[$commandID] = $commandClass;
         } else {
             return null;
         }
 
         return $commandClass;
+    }
+
+    /**
+     * Find command within module commands namespace
+     *
+     * @param string $commandID
+     * @return string|null
+     */
+    public function findModuleCommand(string $commandID): ?string
+    {
+        foreach ($this->modules as $module) {
+            if (class_exists($moduleCommand = "Predis\Command\Redis\\$module\\$commandID")) {
+                return $moduleCommand;
+            }
+        }
+
+        return null;
     }
 
     /**
