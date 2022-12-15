@@ -10,17 +10,27 @@ use UnexpectedValueException;
  */
 trait Keys
 {
-    public function unpackKeysArray(int $keysArgumentOffset, array &$arguments): void
+    public function setArguments(array $arguments, bool $withNumkeys = true)
     {
         $argumentsLength = count($arguments);
 
-        if ($keysArgumentOffset > $argumentsLength || !is_array($arguments[$keysArgumentOffset])) {
+        if (
+            static::$keysArgumentPositionOffset > $argumentsLength ||
+            !is_array($arguments[static::$keysArgumentPositionOffset])
+        ) {
             throw new UnexpectedValueException('Wrong keys argument type or position offset');
         }
 
-        $keysArgument = $arguments[$keysArgumentOffset];
-        $argumentsBefore = array_slice($arguments, 0, $keysArgumentOffset);
-        $argumentsAfter = array_slice($arguments,  ++$keysArgumentOffset);
-        $arguments = array_merge($argumentsBefore, $keysArgument, $argumentsAfter);
+        $keysArgument = $arguments[static::$keysArgumentPositionOffset];
+        $argumentsBeforeKeys = array_slice($arguments, 0, static::$keysArgumentPositionOffset);
+        $argumentsAfterKeys = array_slice($arguments, static::$keysArgumentPositionOffset + 1);
+
+        if ($withNumkeys) {
+            $numkeys = count($keysArgument);
+            parent::setArguments(array_merge($argumentsBeforeKeys, [$numkeys], $keysArgument, $argumentsAfterKeys));
+            return;
+        }
+
+        parent::setArguments(array_merge($argumentsBeforeKeys, $keysArgument, $argumentsAfterKeys));
     }
 }
