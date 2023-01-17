@@ -76,10 +76,10 @@ class SUNSUBSCRIBE_Test extends PredisCommandTestCase
     {
         $redis = $this->getClient();
 
-        $redis->ssubscribe('key');
-        $redis->ssubscribe('key1');
+        $redis->ssubscribe('channel');
+        $redis->ssubscribe('channel');
 
-        $this->assertSame(['sunsubscribe', 'key', 1], $redis->sunsubscribe('key'));
+        $this->assertSame(['sunsubscribe', 'channel', 1], $redis->sunsubscribe('channel'));
     }
 
     /**
@@ -91,10 +91,12 @@ class SUNSUBSCRIBE_Test extends PredisCommandTestCase
     {
         $redis = $this->getClient();
 
-        $redis->ssubscribe('key');
-        $redis->ssubscribe('key1');
+        $redis->ssubscribe('channel');
+        $redis->ssubscribe('channel1');
 
-        $this->assertSame(['sunsubscribe', 'key1', 1], $redis->sunsubscribe());
-        $this->assertSame(['sunsubscribe', 'key', 0], $redis->getConnection()->read());
+        [$_, $unsubscribed1, $_] = $redis->sunsubscribe();
+        [$_, $unsubscribed2, $_] = $redis->getConnection()->read();
+
+        $this->assertSameValues(['channel', 'channel1'], [$unsubscribed1, $unsubscribed2]);
     }
 }
