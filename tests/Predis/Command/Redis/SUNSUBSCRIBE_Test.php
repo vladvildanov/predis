@@ -77,7 +77,7 @@ class SUNSUBSCRIBE_Test extends PredisCommandTestCase
         $redis = $this->getClient();
 
         $redis->ssubscribe('channel');
-        $redis->ssubscribe('channel');
+        $redis->ssubscribe('channel1');
 
         $this->assertSame(['sunsubscribe', 'channel', 1], $redis->sunsubscribe('channel'));
     }
