@@ -22,13 +22,17 @@ abstract class AbstractConsumer implements \Iterator
     const UNSUBSCRIBE = 'unsubscribe';
     const PSUBSCRIBE = 'psubscribe';
     const PUNSUBSCRIBE = 'punsubscribe';
+    const SSUBSCRIBE = 'ssubscribe';
+    const SUNSUBSCRIBE = 'sunsubscribe';
     const MESSAGE = 'message';
     const PMESSAGE = 'pmessage';
+    const SMESSAGE = 'smessage';
     const PONG = 'pong';
 
     const STATUS_VALID = 1;       // 0b0001
     const STATUS_SUBSCRIBED = 2;  // 0b0010
     const STATUS_PSUBSCRIBED = 4; // 0b0100
+    const STATUS_SSUBSCRIBED = 8; // 0b1000
 
     private $position = null;
     private $statusFlags = self::STATUS_VALID;
@@ -96,6 +100,35 @@ abstract class AbstractConsumer implements \Iterator
     }
 
     /**
+     * Subscribes to the specified shard channel.
+     *
+     * @param string ...$shardChannel
+     * @return void
+     */
+    public function ssubscribe(string ...$shardChannel): void
+    {
+        $this->writeRequest(self::SSUBSCRIBE, func_get_args());
+        $this->statusFlags |= self::STATUS_SSUBSCRIBED;
+    }
+
+    /**
+     * Unsubscribes from the specified shard channels
+     *
+     * @param string ...$shardChannel
+     * @return void
+     */
+    public function sunsubscribe(string ...$shardChannel): void
+    {
+        if (null !== $shardChannel) {
+            $arguments = func_get_args();
+        } else {
+            $arguments = [];
+        }
+
+        $this->writeRequest(self::SUNSUBSCRIBE, $arguments);
+    }
+
+    /**
      * PING the server with an optional payload that will be echoed as a
      * PONG message in the pub/sub loop.
      *
@@ -129,6 +162,9 @@ abstract class AbstractConsumer implements \Iterator
             }
             if ($this->isFlagSet(self::STATUS_PSUBSCRIBED)) {
                 $this->punsubscribe();
+            }
+            if ($this->isFlagSet(self::STATUS_SSUBSCRIBED)) {
+                $this->sunsubscribe();
             }
         }
 
@@ -200,7 +236,7 @@ abstract class AbstractConsumer implements \Iterator
     public function valid()
     {
         $isValid = $this->isFlagSet(self::STATUS_VALID);
-        $subscriptionFlags = self::STATUS_SUBSCRIBED | self::STATUS_PSUBSCRIBED;
+        $subscriptionFlags = self::STATUS_SUBSCRIBED | self::STATUS_PSUBSCRIBED | self::STATUS_SSUBSCRIBED;
         $hasSubscriptions = ($this->statusFlags & $subscriptionFlags) > 0;
 
         return $isValid && $hasSubscriptions;

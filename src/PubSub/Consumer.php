@@ -40,6 +40,7 @@ class Consumer extends AbstractConsumer
 
         $this->genericSubscribeInit('subscribe');
         $this->genericSubscribeInit('psubscribe');
+        $this->genericSubscribeInit('ssubscribe');
     }
 
     /**
@@ -68,7 +69,15 @@ class Consumer extends AbstractConsumer
             );
         }
 
-        $commands = array('publish', 'subscribe', 'unsubscribe', 'psubscribe', 'punsubscribe');
+        $commands = array(
+            'publish',
+            'subscribe',
+            'unsubscribe',
+            'psubscribe',
+            'punsubscribe',
+            'ssubscribe',
+            'sunsubscribe'
+        );
 
         if (!$client->getCommandFactory()->supports(...$commands)) {
             throw new NotSupportedException(
@@ -78,7 +87,7 @@ class Consumer extends AbstractConsumer
     }
 
     /**
-     * This method shares the logic to handle both SUBSCRIBE and PSUBSCRIBE.
+     * This method shares the logic to handle SUBSCRIBE, PSUBSCRIBE and SSUBSCRIBE.
      *
      * @param string $subscribeAction Type of subscription.
      */
@@ -121,6 +130,8 @@ class Consumer extends AbstractConsumer
             case self::UNSUBSCRIBE:
             case self::PSUBSCRIBE:
             case self::PUNSUBSCRIBE:
+            case self::SSUBSCRIBE:
+            case self::SUNSUBSCRIBE:
                 if ($response[2] === 0) {
                     $this->invalidate();
                 }
@@ -129,6 +140,7 @@ class Consumer extends AbstractConsumer
                 // no break
 
             case self::MESSAGE:
+            case self::SMESSAGE:
                 return (object) array(
                     'kind' => $response[0],
                     'channel' => $response[1],

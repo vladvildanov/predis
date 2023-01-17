@@ -476,4 +476,48 @@ class ConsumerTest extends PredisTestCase
             exit(0);
         }
     }
+
+    /**
+     * @group connected
+     * @return void
+     * @requiresRedisVersion >= 7.0.0
+     */
+    public function testShardChannelPubSubAgainstRedisServer(): void
+    {
+        $parameters = array(
+            'host' => constant('REDIS_SERVER_HOST'),
+            'port' => constant('REDIS_SERVER_PORT'),
+            'database' => constant('REDIS_SERVER_DBNUM'),
+            // Prevents suite from handing on broken test
+            'read_write_timeout' => 2,
+        );
+
+        $messages = [];
+
+        $producer = $this->createClient($parameters);
+        $consumer = $this->createClient($parameters);
+
+        $pubSub = $consumer->pubSubLoop();
+        $pubSub->ssubscribe('channel:foo');
+
+        $producer->spublish('channel:foo', 'message1');
+        $producer->spublish('channel:foo', 'message2');
+        $producer->spublish('channel:foo', 'QUIT');
+
+        foreach ($pubSub as $message) {
+            if ($message->kind !== 'smessage') {
+                continue;
+            }
+
+            $messages[] = $message->payload;
+
+            if ($message->payload === 'QUIT') {
+                $pubSub->stop();
+            }
+        }
+
+        $this->assertSame(['message1', 'message2', 'QUIT'], $messages);
+        $this->assertFalse($pubSub->valid());
+        $this->assertEquals('ECHO', $consumer->echo('ECHO'));
+    }
 }
