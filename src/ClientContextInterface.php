@@ -18,6 +18,7 @@ use Predis\Command\Argument\Server\LimitOffsetCount;
 use Predis\Command\Argument\Server\To;
 use Predis\Command\CommandInterface;
 use Predis\Command\Redis\Container\ACL;
+use Predis\Command\Redis\Container\CLUSTER;
 use Predis\Command\Redis\Container\FunctionContainer;
 
 /**
@@ -208,6 +209,7 @@ use Predis\Command\Redis\Container\FunctionContainer;
  * Container commands
  * @property FunctionContainer $function
  * @property ACL               $acl
+ * @property CLUSTER           $cluster
  */
 interface ClientContextInterface
 {

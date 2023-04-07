@@ -19,6 +19,7 @@ use Predis\Command\Argument\Server\To;
 use Predis\Command\CommandInterface;
 use Predis\Command\FactoryInterface;
 use Predis\Command\Redis\Container\ACL;
+use Predis\Command\Redis\Container\CLUSTER;
 use Predis\Command\Redis\Container\FunctionContainer;
 use Predis\Configuration\OptionsInterface;
 use Predis\Connection\ConnectionInterface;
@@ -226,6 +227,7 @@ use Predis\Response\Status;
  * Container commands
  * @property FunctionContainer $function
  * @property ACL               $acl
+ * @property CLUSTER           $cluster
  */
 interface ClientInterface
 {
