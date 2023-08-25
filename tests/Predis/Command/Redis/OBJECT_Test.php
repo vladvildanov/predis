@@ -70,18 +70,6 @@ class OBJECT_Test extends PredisCommandTestCase
 
     /**
      * @group connected
-     * @requiresRedisVersion >= 6.0.0
-     */
-    public function testObjectRefcountResp3(): void
-    {
-        $redis = $this->getResp3Client();
-
-        $redis->set('foo', 'bar');
-        $this->assertIsInt($redis->object('REFCOUNT', 'foo'));
-    }
-
-    /**
-     * @group connected
      * @requiresRedisVersion >= 2.2.3
      */
     public function testObjectIdletime(): void
@@ -94,19 +82,7 @@ class OBJECT_Test extends PredisCommandTestCase
 
     /**
      * @group connected
-     * @requiresRedisVersion >= 6.0.0
-     */
-    public function testObjectIdletimeResp3(): void
-    {
-        $redis = $this->getResp3Client();
-
-        $redis->set('foo', 'bar');
-        $this->assertIsInt($redis->object('IDLETIME', 'foo'));
-    }
-
-    /**
-     * @group connected
-     * @requiresRedisVersion >= 2.2.3
+     * @requiresRedisVersion < 7.2.0
      */
     public function testObjectEncoding(): void
     {
@@ -118,14 +94,15 @@ class OBJECT_Test extends PredisCommandTestCase
 
     /**
      * @group connected
-     * @requiresRedisVersion >= 6.0.0
+     * @requiresRedisVersion >= 7.2.0
      */
-    public function testObjectEncodingResp3(): void
+    public function testObjectEncodingReturnsUpdatedResponse(): void
     {
-        $redis = $this->getResp3Client();
+        $redis = $this->getClient();
 
         $redis->lpush('list:metavars', 'foo', 'bar');
-        $this->assertMatchesRegularExpression('/[zip|quick]list/', $redis->object('ENCODING', 'list:metavars'));
+
+        $this->assertSame('listpack', $redis->object('ENCODING', 'list:metavars'));
     }
 
     /**
