@@ -324,6 +324,7 @@ BUFFER;
 
     /**
      * @group connected
+     * @group relay-incompatible
      * @requiresRedisVersion >= 6.0.0
      */
     public function testToggleInvalidatedKeysTrackingResp3(): void
@@ -361,6 +362,7 @@ BUFFER;
 
     /**
      * @group connected
+     * @group relay-incompatible
      * @requiresRedisVersion >= 6.2.0
      */
     public function testGetTrackingInfoResp3(): void
@@ -406,6 +408,7 @@ BUFFER;
 
     /**
      * @group connected
+     * @group relay-incompatible
      * @requiresRedisVersion >= 6.0.0
      */
     public function testToggleManuallyCachingKeysResp3(): void
