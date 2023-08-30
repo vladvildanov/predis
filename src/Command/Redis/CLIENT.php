@@ -47,11 +47,21 @@ class CLIENT extends RedisCommand
             case 'SETINFO':
                 $this->setSetInfoArguments($arguments);
                 break;
+            case 'TRACKING':
+                $this->setTrackingArguments($arguments);
+                break;
+            case 'CACHING':
+                $this->setCachingArguments($arguments);
+                break;
             default:
                 parent::setArguments($arguments);
         }
     }
 
+    /**
+     * @param  array $arguments
+     * @return void
+     */
     private function setListArguments(array $arguments): void
     {
         $processedArguments = [$arguments[0]];
@@ -73,6 +83,10 @@ class CLIENT extends RedisCommand
         parent::setArguments($processedArguments);
     }
 
+    /**
+     * @param  array $arguments
+     * @return void
+     */
     private function setNoTouchArguments(array $arguments): void
     {
         $processedArguments = [$arguments[0]];
@@ -85,6 +99,10 @@ class CLIENT extends RedisCommand
         parent::setArguments($processedArguments);
     }
 
+    /**
+     * @param  array $arguments
+     * @return void
+     */
     private function setSetInfoArguments(array $arguments): void
     {
         $processedArguments = [$arguments[0]];
@@ -102,6 +120,34 @@ class CLIENT extends RedisCommand
     }
 
     /**
+     * @param  array $arguments
+     * @return void
+     */
+    private function setTrackingArguments(array $arguments): void
+    {
+        $processedArguments = [$arguments[0]];
+        $processedArguments[] = ($arguments[1]) ? 'ON' : 'OFF';
+
+        if (array_key_exists(2, $arguments) && null !== $arguments[2]) {
+            $processedArguments = array_merge($processedArguments, $arguments[2]->toArray());
+        }
+
+        parent::setArguments($processedArguments);
+    }
+
+    /**
+     * @param  array $arguments
+     * @return void
+     */
+    private function setCachingArguments(array $arguments): void
+    {
+        $processedArguments = [$arguments[0]];
+        $processedArguments[] = ($arguments[1]) ? 'YES' : 'NO';
+
+        parent::setArguments($processedArguments);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function parseResponse($data)
@@ -111,6 +157,8 @@ class CLIENT extends RedisCommand
         switch (strtoupper($args[0])) {
             case 'LIST':
                 return $this->parseClientList($data);
+            case 'TRACKINGINFO':
+                return $this->parseTrackingInfo($data);
             case 'KILL':
             case 'GETNAME':
             case 'SETNAME':
@@ -145,11 +193,28 @@ class CLIENT extends RedisCommand
     }
 
     /**
+     * @param        $data
+     * @return array
+     */
+    protected function parseTrackingInfo($data): array
+    {
+        $parsedData = [];
+
+        for ($i = 0, $iMax = count($data); $i <= $iMax; $i++) {
+            if (array_key_exists($i + 1, $data)) {
+                $parsedData[$data[$i]] = $data[++$i];
+            }
+        }
+
+        return $parsedData;
+    }
+
+    /**
      * @param                          $data
      * @return array|mixed|string|null
      */
     public function parseResp3Response($data)
     {
-        return $this->parseResponse($data);
+        return $data;
     }
 }

@@ -12,9 +12,11 @@
 
 namespace Predis\Command\Container;
 
+use Predis\Command\Argument\Client\ClientTrackingOptions;
 use Predis\Response\Status;
 
 /**
+ * @method Status caching(bool $toggle)
  * @method string getName()
  * @method Status kill(...$arguments)
  * @method string list(string $type = null, int ...$clientId)
@@ -22,6 +24,8 @@ use Predis\Response\Status;
  * @method Status noTouch(bool $enable = null)
  * @method Status setInfo(string $modifier = null, string $value = null)
  * @method Status setName(string $connectionName)
+ * @method Status tracking(bool $toggle, ClientTrackingOptions $options = null)
+ * @method array  trackingInfo()
  */
 class CLIENT extends AbstractContainer
 {
