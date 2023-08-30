@@ -215,6 +215,12 @@ class CLIENT extends RedisCommand
      */
     public function parseResp3Response($data)
     {
+        $args = array_change_key_case($this->getArguments(), CASE_UPPER);
+
+        if (strtoupper($args[0]) === 'LIST') {
+            return $this->parseClientList($data);
+        }
+
         return $data;
     }
 }

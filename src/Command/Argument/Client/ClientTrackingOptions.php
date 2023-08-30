@@ -21,7 +21,7 @@ class ClientTrackingOptions implements ArrayableArgument
     /**
      * Send invalidation messages to the connection with the specified ID.
      *
-     * @param  int|string $clientId
+     * @param  int   $clientId
      * @return $this
      */
     public function redirect(int $clientId): self
