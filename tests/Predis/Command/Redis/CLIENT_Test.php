@@ -12,6 +12,8 @@
 
 namespace Predis\Command\Redis;
 
+use Predis\Command\Argument\Client\ClientTrackingOptions;
+
 /**
  * @group commands
  * @group realm-server
@@ -108,6 +110,43 @@ class CLIENT_Test extends PredisCommandTestCase
         $command->setArguments($actualArguments);
 
         $this->assertSame($expectedArguments, $command->getArguments());
+    }
+
+    /**
+     * @dataProvider trackingArgumentsProvider
+     * @group disconnected
+     */
+    public function testFilterArgumentsTracking(array $actualArguments, array $expectedArguments): void
+    {
+        $command = $this->getCommand();
+        $command->setArguments($actualArguments);
+
+        $this->assertSame($expectedArguments, $command->getArguments());
+    }
+
+    /**
+     * @dataProvider cachingArgumentsProvider
+     * @group disconnected
+     */
+    public function testFilterArgumentsCaching(array $actualArguments, array $expectedArguments): void
+    {
+        $command = $this->getCommand();
+        $command->setArguments($actualArguments);
+
+        $this->assertSame($expectedArguments, $command->getArguments());
+    }
+
+    /**
+     * @group disconnected
+     */
+    public function testFilterArgumentsTrackingInfo(): void
+    {
+        $arguments = $expected = ['TRACKINGINFO'];
+
+        $command = $this->getCommand();
+        $command->setArguments($arguments);
+
+        $this->assertSame($expected, $command->getArguments());
     }
 
     /**
@@ -266,6 +305,134 @@ BUFFER;
     }
 
     /**
+     * @group connected
+     * @group relay-incompatible
+     * @requiresRedisVersion >= 6.0.0
+     */
+    public function testToggleInvalidatedKeysTracking(): void
+    {
+        $redis = $this->getClient();
+
+        $options = (new ClientTrackingOptions())
+            ->broadcast()
+            ->prefix('foo:', 'bar:')
+            ->noLoop();
+
+        $this->assertEquals('OK', $redis->client->tracking(true, $options));
+        $this->assertEquals('OK', $redis->client->tracking(false));
+    }
+
+    /**
+     * @group connected
+     * @group relay-incompatible
+     * @requiresRedisVersion >= 6.0.0
+     */
+    public function testToggleInvalidatedKeysTrackingResp3(): void
+    {
+        $redis = $this->getResp3Client();
+
+        $options = (new ClientTrackingOptions())
+            ->broadcast()
+            ->prefix('foo:', 'bar:')
+            ->noLoop();
+
+        $this->assertEquals('OK', $redis->client->tracking(true, $options));
+        $this->assertEquals('OK', $redis->client->tracking(false));
+    }
+
+    /**
+     * @group connected
+     * @group relay-incompatible
+     * @requiresRedisVersion >= 6.2.0
+     */
+    public function testGetTrackingInfo(): void
+    {
+        $redis = $this->getClient();
+        $expectedResponse = ['flags' => ['on', 'bcast', 'noloop'], 'redirect' => 0, 'prefixes' => ['bar:', 'foo:']];
+
+        $options = (new ClientTrackingOptions())
+            ->broadcast()
+            ->prefix('foo:', 'bar:')
+            ->noLoop();
+
+        $this->assertEquals('OK', $redis->client->tracking(true, $options));
+        $this->assertSame($expectedResponse, $redis->client->trackingInfo());
+        $this->assertEquals('OK', $redis->client->tracking(false));
+    }
+
+    /**
+     * @group connected
+     * @group relay-incompatible
+     * @requiresRedisVersion >= 6.2.0
+     */
+    public function testGetTrackingInfoResp3(): void
+    {
+        $redis = $this->getResp3Client();
+        $expectedResponse = ['flags' => ['on', 'bcast', 'noloop'], 'redirect' => 0, 'prefixes' => ['bar:', 'foo:']];
+
+        $options = (new ClientTrackingOptions())
+            ->broadcast()
+            ->prefix('foo:', 'bar:')
+            ->noLoop();
+
+        $this->assertEquals('OK', $redis->client->tracking(true, $options));
+        $this->assertSame($expectedResponse, $redis->client->trackingInfo());
+        $this->assertEquals('OK', $redis->client->tracking(false));
+    }
+
+    /**
+     * @group connected
+     * @group relay-incompatible
+     * @requiresRedisVersion >= 6.0.0
+     */
+    public function testToggleManuallyCachingKeys(): void
+    {
+        $redis = $this->getClient();
+
+        $options = (new ClientTrackingOptions())
+            ->optIn()
+            ->noLoop();
+
+        $this->assertEquals('OK', $redis->client->tracking(true, $options));
+        $this->assertEquals('OK', $redis->client->caching(true));
+        $this->assertEquals('OK', $redis->client->tracking(false));
+
+        $options = (new ClientTrackingOptions())
+            ->optOut()
+            ->noLoop();
+
+        $this->assertEquals('OK', $redis->client->tracking(true, $options));
+        $this->assertEquals('OK', $redis->client->caching(false));
+        $this->assertEquals('OK', $redis->client->tracking(false));
+    }
+
+    /**
+     * @group connected
+     * @group relay-incompatible
+     * @requiresRedisVersion >= 6.0.0
+     */
+    public function testToggleManuallyCachingKeysResp3(): void
+    {
+        $redis = $this->getResp3Client();
+
+        $options = (new ClientTrackingOptions())
+            ->optIn()
+            ->noLoop();
+
+        $this->assertEquals('OK', $redis->client->tracking(true, $options));
+        $this->assertEquals('OK', $redis->client->caching(true));
+        $this->assertEquals('OK', $redis->client->tracking(false));
+
+        $options = (new ClientTrackingOptions())
+            ->optOut()
+            ->noLoop();
+
+        $this->assertEquals('OK', $redis->client->tracking(true, $options));
+        $this->assertEquals('OK', $redis->client->caching(false));
+        $this->assertEquals('OK', $redis->client->tracking(false));
+    }
+
+    /**
      * @return array
      */
     public function invalidConnectionNameProvider()
@@ -360,6 +527,62 @@ BUFFER;
             'with only modifier given' => [
                 ['SETINFO', 'LIB-VER'],
                 ['SETINFO'],
+            ],
+        ];
+    }
+
+    public function trackingArgumentsProvider(): array
+    {
+        return [
+            'with default arguments - toggle on' => [
+                ['TRACKING', true],
+                ['TRACKING', 'ON'],
+            ],
+            'with default arguments - toggle off' => [
+                ['TRACKING', false],
+                ['TRACKING', 'OFF'],
+            ],
+            'with REDIRECT argument' => [
+                ['TRACKING', true, (new ClientTrackingOptions())->redirect(1)],
+                ['TRACKING', 'ON', 'REDIRECT', 1],
+            ],
+            'with PREFIX arguments' => [
+                ['TRACKING', true, (new ClientTrackingOptions())->prefix('prefix1', 'prefix2')],
+                ['TRACKING', 'ON', 'PREFIX', 'prefix1', 'PREFIX', 'prefix2'],
+            ],
+            'with BCAST argument' => [
+                ['TRACKING', true, (new ClientTrackingOptions())->broadcast()],
+                ['TRACKING', 'ON', 'BCAST'],
+            ],
+            'with OPTIN argument' => [
+                ['TRACKING', true, (new ClientTrackingOptions())->optIn()],
+                ['TRACKING', 'ON', 'OPTIN'],
+            ],
+            'with OPTOUT argument' => [
+                ['TRACKING', true, (new ClientTrackingOptions())->optOut()],
+                ['TRACKING', 'ON', 'OPTOUT'],
+            ],
+            'with NOLOOP argument' => [
+                ['TRACKING', true, (new ClientTrackingOptions())->noLoop()],
+                ['TRACKING', 'ON', 'NOLOOP'],
+            ],
+            'with all arguments' => [
+                ['TRACKING', true, (new ClientTrackingOptions())->redirect(1)->prefix('prefix1', 'prefix2')->broadcast()->optIn()->optOut()->noLoop()],
+                ['TRACKING', 'ON', 'REDIRECT', 1, 'PREFIX', 'prefix1', 'PREFIX', 'prefix2', 'BCAST', 'OPTIN', 'OPTOUT', 'NOLOOP'],
+            ],
+        ];
+    }
+
+    public function cachingArgumentsProvider(): array
+    {
+        return [
+            'with default arguments - yes' => [
+                ['CACHING', true],
+                ['CACHING', 'YES'],
+            ],
+            'with default arguments - no' => [
+                ['CACHING', false],
+                ['CACHING', 'NO'],
             ],
         ];
     }
