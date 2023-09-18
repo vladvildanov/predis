@@ -14,9 +14,6 @@ namespace Predis\Cache;
 
 use APCUIterator;
 
-/**
- * @group ext-apcu
- */
 class ApcuCache implements CacheWithMetadataInterface
 {
     /**
