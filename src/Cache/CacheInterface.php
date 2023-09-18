@@ -20,7 +20,7 @@ interface CacheInterface
      * @param  string $key
      * @param         $var
      * @param  int    $ttl
-     * @return mixed
+     * @return bool
      */
     public function add(string $key, $var, int $ttl = 0): bool;
 
