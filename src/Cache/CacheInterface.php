@@ -72,7 +72,7 @@ interface CacheInterface
      * Removes value associated with given key from cache.
      *
      * @param  string $key
-     * @return mixed
+     * @return bool
      */
     public function delete(string $key): bool;
 
