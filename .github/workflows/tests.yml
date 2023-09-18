@@ -52,6 +52,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: relay, apcu
+          ini-values: apc.enable_cli=1
           coverage: ${{ (matrix.php == '8.1' && matrix.redis == '7') && 'xdebug' || 'none' }}
 
       - name: Install Composer dependencies
