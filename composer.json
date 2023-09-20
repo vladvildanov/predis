@@ -30,7 +30,8 @@
         "phpunit/phpunit": "^8.0 || ~9.4.4"
     },
     "suggest": {
-        "ext-relay": "Faster connection with in-memory caching (>=0.6.2)"
+        "ext-relay": "Faster connection with in-memory caching (>=0.6.2)",
+        "ext-apcu": "Required for CSC functionality"
     },
     "scripts": {
         "phpstan": "phpstan analyse",
