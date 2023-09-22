@@ -27,6 +27,7 @@ class ParametersTest extends PredisTestCase
         $this->assertEquals($defaults['scheme'], $parameters->scheme);
         $this->assertEquals($defaults['host'], $parameters->host);
         $this->assertEquals($defaults['port'], $parameters->port);
+        $this->assertFalse($parameters->cache);
     }
 
     /**
@@ -419,6 +420,7 @@ class ParametersTest extends PredisTestCase
             'host' => '127.0.0.1',
             'port' => 6379,
             'protocol' => 2,
+            'cache' => false,
         ];
     }
 
