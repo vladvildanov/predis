@@ -97,9 +97,10 @@ class CacheProxyConnectionTest extends PredisTestCase
         $this->mockConnection
             ->expects($this->once())
             ->method('isConnected')
-            ->withAnyParameters();
+            ->withAnyParameters()
+            ->willReturn(true);
 
-        $this->proxyConnection->isConnected();
+        $this->assertTrue($this->proxyConnection->isConnected());
     }
 
     /**

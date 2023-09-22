@@ -65,7 +65,7 @@ class CacheProxyConnection implements ConnectionInterface
      */
     public function isConnected()
     {
-        $this->connection->isConnected();
+        return $this->connection->isConnected();
     }
 
     /**
