@@ -12,7 +12,7 @@
 
 require __DIR__ . '/../autoload.php';
 
-if (PHP_SAPI !== 'fpm') {
+if (PHP_SAPI !== 'fpm-fcgi') {
     exit('This example available only in FPM mode.');
 }
 
