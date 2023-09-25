@@ -35,5 +35,5 @@ var_dump($client->get('foo'));
 // 6. Sleep until TTL expired.
 sleep(3);
 
-// 7. Retrieves update value from Redis storage again.
+// 7. Retrieves updated value from Redis storage again.
 var_dump($client->get('foo'));
