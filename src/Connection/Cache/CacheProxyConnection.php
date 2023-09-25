@@ -130,7 +130,7 @@ class CacheProxyConnection implements ConnectionInterface
      */
     public function getSentinelConnection(): NodeConnectionInterface
     {
-        /* @phpstan-ignore-line */
+        /* @phpstan-ignore-next-line */
         return $this->connection->getSentinelConnection();
     }
 
