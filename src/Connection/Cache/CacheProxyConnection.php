@@ -16,6 +16,7 @@ use Predis\Cache\CacheWithMetadataInterface;
 use Predis\Command\CommandInterface;
 use Predis\Configuration\Cache\CacheConfiguration;
 use Predis\Connection\ConnectionInterface;
+use Predis\Connection\NodeConnectionInterface;
 
 class CacheProxyConnection implements ConnectionInterface
 {
@@ -89,11 +90,10 @@ class CacheProxyConnection implements ConnectionInterface
      */
     public function executeCommand(CommandInterface $command)
     {
-        $whitelistCallback = $this->cacheConfiguration->getWhitelistCallback();
         $commandId = $command->getId();
 
         // 1. Check if given command is whitelisted.
-        if (!$whitelistCallback($commandId)) {
+        if (!$this->cacheConfiguration->isWhitelistedCommand($commandId)) {
             return $this->connection->executeCommand($command);
         }
 
@@ -123,6 +123,14 @@ class CacheProxyConnection implements ConnectionInterface
     public function getParameters()
     {
         return $this->connection->getParameters();
+    }
+
+    /**
+     * @return NodeConnectionInterface
+     */
+    public function getSentinelConnection(): NodeConnectionInterface
+    {
+        return $this->connection->getSentinelConnection();
     }
 
     /**

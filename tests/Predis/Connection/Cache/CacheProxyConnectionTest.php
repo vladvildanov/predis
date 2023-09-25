@@ -17,6 +17,8 @@ use Predis\Cache\CacheWithMetadataInterface;
 use Predis\Command\CommandInterface;
 use Predis\Configuration\Cache\CacheConfiguration;
 use Predis\Connection\ConnectionInterface;
+use Predis\Connection\NodeConnectionInterface;
+use Predis\Connection\Replication\SentinelReplication;
 use PredisTestCase;
 
 class CacheProxyConnectionTest extends PredisTestCase
@@ -135,6 +137,33 @@ class CacheProxyConnectionTest extends PredisTestCase
      * @group disconnected
      * @return void
      */
+    public function testGetSentinelConnection(): void
+    {
+        $mockNodeConnection = $this->getMockBuilder(NodeConnectionInterface::class)->getMock();
+
+        $mockSentinel = $this->getMockBuilder(SentinelReplication::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $mockSentinel
+            ->expects($this->once())
+            ->method('getSentinelConnection')
+            ->withAnyParameters()
+            ->willReturn($mockNodeConnection);
+
+        $proxyConnection = new CacheProxyConnection(
+            $mockSentinel,
+            $this->mockCacheConfiguration,
+            $this->mockCacheWithMetadata
+        );
+
+        $this->assertSame($mockNodeConnection, $proxyConnection->getSentinelConnection());
+    }
+
+    /**
+     * @group disconnected
+     * @return void
+     */
     public function testGetParameters(): void
     {
         $expectedParams = ['param1' => 'value', 'param2' => 'value'];
@@ -156,11 +185,9 @@ class CacheProxyConnectionTest extends PredisTestCase
     {
         $this->mockCacheConfiguration
             ->expects($this->once())
-            ->method('getWhitelistCallback')
-            ->withAnyParameters()
-            ->willReturn(static function ($commandId) {
-                return $commandId === 'GET';
-            });
+            ->method('isWhitelistedCommand')
+            ->with('HSET')
+            ->willReturn(false);
 
         $this->mockConnection
             ->expects($this->once())
@@ -220,11 +247,9 @@ class CacheProxyConnectionTest extends PredisTestCase
     {
         $this->mockCacheConfiguration
             ->expects($this->once())
-            ->method('getWhitelistCallback')
-            ->withAnyParameters()
-            ->willReturn(static function ($commandId) {
-                return $commandId === 'GET';
-            });
+            ->method('isWhitelistedCommand')
+            ->with('GET')
+            ->willReturn(true);
 
         $this->mockConnection
             ->expects($this->never())
@@ -287,11 +312,9 @@ class CacheProxyConnectionTest extends PredisTestCase
     {
         $this->mockCacheConfiguration
             ->expects($this->once())
-            ->method('getWhitelistCallback')
-            ->withAnyParameters()
-            ->willReturn(static function ($commandId) {
-                return $commandId === 'GET';
-            });
+            ->method('isWhitelistedCommand')
+            ->with('GET')
+            ->willReturn(true);
 
         $this->mockConnection
             ->expects($this->once())
@@ -356,11 +379,9 @@ class CacheProxyConnectionTest extends PredisTestCase
     {
         $this->mockCacheConfiguration
             ->expects($this->once())
-            ->method('getWhitelistCallback')
-            ->withAnyParameters()
-            ->willReturn(static function ($commandId) {
-                return $commandId === 'GET';
-            });
+            ->method('isWhitelistedCommand')
+            ->with('GET')
+            ->willReturn(true);
 
         $this->mockConnection
             ->expects($this->once())

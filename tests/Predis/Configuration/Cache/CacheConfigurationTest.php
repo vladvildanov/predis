@@ -32,16 +32,12 @@ class CacheConfigurationTest extends PredisTestCase
      * @group disconnected
      * @return void
      */
-    public function testGetWhitelistCallback(): void
+    public function testIsWhitelistedCommand(): void
     {
         $configuration = new CacheConfiguration();
-        $callback = static function ($commandId) {
-            return $commandId === 'GET';
-        };
 
-        $expectedCallback = $configuration->getWhitelistCallback();
-
-        $this->assertSame($expectedCallback('GET'), $callback('GET'));
+        $this->assertTrue($configuration->isWhitelistedCommand('GET'));
+        $this->assertFalse($configuration->isWhitelistedCommand('HGET'));
     }
 
     /**
@@ -63,13 +59,8 @@ class CacheConfigurationTest extends PredisTestCase
     public function testReturnsDefaultConfigurationOnNullConfigurationGiven(): void
     {
         $configuration = new CacheConfiguration();
-        $callback = static function ($commandId) {
-            return $commandId === 'GET';
-        };
 
-        $expectedCallback = $configuration->getWhitelistCallback();
-
-        $this->assertSame($expectedCallback('GET'), $callback('GET'));
+        $this->assertTrue($configuration->isWhitelistedCommand('GET'));
         $this->assertSame(0, $configuration->getTTl());
         $this->assertFalse($configuration->isExceedsMaxCount(1000));
         $this->assertTrue($configuration->isExceedsMaxCount(1001));

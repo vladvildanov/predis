@@ -50,7 +50,11 @@ class CacheConfiguration
 
     public function __construct(array $configuration = null)
     {
-        $this->mapConfiguration($configuration);
+        $this->setDefaultConfiguration();
+
+        if (null !== $configuration) {
+            $this->mapConfiguration($configuration);
+        }
     }
 
     /**
@@ -62,11 +66,14 @@ class CacheConfiguration
     }
 
     /**
-     * @return Closure
+     * @param  string $commandId
+     * @return bool
      */
-    public function getWhitelistCallback(): Closure
+    public function isWhitelistedCommand(string $commandId): bool
     {
-        return $this->whitelistCallback;
+        $callback = $this->whitelistCallback;
+
+        return $callback($commandId);
     }
 
     /**
@@ -88,12 +95,6 @@ class CacheConfiguration
      */
     private function mapConfiguration(array $configuration = null): void
     {
-        if (null === $configuration) {
-            $this->setDefaultConfiguration();
-
-            return;
-        }
-
         $unexpectedKeys = array_filter(array_keys($configuration), function ($key) {
             return !array_key_exists($key, $this->propertiesMapping);
         });
@@ -107,9 +108,6 @@ class CacheConfiguration
             $property = $this->propertiesMapping[$key];
             $this->$property = (int) $value;
         }
-
-        // TODO: Make it user-defined.
-        $this->whitelistCallback = $this->getDefaultWhitelistCallback();
     }
 
     /**
