@@ -13,9 +13,12 @@
 namespace Predis\Configuration\Option;
 
 use InvalidArgumentException;
+use Predis\Cache\ApcuCache;
+use Predis\Configuration\Cache\CacheConfiguration;
 use Predis\Configuration\OptionInterface;
 use Predis\Configuration\OptionsInterface;
 use Predis\Connection\AggregateConnectionInterface;
+use Predis\Connection\Cache\CacheProxyConnection;
 use Predis\Connection\NodeConnectionInterface;
 
 /**
@@ -82,6 +85,10 @@ class Aggregate implements OptionInterface
 
             if ($parameters && $autoaggregate) {
                 static::aggregate($options, $connection, $parameters);
+            }
+
+            if ((bool) $options->cache) {
+                return new CacheProxyConnection($connection, new CacheConfiguration($options->cache_config), new ApcuCache());
             }
 
             return $connection;

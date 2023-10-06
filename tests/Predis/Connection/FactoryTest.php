@@ -14,6 +14,7 @@ namespace Predis\Connection;
 
 use Predis\Client;
 use Predis\Command\RawCommand;
+use Predis\Connection\Cache\CacheProxyConnection;
 use PredisTestCase;
 use ReflectionObject;
 use stdClass;
@@ -593,6 +594,20 @@ class FactoryTest extends PredisTestCase
 
         $this->assertInstanceOf(RawCommand::class, $initCommands[0]);
         $this->assertSame('HELLO', $initCommands[2]->getId());
+    }
+
+    /**
+     * @group disconnected
+     * @return void
+     */
+    public function testCreatesCacheProxyConnection(): void
+    {
+        $parameters = ['cache' => true];
+
+        $factory = new Factory();
+        $connection = $factory->create($parameters);
+
+        $this->assertInstanceOf(CacheProxyConnection::class, $connection);
     }
 
     // ******************************************************************** //

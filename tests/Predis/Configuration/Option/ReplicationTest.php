@@ -12,8 +12,10 @@
 
 namespace Predis\Configuration\Option;
 
+use Closure;
 use PHPUnit\Framework\MockObject\MockObject;
 use Predis\Configuration\OptionsInterface;
+use Predis\Connection\Cache\CacheProxyConnection;
 use PredisTestCase;
 use ReflectionProperty;
 
@@ -45,15 +47,17 @@ class ReplicationTest extends PredisTestCase
         /** @var OptionsInterface|MockObject */
         $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
         $options
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(3))
             ->method('__get')
             ->withConsecutive(
                 ['autodiscovery'],
-                ['connections']
+                ['connections'],
+                ['cache']
             )
             ->willReturnOnConsecutiveCalls(
                 true,
-                $connectionFactory
+                $connectionFactory,
+                false
             );
 
         $this->assertInstanceOf('closure', $initializer = $option->getDefault($options));
@@ -115,10 +119,10 @@ class ReplicationTest extends PredisTestCase
         /** @var MockObject|OptionsInterface */
         $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
         $options
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('__get')
-            ->with('connections')
-            ->willReturn($factory);
+            ->withConsecutive(['connections'], ['cache'])
+            ->willReturnOnConsecutiveCalls($factory, false);
 
         $connection = $this->getMockBuilder('Predis\Connection\AggregateConnectionInterface')->getMock();
         $connection
@@ -153,9 +157,10 @@ class ReplicationTest extends PredisTestCase
         /** @var MockObject|OptionsInterface */
         $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
         $options
-            ->expects($this->never())
+            ->expects($this->once())
             ->method('__get')
-            ->with('connections');
+            ->with('cache')
+            ->willReturn(false);
 
         $connection = $this->getMockBuilder('Predis\Connection\AggregateConnectionInterface')->getMock();
         $connection
@@ -199,10 +204,10 @@ class ReplicationTest extends PredisTestCase
         /** @var MockObject|OptionsInterface */
         $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
         $options
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('__get')
-            ->with('connections')
-            ->willReturn($factory);
+            ->withConsecutive(['connections'], ['cache'])
+            ->willReturn($factory, false);
 
         $connection = $this->getMockBuilder('Predis\Connection\AggregateConnectionInterface')->getMock();
         $connection
@@ -237,9 +242,10 @@ class ReplicationTest extends PredisTestCase
         /** @var MockObject|OptionsInterface */
         $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
         $options
-            ->expects($this->never())
+            ->expects($this->once())
             ->method('__get')
-            ->with('connections');
+            ->with('cache')
+            ->willReturn(false);
 
         $connection = $this->getMockBuilder('Predis\Connection\AggregateConnectionInterface')->getMock();
         $connection
@@ -314,15 +320,17 @@ class ReplicationTest extends PredisTestCase
         /** @var OptionsInterface|MockObject */
         $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
         $options
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(3))
             ->method('__get')
             ->withConsecutive(
                 ['service'],
-                ['connections']
+                ['connections'],
+                ['cache']
             )
             ->willReturnOnConsecutiveCalls(
                 'mymaster',
-                $this->getMockBuilder('Predis\Connection\FactoryInterface')->getMock()
+                $this->getMockBuilder('Predis\Connection\FactoryInterface')->getMock(),
+                false
             );
 
         $parameters = [
@@ -331,6 +339,41 @@ class ReplicationTest extends PredisTestCase
 
         $this->assertInstanceOf('closure', $initializer = $option->filter($options, 'sentinel'));
         $this->assertInstanceOf('Predis\Connection\Replication\SentinelReplication', $connection = $initializer($parameters));
+
+        $this->assertSame($parameters[0], $connection->getSentinelConnection());
+    }
+
+    /**
+     * @group disconnected
+     */
+    public function testCreatesCacheProxyConnectionOnAnyReplication(): void
+    {
+        $option = new Replication();
+
+        /** @var OptionsInterface|MockObject */
+        $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
+        $options
+            ->expects($this->exactly(4))
+            ->method('__get')
+            ->withConsecutive(
+                ['service'],
+                ['connections'],
+                ['cache'],
+                ['cache_config']
+            )
+            ->willReturnOnConsecutiveCalls(
+                'mymaster',
+                $this->getMockBuilder('Predis\Connection\FactoryInterface')->getMock(),
+                true,
+                null
+            );
+
+        $parameters = [
+            $this->getMockBuilder('Predis\Connection\NodeConnectionInterface')->getMock(),
+        ];
+
+        $this->assertInstanceOf(Closure::class, $initializer = $option->filter($options, 'sentinel'));
+        $this->assertInstanceOf(CacheProxyConnection::class, $connection = $initializer($parameters));
 
         $this->assertSame($parameters[0], $connection->getSentinelConnection());
     }

@@ -12,8 +12,10 @@
 
 namespace Predis\Configuration\Option;
 
+use Closure;
 use PHPUnit\Framework\MockObject\MockObject;
 use Predis\Configuration\OptionsInterface;
+use Predis\Connection\Cache\CacheProxyConnection;
 use PredisTestCase;
 
 class ClusterTest extends PredisTestCase
@@ -81,10 +83,10 @@ class ClusterTest extends PredisTestCase
         /** @var MockObject|OptionsInterface */
         $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
         $options
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('__get')
-            ->with('connections')
-            ->willReturn($factory);
+            ->withConsecutive(['connections'], ['cache'])
+            ->willReturnOnConsecutiveCalls($factory, false);
 
         $connection = $this->getMockBuilder('Predis\Connection\AggregateConnectionInterface')->getMock();
         $connection
@@ -119,9 +121,10 @@ class ClusterTest extends PredisTestCase
         /** @var MockObject|OptionsInterface */
         $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
         $options
-            ->expects($this->never())
+            ->expects($this->once())
             ->method('__get')
-            ->with('connections');
+            ->with('cache')
+            ->willReturn(false);
 
         $connection = $this->getMockBuilder('Predis\Connection\AggregateConnectionInterface')->getMock();
         $connection
@@ -165,10 +168,10 @@ class ClusterTest extends PredisTestCase
         /** @var MockObject|OptionsInterface */
         $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
         $options
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('__get')
-            ->with('connections')
-            ->willReturn($factory);
+            ->withConsecutive(['connections'], ['cache'])
+            ->willReturnOnConsecutiveCalls($factory, false);
 
         $connection = $this->getMockBuilder('Predis\Connection\AggregateConnectionInterface')->getMock();
         $connection
@@ -203,9 +206,10 @@ class ClusterTest extends PredisTestCase
         /** @var MockObject|OptionsInterface */
         $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
         $options
-            ->expects($this->never())
+            ->expects($this->once())
             ->method('__get')
-            ->with('connections');
+            ->with('cache')
+            ->willReturn(false);
 
         $connection = $this->getMockBuilder('Predis\Connection\AggregateConnectionInterface')->getMock();
         $connection
@@ -281,17 +285,19 @@ class ClusterTest extends PredisTestCase
         $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
 
         $options
-            ->expects($this->exactly(3))
+            ->expects($this->exactly(4))
             ->method('__get')
             ->withConsecutive(
                 ['connections'],
                 ['crc16'],
-                ['readTimeout']
+                ['readTimeout'],
+                ['cache']
             )
             ->willReturnOnConsecutiveCalls(
                 $this->getMockBuilder('Predis\Connection\FactoryInterface')->getMock(),
                 $this->getMockBuilder('Predis\Cluster\Hash\HashGeneratorInterface')->getMock(),
-                1000
+                1000,
+                false
             );
 
         $this->assertInstanceOf('closure', $initializer = $option->filter($options, 'redis'));
@@ -309,21 +315,60 @@ class ClusterTest extends PredisTestCase
         $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
 
         $options
-            ->expects($this->exactly(3))
+            ->expects($this->exactly(4))
             ->method('__get')
             ->withConsecutive(
                 ['connections'],
                 ['crc16'],
-                ['readTimeout']
+                ['readTimeout'],
+                ['cache']
             )
             ->willReturnOnConsecutiveCalls(
                 $this->getMockBuilder('Predis\Connection\FactoryInterface')->getMock(),
                 $this->getMockBuilder('Predis\Cluster\Hash\HashGeneratorInterface')->getMock(),
-                1000
+                1000,
+                false
             );
 
         $this->assertInstanceOf('closure', $initializer = $option->filter($options, 'redis-cluster'));
         $this->assertInstanceOf('Predis\Connection\Cluster\RedisCluster', $initializer($parameters = []));
+    }
+
+    /**
+     * @dataProvider clusterProvider
+     * @group disconnected
+     */
+    public function testCreatesCacheProxyConnectionOnAnyCluster($value): void
+    {
+        $option = new Cluster();
+        $parameters = ['cache' => 1, 'cache_config' => ['ttl' => 200]];
+
+        /** @var OptionsInterface|MockObject */
+        $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
+
+        $options
+            ->expects($this->exactly(5))
+            ->method('__get')
+            ->withConsecutive(
+                ['connections'],
+                ['crc16'],
+                ['readTimeout'],
+                ['cache'],
+                ['cache_config']
+            )
+            ->willReturnOnConsecutiveCalls(
+                $this->getMockBuilder('Predis\Connection\FactoryInterface')->getMock(),
+                $this->getMockBuilder('Predis\Cluster\Hash\HashGeneratorInterface')->getMock(),
+                1000,
+                true,
+                null
+            );
+
+        $this->assertInstanceOf(Closure::class, $initializer = $option->filter($options, $value));
+        $this->assertInstanceOf(
+            CacheProxyConnection::class,
+            $initializer($parameters)
+        );
     }
 
     /**
@@ -361,5 +406,13 @@ class ClusterTest extends PredisTestCase
         $connection = $this->getMockBuilder('Predis\Connection\Cluster\ClusterInterface')->getMock();
 
         $option->filter($options, $connection);
+    }
+
+    public function clusterProvider(): array
+    {
+        return [
+            ['redis'],
+            ['redis-cluster'],
+        ];
     }
 }

@@ -66,10 +66,12 @@ class AggregateTest extends PredisTestCase
 
         /** @var MockObject|OptionsInterface */
         $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
+
         $options
-            ->expects($this->never())
+            ->expects($this->once())
             ->method('__get')
-            ->with('connections');
+            ->with('cache')
+            ->willReturn(false);
 
         $connection = $this->getMockBuilder('Predis\Connection\AggregateConnectionInterface')->getMock();
         $connection
@@ -100,9 +102,10 @@ class AggregateTest extends PredisTestCase
         /** @var MockObject|OptionsInterface */
         $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
         $options
-            ->expects($this->never())
+            ->expects($this->once())
             ->method('__get')
-            ->with('connections');
+            ->with('cache')
+            ->willReturn(false);
 
         $connection = $this->getMockBuilder('Predis\Connection\AggregateConnectionInterface')->getMock();
         $connection
@@ -146,10 +149,10 @@ class AggregateTest extends PredisTestCase
         /** @var MockObject|OptionsInterface */
         $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
         $options
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('__get')
-            ->with('connections')
-            ->willReturn($factory);
+            ->withConsecutive(['connections'], ['cache'])
+            ->willReturnOnConsecutiveCalls($factory, false);
 
         $connection = $this->getMockBuilder('Predis\Connection\AggregateConnectionInterface')
             ->getMock();
@@ -185,9 +188,10 @@ class AggregateTest extends PredisTestCase
         /** @var MockObject|OptionsInterface */
         $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
         $options
-            ->expects($this->never())
+            ->expects($this->once())
             ->method('__get')
-            ->with('connections');
+            ->with('cache')
+            ->willReturn(false);
 
         $connection = $this->getMockBuilder('Predis\Connection\AggregateConnectionInterface')->getMock();
         $connection

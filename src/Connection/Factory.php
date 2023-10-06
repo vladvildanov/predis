@@ -13,8 +13,11 @@
 namespace Predis\Connection;
 
 use InvalidArgumentException;
+use Predis\Cache\ApcuCache;
 use Predis\Client;
 use Predis\Command\RawCommand;
+use Predis\Configuration\Cache\CacheConfiguration;
+use Predis\Connection\Cache\CacheProxyConnection;
 use ReflectionClass;
 use UnexpectedValueException;
 
@@ -105,6 +108,10 @@ class Factory implements FactoryInterface
                 'Objects returned by connection initializers must implement ' .
                 "'Predis\Connection\NodeConnectionInterface'."
             );
+        }
+
+        if ((bool) $parameters->cache) {
+            return new CacheProxyConnection($connection, new CacheConfiguration($parameters->cache_config), new ApcuCache());
         }
 
         return $connection;
