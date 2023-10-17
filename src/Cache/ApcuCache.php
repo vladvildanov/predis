@@ -17,16 +17,6 @@ use APCUIterator;
 class ApcuCache implements CacheWithMetadataInterface
 {
     /**
-     * @var APCUIterator
-     */
-    private $iterator;
-
-    public function __construct(APCUIterator $iterator = null)
-    {
-        $this->iterator = $iterator ?? new APCUIterator();
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function add(string $key, $var, int $ttl = 0): bool
@@ -119,7 +109,7 @@ class ApcuCache implements CacheWithMetadataInterface
      */
     public function getTotalSize(): int
     {
-        return $this->iterator->getTotalSize();
+        return (new APCUIterator())->getTotalSize();
     }
 
     /**
@@ -127,7 +117,7 @@ class ApcuCache implements CacheWithMetadataInterface
      */
     public function getTotalCount(): int
     {
-        return $this->iterator->getTotalCount();
+        return (new APCUIterator())->getTotalCount();
     }
 
     /**
@@ -144,5 +134,20 @@ class ApcuCache implements CacheWithMetadataInterface
     public function getTotalMisses(): int
     {
         return (int) apcu_cache_info(true)['num_misses'];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function findMatchingKeys(string $regExp): array
+    {
+        $keys = [];
+        $iterator = new APCUIterator($regExp);
+
+        foreach ($iterator as $value) {
+            $keys[] = $value['key'];
+        }
+
+        return $keys;
     }
 }

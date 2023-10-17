@@ -106,4 +106,12 @@ interface CacheInterface
      * @return bool
      */
     public function flush(): bool;
+
+    /**
+     * Returns keys matching given regular expression.
+     *
+     * @param  string $regExp
+     * @return array
+     */
+    public function findMatchingKeys(string $regExp): array;
 }
