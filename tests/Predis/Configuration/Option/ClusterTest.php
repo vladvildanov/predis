@@ -14,8 +14,10 @@ namespace Predis\Configuration\Option;
 
 use Closure;
 use PHPUnit\Framework\MockObject\MockObject;
+use Predis\Command\RawCommand;
 use Predis\Configuration\OptionsInterface;
 use Predis\Connection\Cache\CacheProxyConnection;
+use Predis\Connection\Cluster\ClusterInterface;
 use PredisTestCase;
 
 class ClusterTest extends PredisTestCase
@@ -335,36 +337,40 @@ class ClusterTest extends PredisTestCase
     }
 
     /**
-     * @dataProvider clusterProvider
      * @group disconnected
      */
-    public function testCreatesCacheProxyConnectionOnAnyCluster($value): void
+    public function testCreatesCacheProxyConnectionOnAnyCluster(): void
     {
         $option = new Cluster();
         $parameters = ['cache' => 1, 'cache_config' => ['ttl' => 200]];
+        $mockConnection = $this->getMockBuilder(ClusterInterface::class)->getMock();
+
+        $mockConnection
+            ->expects($this->once())
+            ->method('executeCommand')
+            ->with(new RawCommand('CLIENT', ['TRACKING', 'ON', 'OPTIN']))
+            ->willReturn('OK');
+
+        $callback = function () use ($mockConnection) {
+            return $mockConnection;
+        };
 
         /** @var OptionsInterface|MockObject */
         $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
 
         $options
-            ->expects($this->exactly(5))
+            ->expects($this->exactly(2))
             ->method('__get')
             ->withConsecutive(
-                ['connections'],
-                ['crc16'],
-                ['readTimeout'],
                 ['cache'],
                 ['cache_config']
             )
             ->willReturnOnConsecutiveCalls(
-                $this->getMockBuilder('Predis\Connection\FactoryInterface')->getMock(),
-                $this->getMockBuilder('Predis\Cluster\Hash\HashGeneratorInterface')->getMock(),
-                1000,
                 true,
                 null
             );
 
-        $this->assertInstanceOf(Closure::class, $initializer = $option->filter($options, $value));
+        $this->assertInstanceOf(Closure::class, $initializer = $option->filter($options, $callback));
         $this->assertInstanceOf(
             CacheProxyConnection::class,
             $initializer($parameters)
@@ -406,13 +412,5 @@ class ClusterTest extends PredisTestCase
         $connection = $this->getMockBuilder('Predis\Connection\Cluster\ClusterInterface')->getMock();
 
         $option->filter($options, $connection);
-    }
-
-    public function clusterProvider(): array
-    {
-        return [
-            ['redis'],
-            ['redis-cluster'],
-        ];
     }
 }
