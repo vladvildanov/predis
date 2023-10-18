@@ -1381,6 +1381,33 @@ class ClientTest extends PredisTestCase
 
     /**
      * @group connected
+     * @group relay-incompatible
+     * @requiresRedisVersion >= 7.2.0
+     */
+    public function testClientInvalidateCacheOnInvalidateResponseWithRedisUrlGiven(): void
+    {
+        $url = "redis://" . constant('REDIS_SERVER_HOST') .
+            ":" . constant('REDIS_SERVER_PORT') . "?database=" . constant('REDIS_SERVER_DBNUM') .
+            "&cache=true&protocol=3";
+
+        $client = new Client($url);
+
+        $this->assertEquals('OK', $client->set('foo', 'bar'));
+        $this->assertSame('bar', $client->get('foo'));
+        $this->assertSame('bar', apcu_fetch('GET_foo'));
+
+        $this->assertEquals('OK', $client->set('foo', 'baz'));
+        $this->assertNull($client->get('baz'));
+        $this->assertFalse(apcu_exists('GET_foo'));
+
+        $this->assertSame('baz', $client->get('foo'));
+        $this->assertSame('baz', apcu_fetch('GET_foo'));
+
+        apcu_clear_cache();
+    }
+
+    /**
+     * @group connected
      * @group cluster
      * @group relay-incompatible
      * @requiresRedisVersion >= 7.2.0
