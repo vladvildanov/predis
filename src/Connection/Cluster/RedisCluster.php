@@ -26,6 +26,7 @@ use Predis\Connection\ConnectionException;
 use Predis\Connection\FactoryInterface;
 use Predis\Connection\NodeConnectionInterface;
 use Predis\Connection\ParametersInterface;
+use Predis\Connection\Traits\PushNotificationListener;
 use Predis\NotSupportedException;
 use Predis\Response\Error as ErrorResponse;
 use Predis\Response\ErrorInterface as ErrorResponseInterface;
@@ -56,6 +57,8 @@ use Traversable;
  */
 class RedisCluster implements ClusterInterface, IteratorAggregate, Countable
 {
+    use PushNotificationListener;
+
     private $useClusterSlots = true;
 
     /**
