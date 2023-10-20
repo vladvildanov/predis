@@ -26,4 +26,12 @@ class JSONMERGE extends RedisCommand
     {
         return 'JSON.MERGE';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

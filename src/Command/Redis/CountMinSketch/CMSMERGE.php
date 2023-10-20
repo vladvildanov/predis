@@ -39,4 +39,16 @@ class CMSMERGE extends RedisCommand
 
         parent::setArguments($processedArguments);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        $arguments = $this->getArguments();
+        $numkeys = $arguments[1];
+        unset($arguments[1]);
+
+        return array_slice($arguments, 0, $numkeys + 1);
+    }
 }

@@ -25,4 +25,12 @@ class FTDICTDUMP extends RedisCommand
     {
         return 'FT.DICTDUMP';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

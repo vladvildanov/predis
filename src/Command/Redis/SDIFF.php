@@ -37,6 +37,14 @@ class SDIFF extends RedisCommand
         parent::setArguments($arguments);
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return $this->getArguments();
+    }
+
     public function prefixKeys($prefix)
     {
         $this->applyPrefixForAllArguments($prefix);

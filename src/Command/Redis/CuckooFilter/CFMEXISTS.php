@@ -25,4 +25,12 @@ class CFMEXISTS extends RedisCommand
     {
         return 'CF.MEXISTS';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

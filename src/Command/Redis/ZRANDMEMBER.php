@@ -33,4 +33,12 @@ class ZRANDMEMBER extends RedisCommand
     {
         return 'ZRANDMEMBER';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

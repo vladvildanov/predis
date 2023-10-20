@@ -31,6 +31,16 @@ class FCALL extends RedisCommand
         return 'FCALL';
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        $numkeys = $this->getArgument(1);
+
+        return $this->getArgumentsWithOffset(2, $numkeys);
+    }
+
     public function prefixKeys($prefix)
     {
         $arguments = $this->getArguments();

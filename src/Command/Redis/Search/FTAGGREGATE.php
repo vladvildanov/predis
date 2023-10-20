@@ -37,4 +37,12 @@ class FTAGGREGATE extends RedisCommand
             $commandArguments
         ));
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

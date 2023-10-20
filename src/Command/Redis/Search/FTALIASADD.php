@@ -25,4 +25,12 @@ class FTALIASADD extends RedisCommand
     {
         return 'FT.ALIASADD';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return $this->getArgumentsExceptFirst();
+    }
 }

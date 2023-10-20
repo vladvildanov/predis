@@ -25,4 +25,12 @@ class CFADDNX extends RedisCommand
     {
         return 'CF.ADDNX';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

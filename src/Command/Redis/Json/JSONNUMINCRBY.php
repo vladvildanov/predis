@@ -25,4 +25,12 @@ class JSONNUMINCRBY extends RedisCommand
     {
         return 'JSON.NUMINCRBY';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

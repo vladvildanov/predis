@@ -78,4 +78,16 @@ class ZUNIONSTORE extends RedisCommand
             $this->setRawArguments($arguments);
         }
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        $arguments = $this->getArguments();
+        $numkeys = $arguments[1];
+        unset($arguments[1]);
+
+        return array_slice($arguments, 0, $numkeys + 1);
+    }
 }

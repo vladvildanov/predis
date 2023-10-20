@@ -26,4 +26,12 @@ class BFSCANDUMP extends RedisCommand
     {
         return 'BF.SCANDUMP';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

@@ -26,4 +26,12 @@ class CFLOADCHUNK extends RedisCommand
     {
         return 'CF.LOADCHUNK';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

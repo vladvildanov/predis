@@ -41,4 +41,12 @@ class XAUTOCLAIM extends RedisCommand
 
         parent::setArguments($processedArguments);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

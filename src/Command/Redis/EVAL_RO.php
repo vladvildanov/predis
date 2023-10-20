@@ -31,4 +31,14 @@ class EVAL_RO extends RedisCommand
     {
         return 'EVAL_RO';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        $numkeys = $this->getArgument(1);
+
+        return $this->getArgumentsWithOffset(2, $numkeys);
+    }
 }

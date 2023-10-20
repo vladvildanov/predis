@@ -25,4 +25,20 @@ class TSMADD extends RedisCommand
     {
         return 'TS.MADD';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        $arguments = $this->getArguments();
+        $keys = [];
+
+        for ($i = 0, $iMax = count($arguments); $i <= $iMax; $i++) {
+            $keys[] = $arguments[$i];
+            $i += 2;
+        }
+
+        return $keys;
+    }
 }

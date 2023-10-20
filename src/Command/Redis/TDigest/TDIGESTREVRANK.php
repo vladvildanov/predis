@@ -27,4 +27,12 @@ class TDIGESTREVRANK extends RedisCommand
     {
         return 'TDIGEST.REVRANK';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

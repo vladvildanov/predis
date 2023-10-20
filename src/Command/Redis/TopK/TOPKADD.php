@@ -28,4 +28,12 @@ class TOPKADD extends RedisCommand
     {
         return 'TOPK.ADD';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

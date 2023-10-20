@@ -27,6 +27,14 @@ class RPOPLPUSH extends RedisCommand
         return 'RPOPLPUSH';
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return $this->getArguments();
+    }
+
     public function prefixKeys($prefix)
     {
         $this->applyPrefixForAllArguments($prefix);

@@ -38,4 +38,14 @@ class FCALL_RO extends RedisCommand
 
         parent::setArguments($processedArguments);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        $numkeys = $this->getArgument(1);
+
+        return $this->getArgumentsWithOffset(2, $numkeys);
+    }
 }

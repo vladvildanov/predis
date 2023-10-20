@@ -26,4 +26,12 @@ class BFMADD extends RedisCommand
     {
         return 'BF.MADD';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

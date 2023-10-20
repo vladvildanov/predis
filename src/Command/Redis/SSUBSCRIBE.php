@@ -26,6 +26,14 @@ class SSUBSCRIBE extends RedisCommand
         return 'SSUBSCRIBE';
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return $this->getArguments();
+    }
+
     public function prefixKeys($prefix)
     {
         $this->applyPrefixForAllArguments($prefix);

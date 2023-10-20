@@ -84,6 +84,14 @@ class SORT extends RedisCommand
         parent::setArguments($query);
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
+
     public function prefixKeys($prefix)
     {
         if ($arguments = $this->getArguments()) {

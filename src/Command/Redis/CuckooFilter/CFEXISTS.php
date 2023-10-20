@@ -25,4 +25,12 @@ class CFEXISTS extends RedisCommand
     {
         return 'CF.EXISTS';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

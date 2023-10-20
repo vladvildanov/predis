@@ -25,4 +25,12 @@ class TSDEL extends RedisCommand
     {
         return 'TS.DEL';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

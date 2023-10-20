@@ -25,4 +25,12 @@ class JSONOBJLEN extends RedisCommand
     {
         return 'JSON.OBJLEN';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

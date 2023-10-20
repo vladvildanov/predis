@@ -44,4 +44,12 @@ class FTCREATE extends RedisCommand
             $schema
         ));
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

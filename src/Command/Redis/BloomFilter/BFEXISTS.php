@@ -25,4 +25,12 @@ class BFEXISTS extends RedisCommand
     {
         return 'BF.EXISTS';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

@@ -97,9 +97,8 @@ class CacheProxyConnection implements ConnectionInterface
             return $this->connection->executeCommand($command);
         }
 
-        // TODO: Enhance CommandInterface to provide a method that returns command key/keys.
-        $key = $command->getArgument(0);
-        $cacheKey = $commandId . '_' . $key;
+        $keys = $command->getKeys();
+        $cacheKey = $commandId . '_' . implode('_', $keys);
         $ttl = $this->cacheConfiguration->getTTl();
 
         // 2. Returns cached data if key exists in cache.

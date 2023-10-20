@@ -25,4 +25,12 @@ class JSONCLEAR extends RedisCommand
     {
         return 'JSON.CLEAR';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

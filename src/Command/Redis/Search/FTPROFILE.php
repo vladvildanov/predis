@@ -35,4 +35,12 @@ class FTPROFILE extends RedisCommand
             $arguments->toArray()
         ));
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

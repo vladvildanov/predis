@@ -25,4 +25,12 @@ class FTSYNDUMP extends RedisCommand
     {
         return 'FT.SYNDUMP';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

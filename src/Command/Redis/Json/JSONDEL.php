@@ -25,4 +25,12 @@ class JSONDEL extends RedisCommand
     {
         return 'JSON.DEL';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

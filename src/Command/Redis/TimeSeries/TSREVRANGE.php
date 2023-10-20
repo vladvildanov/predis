@@ -23,4 +23,12 @@ class TSREVRANGE extends TSRANGE
     {
         return 'TS.REVRANGE';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

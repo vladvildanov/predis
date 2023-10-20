@@ -25,4 +25,12 @@ class JSONSTRAPPEND extends RedisCommand
     {
         return 'JSON.STRAPPEND';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

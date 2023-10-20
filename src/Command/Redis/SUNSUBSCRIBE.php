@@ -26,6 +26,14 @@ class SUNSUBSCRIBE extends RedisCommand
         return 'SUNSUBSCRIBE';
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return $this->getArguments();
+    }
+
     public function prefixKeys($prefix)
     {
         $this->applyPrefixForAllArguments($prefix);

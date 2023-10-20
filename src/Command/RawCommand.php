@@ -128,4 +128,9 @@ final class RawCommand implements CommandInterface
     {
         return $data;
     }
+
+    public function getKeys(): array
+    {
+        return [];
+    }
 }

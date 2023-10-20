@@ -25,4 +25,12 @@ class JSONMSET extends RedisCommand
     {
         return 'JSON.MSET';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

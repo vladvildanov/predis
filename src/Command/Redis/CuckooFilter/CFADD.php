@@ -25,4 +25,12 @@ class CFADD extends RedisCommand
     {
         return 'CF.ADD';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

@@ -27,6 +27,14 @@ class SMOVE extends RedisCommand
         return 'SMOVE';
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return $this->getArgumentsExceptLast();
+    }
+
     public function prefixKeys($prefix)
     {
         $this->applyPrefixSkippingLastArgument($prefix);

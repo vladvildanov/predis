@@ -31,4 +31,12 @@ class ZMSCORE extends RedisCommand
     {
         return 'ZMSCORE';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

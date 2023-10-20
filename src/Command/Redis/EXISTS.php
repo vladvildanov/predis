@@ -27,6 +27,14 @@ class EXISTS extends RedisCommand
         return 'EXISTS';
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return $this->getArguments();
+    }
+
     public function prefixKeys($prefix)
     {
         $this->applyPrefixForAllArguments($prefix);

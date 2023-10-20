@@ -38,4 +38,12 @@ class TDIGESTINFO extends RedisCommand
 
         return $result;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

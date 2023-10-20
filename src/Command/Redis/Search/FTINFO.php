@@ -25,4 +25,12 @@ class FTINFO extends RedisCommand
     {
         return 'FT.INFO';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

@@ -26,4 +26,12 @@ class BFADD extends RedisCommand
     {
         return 'BF.ADD';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

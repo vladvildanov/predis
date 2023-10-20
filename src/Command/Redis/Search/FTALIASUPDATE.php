@@ -26,4 +26,12 @@ class FTALIASUPDATE extends RedisCommand
     {
         return 'FT.ALIASUPDATE';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return $this->getArgumentsExceptFirst();
+    }
 }

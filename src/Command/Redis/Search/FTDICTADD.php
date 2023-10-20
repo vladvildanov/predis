@@ -25,4 +25,12 @@ class FTDICTADD extends RedisCommand
     {
         return 'FT.DICTADD';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

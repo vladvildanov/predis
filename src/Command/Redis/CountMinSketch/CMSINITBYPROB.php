@@ -25,4 +25,12 @@ class CMSINITBYPROB extends RedisCommand
     {
         return 'CMS.INITBYPROB';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

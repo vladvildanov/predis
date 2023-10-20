@@ -25,4 +25,12 @@ class TDIGESTADD extends RedisCommand
     {
         return 'TDIGEST.ADD';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

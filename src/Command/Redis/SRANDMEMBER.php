@@ -27,6 +27,14 @@ class SRANDMEMBER extends RedisCommand
         return 'SRANDMEMBER';
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
+
     public function prefixKeys($prefix)
     {
         $this->applyPrefixForFirstArgument($prefix);

@@ -53,6 +53,20 @@ class BITOP_Test extends PredisCommandTestCase
     /**
      * @group disconnected
      */
+    public function testGetKeys(): void
+    {
+        $arguments = ['not_key', 'key', 'key'];
+        $expected = ['key', 'key'];
+
+        $command = $this->getCommand();
+        $command->setArguments($arguments);
+
+        $this->assertSame($expected, $command->getKeys());
+    }
+
+    /**
+     * @group disconnected
+     */
     public function testFilterArgumentsKeysAsSingleArray(): void
     {
         $arguments = ['AND', 'key:dst', ['key:01', 'key:02']];

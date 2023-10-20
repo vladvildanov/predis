@@ -25,4 +25,12 @@ class JSONARRINDEX extends RedisCommand
     {
         return 'JSON.ARRINDEX';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

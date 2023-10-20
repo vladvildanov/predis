@@ -68,4 +68,12 @@ class GEOSEARCHSTORE extends RedisCommand
         $this->setBy($arguments);
         $this->filterArguments();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return $this->getArgumentsWithOffset(0, 2);
+    }
 }

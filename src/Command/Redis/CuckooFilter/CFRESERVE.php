@@ -49,4 +49,12 @@ class CFRESERVE extends RedisCommand
         $this->setBucketSize($arguments);
         $this->filterArguments();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

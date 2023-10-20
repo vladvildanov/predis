@@ -63,4 +63,12 @@ class ZPOPMAX extends RedisCommand
 
         return $parsedData;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

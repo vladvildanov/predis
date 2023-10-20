@@ -24,4 +24,12 @@ class CFINSERTNX extends CFINSERT
     {
         return 'CF.INSERTNX';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

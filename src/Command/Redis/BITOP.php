@@ -41,6 +41,14 @@ class BITOP extends RedisCommand
         parent::setArguments($arguments);
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return $this->getArgumentsExceptFirst();
+    }
+
     public function prefixKeys($prefix)
     {
         $this->applyPrefixSkippingFirstArgument($prefix);

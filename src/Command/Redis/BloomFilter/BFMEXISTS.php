@@ -25,4 +25,12 @@ class BFMEXISTS extends RedisCommand
     {
         return 'BF.MEXISTS';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }
