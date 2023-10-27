@@ -14,12 +14,18 @@ namespace Predis\Connection\Cache;
 
 use Predis\Cache\CacheWithMetadataInterface;
 use Predis\Command\CommandInterface;
+use Predis\Command\RawCommand;
 use Predis\Configuration\Cache\CacheConfiguration;
 use Predis\Connection\ConnectionInterface;
 use Predis\Connection\NodeConnectionInterface;
+use Predis\Connection\Traits\PushNotificationListener;
+use Predis\Consumer\Push\PushNotificationException;
+use Predis\Consumer\Push\PushResponseInterface;
 
 class CacheProxyConnection implements ConnectionInterface
 {
+    use PushNotificationListener;
+
     /**
      * @var ConnectionInterface
      */
@@ -43,6 +49,7 @@ class CacheProxyConnection implements ConnectionInterface
         $this->connection = $connection;
         $this->cacheConfiguration = $cacheConfiguration;
         $this->cache = $cache;
+        $this->setupInvalidationTracking();
     }
 
     /**
@@ -87,6 +94,7 @@ class CacheProxyConnection implements ConnectionInterface
 
     /**
      * {@inheritDoc}
+     * @throws PushNotificationException
      */
     public function executeCommand(CommandInterface $command)
     {
@@ -94,7 +102,7 @@ class CacheProxyConnection implements ConnectionInterface
 
         // 1. Check if given command is whitelisted.
         if (!$this->cacheConfiguration->isWhitelistedCommand($commandId)) {
-            return $this->connection->executeCommand($command);
+            return $this->retryOnInvalidation($command);
         }
 
         $keys = $command->getKeys();
@@ -106,11 +114,13 @@ class CacheProxyConnection implements ConnectionInterface
             return $this->cache->read($cacheKey);
         }
 
-        $response = $this->connection->executeCommand($command);
-
         // 3. Cache response if it's allowed.
         if ($this->isAllowedToBeCached()) {
+            $this->retryOnInvalidation(new RawCommand('CLIENT', ['CACHING', 'YES']));
+            $response = $this->retryOnInvalidation($command);
             $this->cache->add($cacheKey, $response, $ttl);
+        } else {
+            $response = $this->retryOnInvalidation($command);
         }
 
         return $response;
@@ -140,11 +150,45 @@ class CacheProxyConnection implements ConnectionInterface
     {
         $totalCount = $this->cache->getTotalCount();
 
-        // Check if max count threshold is exceeded.
         if ($this->cacheConfiguration->isExceedsMaxCount($totalCount + 1)) {
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * @return void
+     */
+    private function setupInvalidationTracking(): void
+    {
+        $this->connection->executeCommand(new RawCommand('CLIENT', ['TRACKING', 'ON', 'OPTIN']));
+        $this->onPushNotification([
+            PushResponseInterface::INVALIDATE_DATA_TYPE => function (array $payload) {
+                $invalidatedKey = $payload[0][0];
+                $invalidCommandResponses = $this->cache->findMatchingKeys("/$invalidatedKey/");
+                $this->cache->batchDelete($invalidCommandResponses);
+            },
+        ]);
+    }
+
+    /**
+     * Call dispatcher and retries read on push notification.
+     *
+     * @param  CommandInterface          $command
+     * @return mixed
+     * @throws PushNotificationException
+     */
+    protected function retryOnInvalidation(CommandInterface $command)
+    {
+        $response = $this->connection->executeCommand($command);
+
+        if ($response instanceof PushResponseInterface) {
+            $this->dispatchNotification($response);
+
+            return $this->connection->readResponse($command);
+        }
+
+        return $response;
     }
 }

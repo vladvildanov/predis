@@ -113,7 +113,7 @@ class PredisStrategyTest extends PredisTestCase
     {
         $strategy = $this->getClusterStrategy();
         $commands = $this->getCommandFactory();
-        $arguments = [];
+        $arguments = ['key'];
 
         foreach ($this->getExpectedCommands('keys-fake') as $commandID) {
             $command = $commands->create($commandID, $arguments);
@@ -483,6 +483,9 @@ class PredisStrategyTest extends PredisTestCase
             'SSUBSCRIBE' => 'keys-all',
             'SUNSUBSCRIBE' => 'keys-sunsubscribe',
             'SPUBLISH' => 'keys-first',
+
+            /* client */
+            'CLIENT' => 'keys-fake',
         ];
 
         if (isset($type)) {

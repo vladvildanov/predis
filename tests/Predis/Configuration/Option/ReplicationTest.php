@@ -14,8 +14,10 @@ namespace Predis\Configuration\Option;
 
 use Closure;
 use PHPUnit\Framework\MockObject\MockObject;
+use Predis\Command\RawCommand;
 use Predis\Configuration\OptionsInterface;
 use Predis\Connection\Cache\CacheProxyConnection;
+use Predis\Connection\Replication\SentinelReplication;
 use PredisTestCase;
 use ReflectionProperty;
 
@@ -349,21 +351,28 @@ class ReplicationTest extends PredisTestCase
     public function testCreatesCacheProxyConnectionOnAnyReplication(): void
     {
         $option = new Replication();
+        $mockConnection = $this->getMockBuilder(SentinelReplication::class)->disableOriginalConstructor()->getMock();
+
+        $mockConnection
+            ->expects($this->once())
+            ->method('executeCommand')
+            ->with(new RawCommand('CLIENT', ['TRACKING', 'ON', 'OPTIN']))
+            ->willReturn('OK');
+
+        $callback = function () use ($mockConnection) {
+            return $mockConnection;
+        };
 
         /** @var OptionsInterface|MockObject */
         $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
         $options
-            ->expects($this->exactly(4))
+            ->expects($this->exactly(2))
             ->method('__get')
             ->withConsecutive(
-                ['service'],
-                ['connections'],
                 ['cache'],
                 ['cache_config']
             )
             ->willReturnOnConsecutiveCalls(
-                'mymaster',
-                $this->getMockBuilder('Predis\Connection\FactoryInterface')->getMock(),
                 true,
                 null
             );
@@ -372,10 +381,8 @@ class ReplicationTest extends PredisTestCase
             $this->getMockBuilder('Predis\Connection\NodeConnectionInterface')->getMock(),
         ];
 
-        $this->assertInstanceOf(Closure::class, $initializer = $option->filter($options, 'sentinel'));
+        $this->assertInstanceOf(Closure::class, $initializer = $option->filter($options, $callback));
         $this->assertInstanceOf(CacheProxyConnection::class, $connection = $initializer($parameters));
-
-        $this->assertSame($parameters[0], $connection->getSentinelConnection());
     }
 
     /**

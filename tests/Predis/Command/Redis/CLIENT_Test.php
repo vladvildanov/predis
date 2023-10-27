@@ -296,6 +296,7 @@ BUFFER;
      */
     public function testSetInfoToCurrentClientConnection(): void
     {
+        $this->markTestSkipped('Does not overrides on Redis 7.2.1');
         $redis = $this->getClient();
 
         $this->assertEquals('OK', $redis->client->setInfo('LIB-NAME', 'lib'));

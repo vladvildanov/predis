@@ -15,10 +15,14 @@ namespace Predis\Connection\Cache;
 use PHPUnit\Framework\MockObject\MockObject;
 use Predis\Cache\CacheWithMetadataInterface;
 use Predis\Command\CommandInterface;
+use Predis\Command\RawCommand;
 use Predis\Configuration\Cache\CacheConfiguration;
 use Predis\Connection\ConnectionInterface;
 use Predis\Connection\NodeConnectionInterface;
 use Predis\Connection\Replication\SentinelReplication;
+use Predis\Consumer\Push\PushNotificationException;
+use Predis\Consumer\Push\PushResponse;
+use Predis\Consumer\Push\PushResponseInterface;
 use PredisTestCase;
 
 class CacheProxyConnectionTest extends PredisTestCase
@@ -44,6 +48,11 @@ class CacheProxyConnectionTest extends PredisTestCase
     private $mockCommand;
 
     /**
+     * @var CommandInterface
+     */
+    private $cachingCommand;
+
+    /**
      * @var CacheProxyConnection
      */
     private $proxyConnection;
@@ -57,6 +66,7 @@ class CacheProxyConnectionTest extends PredisTestCase
         $this->mockCommand
             ->method('getKeys')
             ->willReturn(['key']);
+        $this->cachingCommand = new RawCommand('CLIENT', ['CACHING', 'YES']);
 
         $this->proxyConnection = new CacheProxyConnection(
             $this->mockConnection,
@@ -314,10 +324,10 @@ class CacheProxyConnectionTest extends PredisTestCase
             ->willReturn(true);
 
         $this->mockConnection
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('executeCommand')
-            ->with($this->mockCommand)
-            ->willReturn('value');
+            ->withConsecutive([$this->cachingCommand], [$this->mockCommand])
+            ->willReturnOnConsecutiveCalls('OK', 'value');
 
         $this->mockCommand
             ->expects($this->once())
@@ -413,6 +423,96 @@ class CacheProxyConnectionTest extends PredisTestCase
             ->expects($this->never())
             ->method('add')
             ->withAnyParameters();
+
+        $this->mockCacheWithMetadata
+            ->expects($this->once())
+            ->method('getTotalCount')
+            ->withAnyParameters()
+            ->willReturn(100);
+
+        $this->assertSame('value', $this->proxyConnection->executeCommand($this->mockCommand));
+    }
+
+    /**
+     * @group disconnected
+     * @return void
+     * @throws PushNotificationException
+     */
+    public function testExecuteCommandInvokeCallbackOnPushNotification(): void
+    {
+        $this->mockCacheConfiguration
+            ->expects($this->once())
+            ->method('isWhitelistedCommand')
+            ->with('GET')
+            ->willReturn(true);
+
+        $this->mockConnection
+            ->expects($this->exactly(2))
+            ->method('executeCommand')
+            ->withConsecutive(
+                [$this->cachingCommand],
+                [$this->mockCommand]
+            )->willReturnOnConsecutiveCalls(
+                'OK',
+                new PushResponse([PushResponseInterface::INVALIDATE_DATA_TYPE, ['foo']])
+            );
+
+        $this->mockCacheWithMetadata
+            ->expects($this->once())
+            ->method('findMatchingKeys')
+            ->with('/foo/')
+            ->willReturn(['foo_bar']);
+
+        $this->mockCacheWithMetadata
+            ->expects($this->once())
+            ->method('batchDelete')
+            ->with(['foo_bar']);
+
+        $this->mockConnection
+            ->expects($this->once())
+            ->method('readResponse')
+            ->with($this->mockCommand)
+            ->willReturn('value');
+
+        $this->mockCommand
+            ->expects($this->once())
+            ->method('getId')
+            ->withAnyParameters()
+            ->willReturn('GET');
+
+        $this->mockCommand
+            ->expects($this->once())
+            ->method('getArgument')
+            ->with(0)
+            ->willReturn('key');
+
+        $this->mockCacheConfiguration
+            ->expects($this->once())
+            ->method('getTTl')
+            ->withAnyParameters()
+            ->willReturn(100);
+
+        $this->mockCacheConfiguration
+            ->expects($this->once())
+            ->method('isExceedsMaxCount')
+            ->with(101)
+            ->willReturn(false);
+
+        $this->mockCacheWithMetadata
+            ->expects($this->once())
+            ->method('exists')
+            ->with('GET_key')
+            ->willReturn(false);
+
+        $this->mockCacheWithMetadata
+            ->expects($this->never())
+            ->method('read')
+            ->withAnyParameters();
+
+        $this->mockCacheWithMetadata
+            ->expects($this->once())
+            ->method('add')
+            ->with('GET_key', 'value', 100);
 
         $this->mockCacheWithMetadata
             ->expects($this->once())
