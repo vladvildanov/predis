@@ -22,6 +22,7 @@ use Predis\Command\Processor\ProcessorInterface;
  * @property \Predis\Connection\FactoryInterface $connections  Connection factory for creating new connections
  * @property bool                                $exceptions   Toggles exceptions in client for -ERR responses
  * @property ProcessorInterface                  $prefix       Key prefixing strategy using the supplied string as prefix
+ * @property int                                 $protocol     Version of RESP protocol.
  * @property \Predis\Command\FactoryInterface    $commands     Command factory for creating Redis commands
  * @property callable                            $replication  Aggregate connection initializer for replication
  * @property int                                 $readTimeout  Timeout in milliseconds between read operations on reading from multiple connections.

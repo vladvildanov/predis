@@ -1323,6 +1323,113 @@ class ClientTest extends PredisTestCase
         $this->assertSame(Client::VERSION, $libVer);
     }
 
+    /**
+     * @group connected
+     * @group relay-incompatible
+     * @requiresRedisVersion >= 7.2.0
+     */
+    public function testClientCachesResponseOnValidCommand(): void
+    {
+        $client = new Client($this->getParameters(['protocol' => 3, 'cache' => true]));
+
+        $this->assertEquals('OK', $client->set('foo', 'bar'));
+        $this->assertSame('bar', $client->get('foo'));
+        $this->assertSame('bar', apcu_fetch('GET_foo'));
+
+        apcu_clear_cache();
+    }
+
+    /**
+     * @group connected
+     * @group cluster
+     * @group relay-incompatible
+     * @requiresRedisVersion >= 7.2.0
+     */
+    public function testClusterClientCachesResponseOnValidCommand(): void
+    {
+        $client = new Client($this->getDefaultParametersArray(), ['cluster' => 'redis', 'cache' => true, 'parameters' => ['protocol' => 3]]);
+
+        $this->assertEquals('OK', $client->set('foo', 'bar'));
+        $this->assertSame('bar', $client->get('foo'));
+        $this->assertSame('bar', apcu_fetch('GET_foo'));
+
+        apcu_clear_cache();
+    }
+
+    /**
+     * @group connected
+     * @group relay-incompatible
+     * @requiresRedisVersion >= 7.2.0
+     */
+    public function testClientInvalidateCacheOnInvalidateResponse(): void
+    {
+        $client = new Client($this->getParameters(['protocol' => 3, 'cache' => true]));
+
+        $this->assertEquals('OK', $client->set('foo', 'bar'));
+        $this->assertSame('bar', $client->get('foo'));
+        $this->assertSame('bar', apcu_fetch('GET_foo'));
+
+        $this->assertEquals('OK', $client->set('foo', 'baz'));
+        $this->assertNull($client->get('baz'));
+        $this->assertFalse(apcu_exists('GET_foo'));
+
+        $this->assertSame('baz', $client->get('foo'));
+        $this->assertSame('baz', apcu_fetch('GET_foo'));
+
+        apcu_clear_cache();
+    }
+
+    /**
+     * @group connected
+     * @group relay-incompatible
+     * @requiresRedisVersion >= 7.2.0
+     */
+    public function testClientInvalidateCacheOnInvalidateResponseWithRedisUrlGiven(): void
+    {
+        $url = "redis://" . constant('REDIS_SERVER_HOST') .
+            ":" . constant('REDIS_SERVER_PORT') . "?database=" . constant('REDIS_SERVER_DBNUM') .
+            "&cache=true&protocol=3";
+
+        $client = new Client($url);
+
+        $this->assertEquals('OK', $client->set('foo', 'bar'));
+        $this->assertSame('bar', $client->get('foo'));
+        $this->assertSame('bar', apcu_fetch('GET_foo'));
+
+        $this->assertEquals('OK', $client->set('foo', 'baz'));
+        $this->assertNull($client->get('baz'));
+        $this->assertFalse(apcu_exists('GET_foo'));
+
+        $this->assertSame('baz', $client->get('foo'));
+        $this->assertSame('baz', apcu_fetch('GET_foo'));
+
+        apcu_clear_cache();
+    }
+
+    /**
+     * @group connected
+     * @group cluster
+     * @group relay-incompatible
+     * @requiresRedisVersion >= 7.2.0
+     */
+    public function testClusterClientInvalidateCacheOnInvalidateResponse(): void
+    {
+        $client = new Client($this->getDefaultParametersArray(), ['cluster' => 'redis', 'cache' => true, 'parameters' => ['protocol' => 3]]);
+
+        $this->assertEquals('OK', $client->set('foo', 'bar'));
+        $this->assertSame('bar', $client->get('foo'));
+        $this->assertSame('bar', apcu_fetch('GET_foo'));
+
+        $this->assertEquals('OK', $client->set('foo', 'baz'));
+        $this->assertNull($client->get('baz'));
+        $this->assertFalse(apcu_exists('GET_foo'));
+
+        $this->assertSame('baz', $client->get('foo'));
+        $this->assertSame('baz', apcu_fetch('GET_foo'));
+
+        apcu_clear_cache();
+    }
+
     // ******************************************************************** //
     // ---- HELPER METHODS ------------------------------------------------ //
     // ******************************************************************** //

@@ -192,6 +192,18 @@ class ApcuCacheTest extends PredisTestCase
         $this->assertSame(1, $this->cache->getTotalMisses());
     }
 
+    /**
+     * @return void
+     */
+    public function testFindMatchingKeys(): void
+    {
+        $this->assertTrue($this->cache->add('key_foo', 'value'));
+        $this->assertTrue($this->cache->add('key_bar', 'value'));
+        $this->assertTrue($this->cache->add('key_foo_bar', 'value'));
+
+        $this->assertSame(['key_foo', 'key_foo_bar'], $this->cache->findMatchingKeys('/foo/'));
+    }
+
     protected function tearDown(): void
     {
         $this->cache->flush();
