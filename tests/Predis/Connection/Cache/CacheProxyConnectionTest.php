@@ -567,12 +567,6 @@ class CacheProxyConnectionTest extends PredisTestCase
             ->withAnyParameters()
             ->willReturn('GET');
 
-        $this->mockCommand
-            ->expects($this->once())
-            ->method('getArgument')
-            ->with(0)
-            ->willReturn('key');
-
         $this->mockCacheConfiguration
             ->expects($this->once())
             ->method('getTTl')
@@ -660,12 +654,6 @@ class CacheProxyConnectionTest extends PredisTestCase
             ->method('getId')
             ->withAnyParameters()
             ->willReturn('GET');
-
-        $this->mockCommand
-            ->expects($this->once())
-            ->method('getArgument')
-            ->with(0)
-            ->willReturn('key');
 
         $this->mockCacheConfiguration
             ->expects($this->once())
