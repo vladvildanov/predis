@@ -1386,9 +1386,9 @@ class ClientTest extends PredisTestCase
      */
     public function testClientInvalidateCacheOnInvalidateResponseWithRedisUrlGiven(): void
     {
-        $url = "redis://" . constant('REDIS_SERVER_HOST') .
-            ":" . constant('REDIS_SERVER_PORT') . "?database=" . constant('REDIS_SERVER_DBNUM') .
-            "&cache=true&protocol=3";
+        $url = 'redis://' . constant('REDIS_SERVER_HOST') .
+            ':' . constant('REDIS_SERVER_PORT') . '?database=' . constant('REDIS_SERVER_DBNUM') .
+            '&cache=true&protocol=3';
 
         $client = new Client($url);
 

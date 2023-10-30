@@ -537,4 +537,196 @@ class CacheProxyConnectionTest extends PredisTestCase
 
         $this->assertSame('value', $this->proxyConnection->executeCommand($this->mockCommand));
     }
+
+    /**
+     * @group disconnected
+     * @return void
+     * @throws PushNotificationException
+     */
+    public function testExecuteCommandInvokeCallbackOnConsecutivePushNotifications(): void
+    {
+        $this->mockCacheConfiguration
+            ->expects($this->once())
+            ->method('isWhitelistedCommand')
+            ->with('GET')
+            ->willReturn(true);
+
+        $this->mockConnection
+            ->expects($this->exactly(2))
+            ->method('executeCommand')
+            ->withConsecutive(
+                [$this->cachingCommand],
+                [$this->mockCommand]
+            )->willReturnOnConsecutiveCalls(
+                'OK',
+                new PushResponse([PushResponseInterface::INVALIDATE_DATA_TYPE, ['foo']])
+            );
+
+        $this->mockCacheWithMetadata
+            ->expects($this->exactly(2))
+            ->method('findMatchingKeys')
+            ->withConsecutive(
+                ['/foo/'],
+                ['/bar/']
+            )
+            ->willReturnOnConsecutiveCalls(['foo_bar'], ['bar_foo']);
+
+        $this->mockCacheWithMetadata
+            ->expects($this->exactly(2))
+            ->method('batchDelete')
+            ->withConsecutive([['foo_bar']], [['bar_foo']]);
+
+        $this->mockConnection
+            ->expects($this->exactly(2))
+            ->method('readResponse')
+            ->withConsecutive(
+                [$this->mockCommand],
+                [$this->mockCommand]
+            )->willReturnOnConsecutiveCalls(
+                new PushResponse([PushResponseInterface::INVALIDATE_DATA_TYPE, ['bar']]),
+                'value'
+            );
+
+        $this->mockCommand
+            ->expects($this->once())
+            ->method('getId')
+            ->withAnyParameters()
+            ->willReturn('GET');
+
+        $this->mockCommand
+            ->expects($this->once())
+            ->method('getArgument')
+            ->with(0)
+            ->willReturn('key');
+
+        $this->mockCacheConfiguration
+            ->expects($this->once())
+            ->method('getTTl')
+            ->withAnyParameters()
+            ->willReturn(100);
+
+        $this->mockCacheConfiguration
+            ->expects($this->once())
+            ->method('isExceedsMaxCount')
+            ->with(101)
+            ->willReturn(false);
+
+        $this->mockCacheWithMetadata
+            ->expects($this->once())
+            ->method('exists')
+            ->with('GET_key')
+            ->willReturn(false);
+
+        $this->mockCacheWithMetadata
+            ->expects($this->never())
+            ->method('read')
+            ->withAnyParameters();
+
+        $this->mockCacheWithMetadata
+            ->expects($this->once())
+            ->method('add')
+            ->with('GET_key', 'value', 100);
+
+        $this->mockCacheWithMetadata
+            ->expects($this->once())
+            ->method('getTotalCount')
+            ->withAnyParameters()
+            ->willReturn(100);
+
+        $this->assertSame('value', $this->proxyConnection->executeCommand($this->mockCommand));
+    }
+
+    /**
+     * @group disconnected
+     * @return void
+     * @throws PushNotificationException
+     */
+    public function testExecuteCommandFlushesCacheOnNullInvalidationResponse(): void
+    {
+        $this->mockCacheConfiguration
+            ->expects($this->once())
+            ->method('isWhitelistedCommand')
+            ->with('GET')
+            ->willReturn(true);
+
+        $this->mockConnection
+            ->expects($this->exactly(2))
+            ->method('executeCommand')
+            ->withConsecutive(
+                [$this->cachingCommand],
+                [$this->mockCommand]
+            )->willReturnOnConsecutiveCalls(
+                'OK',
+                new PushResponse([PushResponseInterface::INVALIDATE_DATA_TYPE, null])
+            );
+
+        $this->mockCacheWithMetadata
+            ->expects($this->once())
+            ->method('flush');
+
+        $this->mockCacheWithMetadata
+            ->expects($this->never())
+            ->method('findMatchingKeys')
+            ->with('/foo/')
+            ->willReturn(['foo_bar']);
+
+        $this->mockCacheWithMetadata
+            ->expects($this->never())
+            ->method('batchDelete')
+            ->with(['foo_bar']);
+
+        $this->mockConnection
+            ->expects($this->once())
+            ->method('readResponse')
+            ->with($this->mockCommand)
+            ->willReturn('value');
+
+        $this->mockCommand
+            ->expects($this->once())
+            ->method('getId')
+            ->withAnyParameters()
+            ->willReturn('GET');
+
+        $this->mockCommand
+            ->expects($this->once())
+            ->method('getArgument')
+            ->with(0)
+            ->willReturn('key');
+
+        $this->mockCacheConfiguration
+            ->expects($this->once())
+            ->method('getTTl')
+            ->withAnyParameters()
+            ->willReturn(100);
+
+        $this->mockCacheConfiguration
+            ->expects($this->once())
+            ->method('isExceedsMaxCount')
+            ->with(101)
+            ->willReturn(false);
+
+        $this->mockCacheWithMetadata
+            ->expects($this->once())
+            ->method('exists')
+            ->with('GET_key')
+            ->willReturn(false);
+
+        $this->mockCacheWithMetadata
+            ->expects($this->never())
+            ->method('read')
+            ->withAnyParameters();
+
+        $this->mockCacheWithMetadata
+            ->expects($this->once())
+            ->method('add')
+            ->with('GET_key', 'value', 100);
+
+        $this->mockCacheWithMetadata
+            ->expects($this->once())
+            ->method('getTotalCount')
+            ->withAnyParameters()
+            ->willReturn(100);
+
+        $this->assertSame('value', $this->proxyConnection->executeCommand($this->mockCommand));
+    }
 }
