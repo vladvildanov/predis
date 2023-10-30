@@ -12,6 +12,8 @@
 
 namespace Predis\Command\Redis;
 
+use Predis\Command\Command;
+use Predis\Command\CommandInterface;
 use Predis\Command\PrefixableCommand;
 
 /**
@@ -48,6 +50,16 @@ class BITCOUNT_Test extends PredisCommandTestCase
         $command->setArguments($arguments);
 
         $this->assertSame($expected, $command->getArguments());
+    }
+
+    /**
+     * @group disconnected
+     */
+    public function testGetCommandMode(): void
+    {
+        $command = $this->getCommand();
+
+        $this->assertSame(CommandInterface::READ_MODE, $command->getCommandMode());
     }
 
     /**

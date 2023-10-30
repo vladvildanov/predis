@@ -12,6 +12,7 @@
 
 namespace Predis\Command\Redis;
 
+use Predis\Command\CommandInterface;
 use Predis\Command\PrefixableCommand as RedisCommand;
 
 /**
@@ -55,5 +56,13 @@ class TYPE extends RedisCommand
     public function prefixKeys($prefix)
     {
         $this->applyPrefixForFirstArgument($prefix);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCommandMode(): string
+    {
+        return CommandInterface::READ_MODE;
     }
 }

@@ -57,6 +57,14 @@ abstract class Command implements CommandInterface
     /**
      * {@inheritdoc}
      */
+    public function getCommandMode(): string
+    {
+        return CommandInterface::WRITE_MODE;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getArgument($index)
     {
         if (isset($this->arguments[$index])) {

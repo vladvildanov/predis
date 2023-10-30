@@ -13,6 +13,7 @@
 namespace Predis\Command\Redis;
 
 use Predis\Command\Command as RedisCommand;
+use Predis\Command\CommandInterface;
 use Predis\Command\Traits\Keys;
 use Predis\Command\Traits\Limit\Limit;
 
@@ -55,5 +56,13 @@ class ZINTERCARD extends RedisCommand
         $numkeys = $this->getArgument(0);
 
         return $this->getArgumentsWithOffset(1, $numkeys);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCommandMode(): string
+    {
+        return CommandInterface::READ_MODE;
     }
 }

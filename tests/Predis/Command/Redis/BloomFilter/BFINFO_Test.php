@@ -12,6 +12,7 @@
 
 namespace Predis\Command\Redis\BloomFilter;
 
+use Predis\Command\CommandInterface;
 use Predis\Command\Redis\PredisCommandTestCase;
 use Predis\Response\ServerException;
 use UnexpectedValueException;
@@ -48,6 +49,16 @@ class BFINFO_Test extends PredisCommandTestCase
         $command->setArguments($actualArguments);
 
         $this->assertSame($expectedArguments, $command->getArguments());
+    }
+
+    /**
+     * @group disconnected
+     */
+    public function testGetCommandMode(): void
+    {
+        $command = $this->getCommand();
+
+        $this->assertSame(CommandInterface::READ_MODE, $command->getCommandMode());
     }
 
     /**

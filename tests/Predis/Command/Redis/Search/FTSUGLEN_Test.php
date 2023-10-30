@@ -12,6 +12,7 @@
 
 namespace Predis\Command\Redis\Search;
 
+use Predis\Command\CommandInterface;
 use Predis\Command\Redis\PredisCommandTestCase;
 
 /**
@@ -48,6 +49,16 @@ class FTSUGLEN_Test extends PredisCommandTestCase
         $command->setArguments($actualArguments);
 
         $this->assertSameValues($expectedArguments, $command->getArguments());
+    }
+
+    /**
+     * @group disconnected
+     */
+    public function testGetCommandMode(): void
+    {
+        $command = $this->getCommand();
+
+        $this->assertSame(CommandInterface::READ_MODE, $command->getCommandMode());
     }
 
     /**

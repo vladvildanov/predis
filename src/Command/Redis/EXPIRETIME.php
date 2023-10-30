@@ -13,6 +13,7 @@
 namespace Predis\Command\Redis;
 
 use Predis\Command\Command as RedisCommand;
+use Predis\Command\CommandInterface;
 
 /**
  * @see https://redis.io/commands/expiretime/
@@ -25,5 +26,13 @@ class EXPIRETIME extends RedisCommand
     public function getId()
     {
         return 'EXPIRETIME';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCommandMode(): string
+    {
+        return CommandInterface::READ_MODE;
     }
 }

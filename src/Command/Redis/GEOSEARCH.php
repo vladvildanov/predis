@@ -13,6 +13,7 @@
 namespace Predis\Command\Redis;
 
 use Predis\Command\Command as RedisCommand;
+use Predis\Command\CommandInterface;
 use Predis\Command\Traits\By\GeoBy;
 use Predis\Command\Traits\Count;
 use Predis\Command\Traits\From\GeoFrom;
@@ -118,6 +119,14 @@ class GEOSEARCH extends RedisCommand
         }
 
         return $parsedData;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCommandMode(): string
+    {
+        return CommandInterface::READ_MODE;
     }
 
     /**

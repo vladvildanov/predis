@@ -13,6 +13,7 @@
 namespace Predis\Command\Redis;
 
 use Predis\Command\Command as RedisCommand;
+use Predis\Command\CommandInterface;
 
 /**
  * @see https://redis.io/commands/fcall_ro/
@@ -47,5 +48,13 @@ class FCALL_RO extends RedisCommand
         $numkeys = $this->getArgument(1);
 
         return $this->getArgumentsWithOffset(2, $numkeys);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCommandMode(): string
+    {
+        return CommandInterface::READ_MODE;
     }
 }

@@ -13,6 +13,7 @@
 namespace Predis\Command\Redis\CuckooFilter;
 
 use Predis\Command\Command as RedisCommand;
+use Predis\Command\CommandInterface;
 
 /**
  * @see https://redis.io/commands/cf.scandump/
@@ -33,5 +34,13 @@ class CFSCANDUMP extends RedisCommand
     public function getKeys(): array
     {
         return [$this->getFirstArgument()];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCommandMode(): string
+    {
+        return CommandInterface::READ_MODE;
     }
 }

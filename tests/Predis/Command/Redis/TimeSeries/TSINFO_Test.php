@@ -15,6 +15,7 @@ namespace Predis\Command\Redis\TimeSeries;
 use Predis\Command\Argument\TimeSeries\CommonArguments;
 use Predis\Command\Argument\TimeSeries\CreateArguments;
 use Predis\Command\Argument\TimeSeries\InfoArguments;
+use Predis\Command\CommandInterface;
 use Predis\Command\Redis\PredisCommandTestCase;
 
 /**
@@ -49,6 +50,16 @@ class TSINFO_Test extends PredisCommandTestCase
         $command->setArguments($actualArguments);
 
         $this->assertSameValues($expectedArguments, $command->getArguments());
+    }
+
+    /**
+     * @group disconnected
+     */
+    public function testGetCommandMode(): void
+    {
+        $command = $this->getCommand();
+
+        $this->assertSame(CommandInterface::READ_MODE, $command->getCommandMode());
     }
 
     /**

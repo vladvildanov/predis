@@ -13,6 +13,7 @@
 namespace Predis\Command\Redis;
 
 use Predis\Command\Command as RedisCommand;
+use Predis\Command\CommandInterface;
 
 /**
  * @see http://redis.io/commands/touch
@@ -35,5 +36,13 @@ class TOUCH extends RedisCommand
         $arguments = self::normalizeArguments($arguments);
 
         parent::setArguments($arguments);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCommandMode(): string
+    {
+        return CommandInterface::READ_MODE;
     }
 }

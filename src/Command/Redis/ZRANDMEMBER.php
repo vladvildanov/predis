@@ -13,6 +13,7 @@
 namespace Predis\Command\Redis;
 
 use Predis\Command\Command as RedisCommand;
+use Predis\Command\CommandInterface;
 use Predis\Command\Traits\With\WithScores;
 
 /**
@@ -40,5 +41,13 @@ class ZRANDMEMBER extends RedisCommand
     public function getKeys(): array
     {
         return [$this->getArgument(0)];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCommandMode(): string
+    {
+        return CommandInterface::READ_MODE;
     }
 }

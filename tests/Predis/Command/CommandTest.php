@@ -156,4 +156,14 @@ class CommandTest extends PredisTestCase
         $arguments = [new stdClass()];
         $this->assertSame($arguments, Command::normalizeVariadic($arguments));
     }
+
+    /**
+     * @group disconnected
+     */
+    public function testGetCommandMode(): void
+    {
+        $command = $this->getMockForAbstractClass(Command::class);
+
+        $this->assertSame(CommandInterface::WRITE_MODE, $command->getCommandMode());
+    }
 }

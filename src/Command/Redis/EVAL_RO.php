@@ -13,6 +13,7 @@
 namespace Predis\Command\Redis;
 
 use Predis\Command\Command as RedisCommand;
+use Predis\Command\CommandInterface;
 use Predis\Command\Traits\Keys;
 
 /**
@@ -30,6 +31,14 @@ class EVAL_RO extends RedisCommand
     public function getId()
     {
         return 'EVAL_RO';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCommandMode(): string
+    {
+        return CommandInterface::READ_MODE;
     }
 
     /**

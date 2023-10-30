@@ -13,6 +13,7 @@
 namespace Predis\Command\Redis\Search;
 
 use Predis\Command\Command as RedisCommand;
+use Predis\Command\CommandInterface;
 
 class FTSPELLCHECK extends RedisCommand
 {
@@ -42,5 +43,13 @@ class FTSPELLCHECK extends RedisCommand
     public function getKeys(): array
     {
         return [$this->getArgument(0)];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCommandMode(): string
+    {
+        return CommandInterface::READ_MODE;
     }
 }

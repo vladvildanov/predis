@@ -12,6 +12,7 @@
 
 namespace Predis\Command\Redis\TopK;
 
+use Predis\Command\CommandInterface;
 use Predis\Command\Redis\PredisCommandTestCase;
 use Predis\Response\ServerException;
 
@@ -47,6 +48,16 @@ class TOPKLIST_Test extends PredisCommandTestCase
         $command->setArguments($actualArguments);
 
         $this->assertSameValues($expectedArguments, $command->getArguments());
+    }
+
+    /**
+     * @group disconnected
+     */
+    public function testGetCommandMode(): void
+    {
+        $command = $this->getCommand();
+
+        $this->assertSame(CommandInterface::READ_MODE, $command->getCommandMode());
     }
 
     /**

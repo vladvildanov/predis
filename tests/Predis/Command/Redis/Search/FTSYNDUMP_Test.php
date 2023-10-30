@@ -13,6 +13,7 @@
 namespace Predis\Command\Redis\Search;
 
 use Predis\Command\Argument\Search\SchemaFields\TextField;
+use Predis\Command\CommandInterface;
 use Predis\Command\Redis\PredisCommandTestCase;
 use Predis\Response\ServerException;
 
@@ -50,6 +51,16 @@ class FTSYNDUMP_Test extends PredisCommandTestCase
         $command->setArguments($actualArguments);
 
         $this->assertSameValues($expectedArguments, $command->getArguments());
+    }
+
+    /**
+     * @group disconnected
+     */
+    public function testGetCommandMode(): void
+    {
+        $command = $this->getCommand();
+
+        $this->assertSame(CommandInterface::READ_MODE, $command->getCommandMode());
     }
 
     /**
