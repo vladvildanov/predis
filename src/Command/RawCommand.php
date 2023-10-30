@@ -28,14 +28,16 @@ final class RawCommand implements CommandInterface
     private $slot;
     private $commandID;
     private $arguments;
+    private $mode;
 
     /**
      * @param string $commandID Command ID
      * @param array  $arguments Command arguments
      */
-    public function __construct($commandID, array $arguments = [])
+    public function __construct($commandID, array $arguments = [], string $mode = CommandInterface::WRITE_MODE)
     {
         $this->commandID = strtoupper($commandID);
+        $this->mode = $mode;
         $this->setArguments($arguments);
     }
 
@@ -132,5 +134,10 @@ final class RawCommand implements CommandInterface
     public function getKeys(): array
     {
         return [];
+    }
+
+    public function getCommandMode(): string
+    {
+        return $this->mode;
     }
 }
