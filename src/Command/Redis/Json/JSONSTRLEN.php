@@ -25,4 +25,12 @@ class JSONSTRLEN extends RedisCommand
     {
         return 'JSON.STRLEN';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

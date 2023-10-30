@@ -27,4 +27,12 @@ class TDIGESTRANK extends RedisCommand
     {
         return 'TDIGEST.RANK';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

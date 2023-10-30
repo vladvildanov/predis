@@ -27,6 +27,14 @@ class DECR extends RedisCommand
         return 'DECR';
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
+
     public function prefixKeys($prefix)
     {
         $this->applyPrefixForFirstArgument($prefix);

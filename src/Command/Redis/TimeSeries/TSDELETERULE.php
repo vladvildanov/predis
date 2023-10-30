@@ -25,4 +25,12 @@ class TSDELETERULE extends RedisCommand
     {
         return 'TS.DELETERULE';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return $this->getArguments();
+    }
 }

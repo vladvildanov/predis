@@ -60,4 +60,14 @@ class ZDIFF extends RedisCommand
 
         return $parsedData;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        $numkeys = $this->getArgument(0);
+
+        return $this->getArgumentsWithOffset(1, $numkeys);
+    }
 }

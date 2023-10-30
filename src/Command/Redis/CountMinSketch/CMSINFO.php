@@ -42,4 +42,12 @@ class CMSINFO extends RedisCommand
 
         return $data;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

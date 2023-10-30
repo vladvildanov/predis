@@ -25,4 +25,12 @@ class TDIGESTRESET extends RedisCommand
     {
         return 'TDIGEST.RESET';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

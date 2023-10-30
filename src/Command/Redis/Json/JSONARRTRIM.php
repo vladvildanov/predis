@@ -25,4 +25,12 @@ class JSONARRTRIM extends RedisCommand
     {
         return 'JSON.ARRTRIM';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

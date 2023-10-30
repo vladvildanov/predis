@@ -67,6 +67,20 @@ class MSET_Test extends PredisCommandTestCase
     /**
      * @group disconnected
      */
+    public function testGetKeys(): void
+    {
+        $arguments = ['key', 'value', 'key', 'value'];
+        $expected = ['key', 'key'];
+
+        $command = $this->getCommand();
+        $command->setArguments($arguments);
+
+        $this->assertSameValues($expected, $command->getKeys());
+    }
+
+    /**
+     * @group disconnected
+     */
     public function testParseResponse(): void
     {
         $this->assertSame('OK', $this->getCommand()->parseResponse('OK'));

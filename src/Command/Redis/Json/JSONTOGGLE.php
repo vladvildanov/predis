@@ -25,4 +25,12 @@ class JSONTOGGLE extends RedisCommand
     {
         return 'JSON.TOGGLE';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

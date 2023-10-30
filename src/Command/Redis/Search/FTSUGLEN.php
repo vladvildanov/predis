@@ -25,4 +25,12 @@ class FTSUGLEN extends RedisCommand
     {
         return 'FT.SUGLEN';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

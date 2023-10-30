@@ -32,6 +32,14 @@ class BITPOS extends RedisCommand
         return 'BITPOS';
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
+
     public function prefixKeys($prefix)
     {
         $this->applyPrefixForFirstArgument($prefix);

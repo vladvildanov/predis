@@ -50,4 +50,12 @@ class HRANDFIELD extends RedisCommand
 
         return $return;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

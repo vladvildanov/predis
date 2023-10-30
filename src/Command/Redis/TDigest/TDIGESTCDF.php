@@ -54,4 +54,12 @@ class TDIGESTCDF extends RedisCommand
             }
         }, $data);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

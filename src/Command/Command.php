@@ -49,11 +49,71 @@ abstract class Command implements CommandInterface
     /**
      * {@inheritdoc}
      */
+    public function getKeys(): array
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getArgument($index)
     {
         if (isset($this->arguments[$index])) {
             return $this->arguments[$index];
         }
+    }
+
+    /**
+     * @return mixed|null
+     */
+    protected function getFirstArgument()
+    {
+        return $this->getArgument(0);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getArgumentsExceptLast(): array
+    {
+        return array_slice($this->getArguments(), 0, -1);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getArgumentsExceptFirst(): array
+    {
+        return array_slice($this->getArguments(), 1);
+    }
+
+    /**
+     * @param  int   $offset
+     * @param  int   $length
+     * @return array
+     */
+    protected function getArgumentsWithOffset(int $offset, int $length): array
+    {
+        return array_slice($this->getArguments(), $offset, $length);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getInterleavedArguments(): array
+    {
+        $matchingArguments = [];
+
+        if ($arguments = $this->getArguments()) {
+            $length = count($arguments);
+
+            for ($i = 0; $i < $length; $i += 2) {
+                $matchingArguments[$i] = $arguments[$i];
+            }
+        }
+
+        return $matchingArguments;
     }
 
     /**

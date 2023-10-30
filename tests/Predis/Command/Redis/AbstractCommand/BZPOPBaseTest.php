@@ -36,6 +36,19 @@ class BZPOPBaseTest extends PredisTestCase
 
     /**
      * @group disconnected
+     */
+    public function testGetKeys(): void
+    {
+        $arguments = [['key'], 'not_key'];
+        $expected = ['key'];
+
+        $this->testCommand->setArguments($arguments);
+
+        $this->assertSame($expected, $this->testCommand->getKeys());
+    }
+
+    /**
+     * @group disconnected
      * @dataProvider argumentsProvider
      */
     public function testFilterArguments(array $actualArguments, array $expectedArguments): void

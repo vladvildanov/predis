@@ -25,4 +25,12 @@ class CMSINITBYDIM extends RedisCommand
     {
         return 'CMS.INITBYDIM';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

@@ -25,4 +25,12 @@ class BFLOADCHUNK extends RedisCommand
     {
         return 'BF.LOADCHUNK';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

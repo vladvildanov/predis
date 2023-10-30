@@ -54,4 +54,12 @@ class ZRANGESTORE extends RedisCommand
         $this->setLimitArguments($arguments);
         $this->filterArguments();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return $this->getArgumentsWithOffset(0, 2);
+    }
 }

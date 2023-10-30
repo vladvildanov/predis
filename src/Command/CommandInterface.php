@@ -61,6 +61,13 @@ interface CommandInterface
     public function getArguments();
 
     /**
+     * Returns command arguments that represents keys in storage.
+     *
+     * @return array
+     */
+    public function getKeys(): array;
+
+    /**
      * Gets the argument of the command at the specified index.
      *
      * @param int $index Index of the desired argument.

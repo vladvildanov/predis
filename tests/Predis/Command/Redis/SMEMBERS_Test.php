@@ -53,6 +53,20 @@ class SMEMBERS_Test extends PredisCommandTestCase
     /**
      * @group disconnected
      */
+    public function testGetKeys(): void
+    {
+        $arguments = ['key', 'not_key'];
+        $expected = ['key'];
+
+        $command = $this->getCommand();
+        $command->setArguments($arguments);
+
+        $this->assertSame($expected, $command->getKeys());
+    }
+
+    /**
+     * @group disconnected
+     */
     public function testParseResponse(): void
     {
         $raw = ['member1', 'member2', 'member3'];

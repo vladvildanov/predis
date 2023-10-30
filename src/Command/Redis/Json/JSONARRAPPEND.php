@@ -25,4 +25,12 @@ class JSONARRAPPEND extends RedisCommand
     {
         return 'JSON.ARRAPPEND';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

@@ -53,6 +53,20 @@ class CFINFO_Test extends PredisCommandTestCase
 
     /**
      * @group disconnected
+     */
+    public function testGetKeys(): void
+    {
+        $arguments = ['key', 'not_key'];
+        $expected = ['key'];
+
+        $command = $this->getCommand();
+        $command->setArguments($arguments);
+
+        $this->assertSame($expected, $command->getKeys());
+    }
+
+    /**
+     * @group disconnected
      * @dataProvider responsesProvider
      */
     public function testParseResponse(array $actualResponse, array $expectedResponse): void

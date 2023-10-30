@@ -26,4 +26,12 @@ class CFCOUNT extends RedisCommand
     {
         return 'CF.COUNT';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

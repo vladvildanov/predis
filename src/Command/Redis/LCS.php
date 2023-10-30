@@ -54,6 +54,14 @@ class LCS extends RedisCommand
         $this->filterArguments();
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return $this->getArgumentsWithOffset(0, 2);
+    }
+
     public function parseResponse($data)
     {
         if (is_array($data)) {

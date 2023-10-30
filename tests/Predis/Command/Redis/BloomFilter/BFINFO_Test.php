@@ -52,6 +52,20 @@ class BFINFO_Test extends PredisCommandTestCase
 
     /**
      * @group disconnected
+     */
+    public function testGetKeys(): void
+    {
+        $arguments = ['key'];
+        $expected = ['key'];
+
+        $command = $this->getCommand();
+        $command->setArguments($arguments);
+
+        $this->assertSame($expected, $command->getKeys());
+    }
+
+    /**
+     * @group disconnected
      * @dataProvider responsesProvider
      */
     public function testParseResponse(array $actualResponse, array $expectedResponse): void

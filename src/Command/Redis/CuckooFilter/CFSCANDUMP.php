@@ -26,4 +26,12 @@ class CFSCANDUMP extends RedisCommand
     {
         return 'CF.SCANDUMP';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

@@ -71,4 +71,12 @@ class SORT_RO extends RedisCommand
         $this->setBy($arguments);
         $this->filterArguments();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

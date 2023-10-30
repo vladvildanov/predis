@@ -85,4 +85,14 @@ class ZMPOP extends RedisCommand
     {
         return $this->parseResponse($data);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        $numkeys = $this->getArgument(0);
+
+        return $this->getArgumentsWithOffset(1, $numkeys);
+    }
 }

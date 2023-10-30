@@ -25,4 +25,12 @@ class JSONARRLEN extends RedisCommand
     {
         return 'JSON.ARRLEN';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

@@ -42,6 +42,14 @@ abstract class BZPOPBase extends RedisCommand
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return $this->getArgumentsExceptLast();
+    }
+
+    /**
      * @param                                       $data
      * @return array|false|mixed|null[]|string|null
      */

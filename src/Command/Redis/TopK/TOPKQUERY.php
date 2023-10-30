@@ -26,4 +26,12 @@ class TOPKQUERY extends RedisCommand
     {
         return 'TOPK.QUERY';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

@@ -40,6 +40,14 @@ class BRPOP extends RedisCommand
         parent::setArguments($arguments);
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return $this->getArgumentsExceptLast();
+    }
+
     public function prefixKeys($prefix)
     {
         $this->applyPrefixSkippingLastArgument($prefix);

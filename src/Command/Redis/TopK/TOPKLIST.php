@@ -74,4 +74,12 @@ class TOPKLIST extends RedisCommand
 
         return is_string($lastArgument) && strtoupper($lastArgument) === 'WITHCOUNT';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

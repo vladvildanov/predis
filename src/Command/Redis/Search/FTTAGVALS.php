@@ -25,4 +25,12 @@ class FTTAGVALS extends RedisCommand
     {
         return 'FT.TAGVALS';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

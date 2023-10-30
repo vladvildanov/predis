@@ -26,4 +26,12 @@ class CMSINCRBY extends RedisCommand
     {
         return 'CMS.INCRBY';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

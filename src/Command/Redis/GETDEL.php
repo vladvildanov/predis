@@ -20,4 +20,12 @@ class GETDEL extends RedisCommand
     {
         return 'GETDEL';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

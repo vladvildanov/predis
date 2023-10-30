@@ -25,4 +25,12 @@ class JSONARRPOP extends RedisCommand
     {
         return 'JSON.ARRPOP';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

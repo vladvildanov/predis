@@ -38,4 +38,12 @@ class JSONSET extends RedisCommand
         $this->setSubcommand($arguments);
         $this->filterArguments();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

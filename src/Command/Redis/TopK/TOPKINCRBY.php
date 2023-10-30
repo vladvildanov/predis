@@ -27,4 +27,12 @@ class TOPKINCRBY extends RedisCommand
     {
         return 'TOPK.INCRBY';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

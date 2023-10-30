@@ -25,4 +25,12 @@ class JSONTYPE extends RedisCommand
     {
         return 'JSON.TYPE';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

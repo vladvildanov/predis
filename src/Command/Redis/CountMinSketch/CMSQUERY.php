@@ -25,4 +25,12 @@ class CMSQUERY extends RedisCommand
     {
         return 'CMS.QUERY';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

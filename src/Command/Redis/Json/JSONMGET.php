@@ -33,4 +33,12 @@ class JSONMGET extends RedisCommand
 
         parent::setArguments($unpackedArguments);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return $this->getArgumentsExceptLast();
+    }
 }

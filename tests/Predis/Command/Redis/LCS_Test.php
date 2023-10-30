@@ -48,6 +48,20 @@ class LCS_Test extends PredisCommandTestCase
 
     /**
      * @group disconnected
+     */
+    public function testGetKeys(): void
+    {
+        $arguments = ['key', 'key1', 'not_key'];
+        $expected = ['key', 'key1'];
+
+        $command = $this->getCommand();
+        $command->setArguments($arguments);
+
+        $this->assertSame($expected, $command->getKeys());
+    }
+
+    /**
+     * @group disconnected
      * @dataProvider responsesProvider
      */
     public function testParseResponse($actualResponse, $expectedResponse): void

@@ -47,4 +47,12 @@ class TDIGESTTRIMMED_MEAN extends RedisCommand
             default: return $data;
         }
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

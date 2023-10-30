@@ -54,6 +54,20 @@ class GEOSEARCHSTORE_Test extends PredisCommandTestCase
     /**
      * @group disconnected
      */
+    public function testGetKeys(): void
+    {
+        $arguments = ['destination', 'source', new FromLonLat(1.1, 2.2), new ByRadius(1, 'km')];
+        $expected = ['destination', 'source'];
+
+        $command = $this->getCommand();
+        $command->setArguments($arguments);
+
+        $this->assertSame($expected, $command->getKeys());
+    }
+
+    /**
+     * @group disconnected
+     */
     public function testParseResponse(): void
     {
         $this->assertSame(1, $this->getCommand()->parseResponse(1));

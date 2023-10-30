@@ -78,6 +78,20 @@ class EVAL_Test extends PredisCommandTestCase
     /**
      * @group disconnected
      */
+    public function testGetKeys(): void
+    {
+        $arguments = ['script', 2, 'key', 'key'];
+        $expected = ['key', 'key'];
+
+        $command = $this->getCommand();
+        $command->setArguments($arguments);
+
+        $this->assertSame($expected, $command->getKeys());
+    }
+
+    /**
+     * @group disconnected
+     */
     public function testGetScriptHash(): void
     {
         $command = $this->getCommandWithArgumentsArray([$lua = 'return true', 0]);

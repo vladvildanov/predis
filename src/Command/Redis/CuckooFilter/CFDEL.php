@@ -27,4 +27,12 @@ class CFDEL extends RedisCommand
     {
         return 'CF.DEL';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

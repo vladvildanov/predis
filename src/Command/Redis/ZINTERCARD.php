@@ -46,4 +46,14 @@ class ZINTERCARD extends RedisCommand
 
         $this->setKeys($arguments);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        $numkeys = $this->getArgument(0);
+
+        return $this->getArgumentsWithOffset(1, $numkeys);
+    }
 }

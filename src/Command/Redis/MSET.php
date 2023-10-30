@@ -47,6 +47,14 @@ class MSET extends RedisCommand
         parent::setArguments($arguments);
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return $this->getInterleavedArguments();
+    }
+
     public function prefixKeys($prefix)
     {
         $this->applyPrefixForInterleavedArgument($prefix);

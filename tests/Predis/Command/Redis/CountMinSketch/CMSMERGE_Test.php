@@ -52,6 +52,20 @@ class CMSMERGE_Test extends PredisCommandTestCase
     /**
      * @group disconnected
      */
+    public function testGetKeys(): void
+    {
+        $arguments = ['dest:key', ['key1', 'key2']];
+        $expected = ['dest:key', 'key1', 'key2'];
+
+        $command = $this->getCommand();
+        $command->setArguments($arguments);
+
+        $this->assertSameValues($expected, $command->getKeys());
+    }
+
+    /**
+     * @group disconnected
+     */
     public function testParseResponse(): void
     {
         $this->assertSame(1, $this->getCommand()->parseResponse(1));

@@ -37,6 +37,16 @@ class EVAL_ extends RedisCommand
         return sha1($this->getArgument(0));
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        $numkeys = $this->getArgument(1);
+
+        return $this->getArgumentsWithOffset(2, $numkeys);
+    }
+
     public function prefixKeys($prefix)
     {
         if ($arguments = $this->getArguments()) {

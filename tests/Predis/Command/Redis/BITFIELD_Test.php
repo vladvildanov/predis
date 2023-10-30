@@ -53,6 +53,20 @@ class BITFIELD_Test extends PredisCommandTestCase
     /**
      * @group disconnected
      */
+    public function testGetKeys(): void
+    {
+        $arguments = ['key', 'not_key'];
+        $expected = ['key'];
+
+        $command = $this->getCommand();
+        $command->setArguments($arguments);
+
+        $this->assertSame($expected, $command->getKeys());
+    }
+
+    /**
+     * @group disconnected
+     */
     public function testFilterMultipleArguments(): void
     {
         $arguments = ['key', 'incrby', 'u2', '100', '1', 'OVERFLOW', 'SAT', 'incrby', 'u2', '102', '1', 'GET', 'u2', '100'];

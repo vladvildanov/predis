@@ -25,4 +25,12 @@ class JSONARRINSERT extends RedisCommand
     {
         return 'JSON.ARRINSERT';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

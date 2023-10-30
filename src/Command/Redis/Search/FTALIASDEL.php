@@ -25,4 +25,12 @@ class FTALIASDEL extends RedisCommand
     {
         return 'FT.ALIASDEL';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

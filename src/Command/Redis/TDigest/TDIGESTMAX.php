@@ -46,4 +46,12 @@ class TDIGESTMAX extends RedisCommand
             default: return $data;
         }
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

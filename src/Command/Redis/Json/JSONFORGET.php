@@ -25,4 +25,12 @@ class JSONFORGET extends RedisCommand
     {
         return 'JSON.FORGET';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

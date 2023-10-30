@@ -25,4 +25,12 @@ class JSONOBJKEYS extends RedisCommand
     {
         return 'JSON.OBJKEYS';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

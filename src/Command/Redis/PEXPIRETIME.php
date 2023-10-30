@@ -26,4 +26,12 @@ class PEXPIRETIME extends RedisCommand
     {
         return 'PEXPIRETIME';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

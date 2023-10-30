@@ -69,4 +69,12 @@ class BFINSERT extends RedisCommand
         $this->setCapacity($arguments);
         $this->filterArguments();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getFirstArgument()];
+    }
 }

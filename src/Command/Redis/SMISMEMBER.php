@@ -25,4 +25,12 @@ class SMISMEMBER extends RedisCommand
     {
         return 'SMISMEMBER';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

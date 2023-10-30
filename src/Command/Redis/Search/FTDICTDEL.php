@@ -25,4 +25,12 @@ class FTDICTDEL extends RedisCommand
     {
         return 'FT.DICTDEL';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }

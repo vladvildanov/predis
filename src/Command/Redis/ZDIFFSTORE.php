@@ -37,4 +37,15 @@ class ZDIFFSTORE extends RedisCommand
     {
         return 'ZDIFFSTORE';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        $arguments = $this->getArguments();
+        unset($arguments[1]);
+
+        return $arguments;
+    }
 }

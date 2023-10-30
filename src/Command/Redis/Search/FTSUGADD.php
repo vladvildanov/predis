@@ -36,4 +36,12 @@ class FTSUGADD extends RedisCommand
             $commandArguments
         ));
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getKeys(): array
+    {
+        return [$this->getArgument(0)];
+    }
 }
