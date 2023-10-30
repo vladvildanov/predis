@@ -166,9 +166,18 @@ class CacheProxyConnection implements ConnectionInterface
         $this->connection->executeCommand(new RawCommand('CLIENT', ['TRACKING', 'ON', 'OPTIN']));
         $this->onPushNotification([
             PushResponseInterface::INVALIDATE_DATA_TYPE => function (array $payload) {
-                $invalidatedKey = $payload[0][0];
-                $invalidCommandResponses = $this->cache->findMatchingKeys("/$invalidatedKey/");
-                $this->cache->batchDelete($invalidCommandResponses);
+                $invalidatedKeys = $payload[0];
+
+                if (null === $invalidatedKeys) {
+                    $this->cache->flush();
+
+                    return;
+                }
+
+                foreach ($invalidatedKeys as $invalidatedKey) {
+                    $invalidCommandResponses = $this->cache->findMatchingKeys("/$invalidatedKey/");
+                    $this->cache->batchDelete($invalidCommandResponses);
+                }
             },
         ]);
     }
@@ -185,9 +194,11 @@ class CacheProxyConnection implements ConnectionInterface
         $response = $this->connection->executeCommand($command);
 
         if ($response instanceof PushResponseInterface) {
-            $this->dispatchNotification($response);
+            do {
+                $this->dispatchNotification($response);
 
-            return $this->connection->readResponse($command);
+                $response = $this->connection->readResponse($command);
+            } while ($response instanceof PushResponseInterface);
         }
 
         return $response;
