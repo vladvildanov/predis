@@ -96,6 +96,20 @@ class SORT_Test extends PredisCommandTestCase
     /**
      * @group disconnected
      */
+    public function testGetKeys(): void
+    {
+        $arguments = ['key'];
+        $expected = ['key'];
+
+        $command = $this->getCommand();
+        $command->setArguments($arguments);
+
+        $this->assertSame($expected, $command->getKeys());
+    }
+
+    /**
+     * @group disconnected
+     */
     public function testParseResponse(): void
     {
         $raw = ['value1', 'value2', 'value3'];

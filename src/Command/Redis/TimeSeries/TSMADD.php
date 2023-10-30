@@ -35,8 +35,10 @@ class TSMADD extends RedisCommand
         $keys = [];
 
         for ($i = 0, $iMax = count($arguments); $i <= $iMax; $i++) {
-            $keys[] = $arguments[$i];
-            $i += 2;
+            if (array_key_exists($i, $arguments)) {
+                $keys[] = $arguments[$i];
+                $i += 2;
+            }
         }
 
         return $keys;

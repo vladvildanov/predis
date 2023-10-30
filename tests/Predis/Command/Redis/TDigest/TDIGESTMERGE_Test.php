@@ -50,6 +50,20 @@ class TDIGESTMERGE_Test extends PredisCommandTestCase
     }
 
     /**
+     * @group disconnected
+     */
+    public function testGetKeys(): void
+    {
+        $arguments = ['key', ['source-key1', 'source-key2']];
+        $expected = ['key', 'source-key1', 'source-key2'];
+
+        $command = $this->getCommand();
+        $command->setArguments($arguments);
+
+        $this->assertSameValues($expected, $command->getKeys());
+    }
+
+    /**
      * @group connected
      * @dataProvider sketchesProvider
      * @param  string $sourceKey1

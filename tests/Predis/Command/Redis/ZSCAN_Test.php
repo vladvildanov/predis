@@ -81,6 +81,20 @@ class ZSCAN_Test extends PredisCommandTestCase
     /**
      * @group disconnected
      */
+    public function testGetKeys(): void
+    {
+        $arguments = ['key', 'not_key'];
+        $expected = ['key'];
+
+        $command = $this->getCommand();
+        $command->setArguments($arguments);
+
+        $this->assertSame($expected, $command->getKeys());
+    }
+
+    /**
+     * @group disconnected
+     */
     public function testParseResponse(): void
     {
         $raw = ['3', ['member:1', '1', 'member:2', '2', 'member:3', '3']];

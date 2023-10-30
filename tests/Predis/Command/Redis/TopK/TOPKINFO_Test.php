@@ -54,6 +54,20 @@ class TOPKINFO_Test extends PredisCommandTestCase
     /**
      * @group disconnected
      */
+    public function testGetKeys(): void
+    {
+        $arguments = ['key', 'not_key'];
+        $expected = ['key'];
+
+        $command = $this->getCommand();
+        $command->setArguments($arguments);
+
+        $this->assertSame($expected, $command->getKeys());
+    }
+
+    /**
+     * @group disconnected
+     */
     public function testParseResponse(): void
     {
         $actualResponse = ['k', 50, 'width', 8, 'depth', 7, 'decay', '0.90000000000000002'];

@@ -51,6 +51,20 @@ class ZPOPMIN_Test extends PredisCommandTestCase
     }
 
     /**
+     * @group disconnected
+     */
+    public function testGetKeys(): void
+    {
+        $arguments = ['key', 'not_key'];
+        $expected = ['key'];
+
+        $command = $this->getCommand();
+        $command->setArguments($arguments);
+
+        $this->assertSame($expected, $command->getKeys());
+    }
+
+    /**
      * @requiresRedisVersion >= 5.0.0
      *
      * @group disconnected

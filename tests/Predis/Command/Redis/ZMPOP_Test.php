@@ -47,6 +47,20 @@ class ZMPOP_Test extends PredisCommandTestCase
 
     /**
      * @group disconnected
+     */
+    public function testGetKeys(): void
+    {
+        $arguments = [['key1', 'key2']];
+        $expected = ['key1', 'key2'];
+
+        $command = $this->getCommand();
+        $command->setArguments($arguments);
+
+        $this->assertSame($expected, $command->getKeys());
+    }
+
+    /**
+     * @group disconnected
      * @dataProvider responsesProvider
      */
     public function testParseResponse(array $actualResponse, array $expectedResponse): void

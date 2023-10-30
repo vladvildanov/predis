@@ -16,24 +16,25 @@ if (PHP_SAPI !== 'fpm-fcgi') {
     exit('This example available only in FPM mode.');
 }
 
-// 1. Create client with enabled cache and ttl 2 seconds.
-$client = new \Predis\Client(['cache' => true, 'cache_config' => ['ttl' => 2]]);
+// 1. Create client with enabled cache and RESP3 connection mode.
+$client = new \Predis\Client(['cache' => true, 'protocol' => 3]);
+$client->flushall();
 
 // 2. Set key into Redis storage.
 $client->set('foo', 'bar');
 
-// 3. Retrieves from Redis storage and cache response for 2 seconds.
-var_dump($client->get('foo'));
+// 3. Retrieves from Redis storage and cache response.
+echo nl2br("Value in Redis: " . $client->get('foo') . "\n");
 
-// 4. Set new value for the same key. Just after this invalidation should happen.
-// If not then we have updated value in Redis storage and old value in cache.
+// 4. Check that command response is cached.
+echo nl2br("Value in cache: " . apcu_fetch('GET_foo') . "\n");
+
+// 5. Set new value for the same key.
 $client->set('foo', 'baz');
 
-// 5. Retrieves value from cache.
-var_dump($client->get('foo'));
-
-// 6. Sleep until TTL expired.
-sleep(3);
+// 6. Send any other read command, so invalidation message will be received.
+$client->get('baz');
 
 // 7. Retrieves updated value from Redis storage again.
-var_dump($client->get('foo'));
+echo nl2br("New value in Redis: " . $client->get('foo') . "\n");
+echo nl2br("New value in cache: " . apcu_fetch('GET_foo') . "\n");
