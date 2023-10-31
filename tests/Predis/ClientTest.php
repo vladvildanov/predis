@@ -1469,7 +1469,7 @@ class ClientTest extends PredisTestCase
         $client->flushdb();
         $client->executeCommand($writeCommand);
 
-        // 2. Executes read command and cache response.
+        // 2. Executes read command and cache response. Ensure that response exists in cache.
         $firstExpectedResponse = $client->executeCommand($readCommand);
         $this->assertSame($firstExpectedResponse, apcu_fetch($cacheKey));
 
