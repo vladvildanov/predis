@@ -49,6 +49,20 @@ class CacheConfiguration
         'ttl' => 'ttl',
     ];
 
+    /**
+     * This commands responses should be excluded from caching.
+     *
+     * @var array
+     */
+    private $excludedCommands = [
+        'FT.AGGREGATE', 'FT.ALIASADD', 'FT.ALIASDEL', 'FT.ALIASUPDATE', 'FT.CURSOR', 'FT.EXPLAIN', 'FT.EXPLAINCLI', 'FT.GET', 'FT.INFO', 'FT.MGET',
+        'FT.PROFILE', 'FT.SEARCH', 'FT.SPELLCHECK', 'FT.SUGGET', 'FT.SUGLEN', 'FT.SYNDUMP', 'FT.TAGVALS', 'FT._ALIASADDIFNX', 'BF.CARD', 'BF.DEBUG',
+        'BF.EXISTS', 'BF.INFO', 'BF.MEXISTS', 'BF.SCANDUMP','CF.COMPACT', 'CF.COUNT', 'CF.DEBUG', 'CF.EXISTS', 'CF.INFO', 'CF.MEXISTS', 'CF.SCANDUMP',
+        'CMS.INFO', 'CMS.QUERY', 'EXPIRETIME', 'HRANDFIELD', 'JSON.DEBUG', 'PEXPIRETIME', 'PFCOUNT', 'PTTL', 'SRANDMEMBER', 'TDIGEST.BYRANK',
+        'TDIGEST.BYREVRANK', 'TDIGEST.CDF', 'TDIGEST.INFO', 'TDIGEST.MAX', 'TDIGEST.MIN', 'TDIGEST.QUANTILE', 'TDIGEST.RANK', 'TDIGEST.REVRANK',
+        'TDIGEST.TRIMMED_MEAN', 'TOPK.INFO', 'TOPK.LIST', 'TOPK.QUERY', 'TTL'
+    ];
+
     public function __construct(array $configuration = null)
     {
         $this->setDefaultConfiguration();
@@ -126,8 +140,9 @@ class CacheConfiguration
      */
     private function getDefaultWhitelistCallback(): Closure
     {
-        return static function (CommandInterface $command): bool {
-            return $command->getCommandMode() === CommandInterface::READ_MODE;
+        return function (CommandInterface $command): bool {
+            return $command->getCommandMode() === CommandInterface::READ_MODE
+                && !in_array($command->getId(), $this->excludedCommands, true);
         };
     }
 }
