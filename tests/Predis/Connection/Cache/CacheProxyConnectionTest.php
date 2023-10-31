@@ -66,6 +66,9 @@ class CacheProxyConnectionTest extends PredisTestCase
         $this->mockCommand
             ->method('getKeys')
             ->willReturn(['key']);
+        $this->mockCommand
+            ->method('getCommandMode')
+            ->willReturn(CommandInterface::READ_MODE);
         $this->cachingCommand = new RawCommand('CLIENT', ['CACHING', 'YES']);
 
         $this->proxyConnection = new CacheProxyConnection(
@@ -193,13 +196,18 @@ class CacheProxyConnectionTest extends PredisTestCase
     /**
      * @group disconnected
      * @return void
+     * @throws PushNotificationException
      */
     public function testExecuteCommandExecutesBlacklistedCommandAgainstConnection(): void
     {
+        $this->mockCommand
+            ->method('getCommandMode')
+            ->willReturn(CommandInterface::READ_MODE);
+
         $this->mockCacheConfiguration
             ->expects($this->once())
             ->method('isWhitelistedCommand')
-            ->with('HSET')
+            ->with($this->mockCommand)
             ->willReturn(false);
 
         $this->mockConnection
@@ -256,7 +264,7 @@ class CacheProxyConnectionTest extends PredisTestCase
         $this->mockCacheConfiguration
             ->expects($this->once())
             ->method('isWhitelistedCommand')
-            ->with('GET')
+            ->with($this->mockCommand)
             ->willReturn(true);
 
         $this->mockConnection
@@ -315,7 +323,7 @@ class CacheProxyConnectionTest extends PredisTestCase
         $this->mockCacheConfiguration
             ->expects($this->once())
             ->method('isWhitelistedCommand')
-            ->with('GET')
+            ->with($this->mockCommand)
             ->willReturn(true);
 
         $this->mockConnection
@@ -376,7 +384,7 @@ class CacheProxyConnectionTest extends PredisTestCase
         $this->mockCacheConfiguration
             ->expects($this->once())
             ->method('isWhitelistedCommand')
-            ->with('GET')
+            ->with($this->mockCommand)
             ->willReturn(true);
 
         $this->mockConnection
@@ -438,7 +446,7 @@ class CacheProxyConnectionTest extends PredisTestCase
         $this->mockCacheConfiguration
             ->expects($this->once())
             ->method('isWhitelistedCommand')
-            ->with('GET')
+            ->with($this->mockCommand)
             ->willReturn(true);
 
         $this->mockConnection
@@ -522,7 +530,7 @@ class CacheProxyConnectionTest extends PredisTestCase
         $this->mockCacheConfiguration
             ->expects($this->once())
             ->method('isWhitelistedCommand')
-            ->with('GET')
+            ->with($this->mockCommand)
             ->willReturn(true);
 
         $this->mockConnection
@@ -614,7 +622,7 @@ class CacheProxyConnectionTest extends PredisTestCase
         $this->mockCacheConfiguration
             ->expects($this->once())
             ->method('isWhitelistedCommand')
-            ->with('GET')
+            ->with($this->mockCommand)
             ->willReturn(true);
 
         $this->mockConnection

@@ -100,8 +100,7 @@ class CacheProxyConnection implements ConnectionInterface
     {
         $commandId = $command->getId();
 
-        // 1. Check if given command is whitelisted.
-        if (!$this->cacheConfiguration->isWhitelistedCommand($commandId)) {
+        if (!$this->cacheConfiguration->isWhitelistedCommand($command)) {
             return $this->retryOnInvalidation($command);
         }
 
@@ -109,12 +108,10 @@ class CacheProxyConnection implements ConnectionInterface
         $cacheKey = $commandId . '_' . implode('_', $keys);
         $ttl = $this->cacheConfiguration->getTTl();
 
-        // 2. Returns cached data if key exists in cache.
         if (false !== $this->cache->exists($cacheKey)) {
             return $this->cache->read($cacheKey);
         }
 
-        // 3. Cache response if it's allowed.
         if ($this->isAllowedToBeCached()) {
             $this->retryOnInvalidation(new RawCommand('CLIENT', ['CACHING', 'YES']));
             $response = $this->retryOnInvalidation($command);

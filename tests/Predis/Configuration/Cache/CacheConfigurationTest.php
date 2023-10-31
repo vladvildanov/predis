@@ -12,6 +12,8 @@
 
 namespace Predis\Configuration\Cache;
 
+use Predis\Command\CommandInterface;
+use Predis\Command\RawCommand;
 use PredisTestCase;
 use UnexpectedValueException;
 
@@ -35,9 +37,11 @@ class CacheConfigurationTest extends PredisTestCase
     public function testIsWhitelistedCommand(): void
     {
         $configuration = new CacheConfiguration();
+        $readCommand = new RawCommand('GET', ['key'], CommandInterface::READ_MODE);
+        $writeCommand = new RawCommand('SET', ['key', 'value']);
 
-        $this->assertTrue($configuration->isWhitelistedCommand('GET'));
-        $this->assertFalse($configuration->isWhitelistedCommand('HGET'));
+        $this->assertTrue($configuration->isWhitelistedCommand($readCommand));
+        $this->assertFalse($configuration->isWhitelistedCommand($writeCommand));
     }
 
     /**
@@ -59,8 +63,9 @@ class CacheConfigurationTest extends PredisTestCase
     public function testReturnsDefaultConfigurationOnNullConfigurationGiven(): void
     {
         $configuration = new CacheConfiguration();
+        $readCommand = new RawCommand('GET', ['key'], CommandInterface::READ_MODE);
 
-        $this->assertTrue($configuration->isWhitelistedCommand('GET'));
+        $this->assertTrue($configuration->isWhitelistedCommand($readCommand));
         $this->assertSame(0, $configuration->getTTl());
         $this->assertFalse($configuration->isExceedsMaxCount(1000));
         $this->assertTrue($configuration->isExceedsMaxCount(1001));
