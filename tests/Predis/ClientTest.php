@@ -14,8 +14,11 @@ namespace Predis;
 
 use Iterator;
 use PHPUnit\Framework\MockObject\MockObject;
+use Predis\Command\CommandInterface;
 use Predis\Command\Factory as CommandFactory;
 use Predis\Command\Processor\KeyPrefixProcessor;
+use Predis\Command\Redis\BITCOUNT;
+use Predis\Command\Redis\SET;
 use Predis\Connection\NodeConnectionInterface;
 use Predis\Connection\Parameters;
 use Predis\Connection\ParametersInterface;
@@ -1430,6 +1433,58 @@ class ClientTest extends PredisTestCase
         apcu_clear_cache();
     }
 
+    /**
+     * @dataProvider commandsProvider
+     * @group connected
+     * @group relay-incompatible
+     * @param CommandInterface $writeCommand
+     * @param array $writeCommandArguments
+     * @param CommandInterface $readCommand
+     * @param array $readCommandArguments
+     * @param CommandInterface $overrideCommand
+     * @param array $overrideCommandArguments
+     * @return void
+     * @requiresRedisVersion >= 7.2.0
+     */
+    public function testCommandResponseCachedAndInvalidateOnEnabledCache(
+        CommandInterface $writeCommand,
+        array $writeCommandArguments,
+        CommandInterface $readCommand,
+        array $readCommandArguments,
+        CommandInterface $overrideCommand,
+        array $overrideCommandArguments
+    ): void {
+        $this->assertSame(CommandInterface::READ_MODE, $readCommand->getCommandMode());
+        $this->assertSame(CommandInterface::WRITE_MODE, $writeCommand->getCommandMode());
+        $this->assertSame(CommandInterface::WRITE_MODE, $overrideCommand->getCommandMode());
+
+        $readCommand->setArguments($readCommandArguments);
+        $writeCommand->setArguments($writeCommandArguments);
+        $overrideCommand->setArguments($overrideCommandArguments);
+
+        $client = new Client($this->getParameters(['protocol' => 3, 'cache' => true]));
+        $cacheKey = $readCommand->getId() . '_' . implode('_', $readCommand->getKeys());
+
+        // 1. Flush database and cache, executes write command.
+        $client->flushdb();
+        $client->executeCommand($writeCommand);
+
+        // 2. Executes read command and cache response.
+        $firstExpectedResponse = $client->executeCommand($readCommand);
+        $this->assertSame($firstExpectedResponse, apcu_fetch($cacheKey));
+
+        // 3. Executes override command and send any other read command to get invalidation from server.
+        $client->executeCommand($overrideCommand);
+        $this->assertNull($client->get('non_existing_key'));
+
+        // 4. Retry read command and make sure that new value cached.
+        // Also check that previous response is different from new one
+        // to make sure that reads perform against server when it's required.
+        $secondExpectedResponse = $client->executeCommand($readCommand);
+        $this->assertSame($secondExpectedResponse, apcu_fetch($cacheKey));
+        $this->assertNotSame($secondExpectedResponse, $firstExpectedResponse);
+    }
+
     // ******************************************************************** //
     // ---- HELPER METHODS ------------------------------------------------ //
     // ******************************************************************** //
@@ -1484,5 +1539,19 @@ class ClientTest extends PredisTestCase
             ->willReturn($connection);
 
         return $callable;
+    }
+
+    public function commandsProvider(): array
+    {
+        return [
+            'BITCOUNT' => [
+                new SET(),
+                ['key', 'value'],
+                new BITCOUNT(),
+                ['key'],
+                new SET(),
+                ['key', 'value_new'],
+            ]
+        ];
     }
 }
