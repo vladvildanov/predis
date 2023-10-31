@@ -1462,22 +1462,26 @@ class ClientTest extends PredisTestCase
         $writeCommand->setArguments($writeCommandArguments);
         $overrideCommand->setArguments($overrideCommandArguments);
 
+        // 1. Setup client in cache mode and enable RESP3 protocol (required).
         $client = new Client($this->getParameters(['protocol' => 3, 'cache' => true]));
         $cacheKey = $readCommand->getId() . '_' . implode('_', $readCommand->getKeys());
 
-        // 1. Flush database and cache, executes write command.
+        // 2. Flush database, make sure that cache flushed as well.
         $client->flushdb();
+        $this->assertEquals(0, apcu_cache_info()['num_entries']);
+
+        // 3. Executes write command.
         $client->executeCommand($writeCommand);
 
-        // 2. Executes read command and cache response. Ensure that response exists in cache.
+        // 4. Executes read command and cache response. Ensure that response exists in cache.
         $firstExpectedResponse = $client->executeCommand($readCommand);
         $this->assertSame($firstExpectedResponse, apcu_fetch($cacheKey));
 
-        // 3. Executes override command and send any other read command to get invalidation from server.
+        // 5. Executes override command and send any other read command to get invalidation from server.
         $client->executeCommand($overrideCommand);
         $this->assertNull($client->get('non_existing_key'));
 
-        // 4. Retry read command and make sure that new value cached.
+        // 6. Retry read command and make sure that new value cached.
         // Also check that previous response is different from new one
         // to make sure that reads perform against server when it's required.
         $secondExpectedResponse = $client->executeCommand($readCommand);
