@@ -13,6 +13,7 @@
 namespace Predis\Command\Redis;
 
 use Predis\Command\Command as RedisCommand;
+use Predis\Command\CommandInterface;
 
 /**
  * @see http://redis.io/commands/scan
@@ -63,5 +64,13 @@ class SCAN extends RedisCommand
         }
 
         return $normalized;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCommandMode(): string
+    {
+        return CommandInterface::READ_MODE;
     }
 }

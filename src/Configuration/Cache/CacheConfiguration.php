@@ -13,6 +13,7 @@
 namespace Predis\Configuration\Cache;
 
 use Closure;
+use Predis\Command\CommandInterface;
 use UnexpectedValueException;
 
 class CacheConfiguration
@@ -66,14 +67,14 @@ class CacheConfiguration
     }
 
     /**
-     * @param  string $commandId
+     * @param  CommandInterface $command
      * @return bool
      */
-    public function isWhitelistedCommand(string $commandId): bool
+    public function isWhitelistedCommand(CommandInterface $command): bool
     {
         $callback = $this->whitelistCallback;
 
-        return $callback($commandId);
+        return $callback($command);
     }
 
     /**
@@ -125,9 +126,8 @@ class CacheConfiguration
      */
     private function getDefaultWhitelistCallback(): Closure
     {
-        // TODO: Define the list of the default whitelisted commands
-        return static function (string $commandId): bool {
-            return $commandId === 'GET';
+        return static function (CommandInterface $command): bool {
+            return $command->getCommandMode() === CommandInterface::READ_MODE;
         };
     }
 }

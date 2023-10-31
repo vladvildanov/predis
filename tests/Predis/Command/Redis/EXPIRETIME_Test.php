@@ -12,6 +12,8 @@
 
 namespace Predis\Command\Redis;
 
+use Predis\Command\CommandInterface;
+
 /**
  * @group commands
  * @group realm-keys
@@ -46,6 +48,16 @@ class EXPIRETIME_Test extends PredisCommandTestCase
         $command->setArguments($arguments);
 
         $this->assertSame($expected, $command->getArguments());
+    }
+
+    /**
+     * @group disconnected
+     */
+    public function testGetCommandMode(): void
+    {
+        $command = $this->getCommand();
+
+        $this->assertSame(CommandInterface::READ_MODE, $command->getCommandMode());
     }
 
     /**

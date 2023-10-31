@@ -13,6 +13,7 @@
 namespace Predis\Command\Redis;
 
 use PHPUnit\Util\Test as TestUtil;
+use Predis\Command\CommandInterface;
 use Predis\Response\ServerException;
 
 /**
@@ -49,6 +50,16 @@ class FCALL_RO_Test extends PredisCommandTestCase
         $command->setArguments($actualArguments);
 
         $this->assertSame($expectedArguments, $command->getArguments());
+    }
+
+    /**
+     * @group disconnected
+     */
+    public function testGetCommandMode(): void
+    {
+        $command = $this->getCommand();
+
+        $this->assertSame(CommandInterface::READ_MODE, $command->getCommandMode());
     }
 
     /**

@@ -12,6 +12,7 @@
 
 namespace Predis\Command\Redis;
 
+use Predis\Command\CommandInterface;
 use Predis\Command\PrefixableCommand as RedisCommand;
 
 /**
@@ -43,6 +44,14 @@ class MGET extends RedisCommand
     public function getKeys(): array
     {
         return $this->getArguments();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCommandMode(): string
+    {
+        return CommandInterface::READ_MODE;
     }
 
     public function prefixKeys($prefix)

@@ -17,6 +17,9 @@ namespace Predis\Command;
  */
 interface CommandInterface
 {
+    public const READ_MODE = 'read';
+    public const WRITE_MODE = 'write';
+
     /**
      * Returns the ID of the Redis command. By convention, command identifiers
      * must always be uppercase.
@@ -66,6 +69,13 @@ interface CommandInterface
      * @return array
      */
     public function getKeys(): array;
+
+    /**
+     * Returns command mode.
+     *
+     * @return string
+     */
+    public function getCommandMode(): string;
 
     /**
      * Gets the argument of the command at the specified index.

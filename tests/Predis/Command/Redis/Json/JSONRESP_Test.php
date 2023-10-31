@@ -12,6 +12,7 @@
 
 namespace Predis\Command\Redis\Json;
 
+use Predis\Command\CommandInterface;
 use Predis\Command\Redis\PredisCommandTestCase;
 use Predis\Response\Status;
 
@@ -49,6 +50,16 @@ class JSONRESP_Test extends PredisCommandTestCase
         $command->setArguments($arguments);
 
         $this->assertSame($expected, $command->getArguments());
+    }
+
+    /**
+     * @group disconnected
+     */
+    public function testGetCommandMode(): void
+    {
+        $command = $this->getCommand();
+
+        $this->assertSame(CommandInterface::READ_MODE, $command->getCommandMode());
     }
 
     /**

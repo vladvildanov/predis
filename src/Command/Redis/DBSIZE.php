@@ -13,6 +13,7 @@
 namespace Predis\Command\Redis;
 
 use Predis\Command\Command as RedisCommand;
+use Predis\Command\CommandInterface;
 
 /**
  * @see http://redis.io/commands/dbsize
@@ -25,5 +26,13 @@ class DBSIZE extends RedisCommand
     public function getId()
     {
         return 'DBSIZE';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCommandMode(): string
+    {
+        return CommandInterface::READ_MODE;
     }
 }

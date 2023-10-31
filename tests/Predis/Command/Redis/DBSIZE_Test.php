@@ -12,6 +12,8 @@
 
 namespace Predis\Command\Redis;
 
+use Predis\Command\CommandInterface;
+
 /**
  * @group commands
  * @group realm-server
@@ -43,6 +45,16 @@ class DBSIZE_Test extends PredisCommandTestCase
         $command->setArguments([]);
 
         $this->assertSame([], $command->getArguments());
+    }
+
+    /**
+     * @group disconnected
+     */
+    public function testGetCommandMode(): void
+    {
+        $command = $this->getCommand();
+
+        $this->assertSame(CommandInterface::READ_MODE, $command->getCommandMode());
     }
 
     /**

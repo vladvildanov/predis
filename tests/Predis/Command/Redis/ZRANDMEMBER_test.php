@@ -12,6 +12,7 @@
 
 namespace Predis\Command\Redis;
 
+use Predis\Command\CommandInterface;
 use Predis\Response\ServerException;
 
 class ZRANDMEMBER_test extends PredisCommandTestCase
@@ -42,6 +43,16 @@ class ZRANDMEMBER_test extends PredisCommandTestCase
         $command->setArguments($actualArguments);
 
         $this->assertSame($expectedArguments, $command->getArguments());
+    }
+
+    /**
+     * @group disconnected
+     */
+    public function testGetCommandMode(): void
+    {
+        $command = $this->getCommand();
+
+        $this->assertSame(CommandInterface::READ_MODE, $command->getCommandMode());
     }
 
     /**

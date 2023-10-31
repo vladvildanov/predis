@@ -19,6 +19,7 @@ use Predis\Command\Argument\Geospatial\ByRadius;
 use Predis\Command\Argument\Geospatial\FromInterface;
 use Predis\Command\Argument\Geospatial\FromLonLat;
 use Predis\Command\Argument\Geospatial\FromMember;
+use Predis\Command\CommandInterface;
 use UnexpectedValueException;
 
 class GEOSEARCH_Test extends PredisCommandTestCase
@@ -49,6 +50,16 @@ class GEOSEARCH_Test extends PredisCommandTestCase
         $command->setArguments($actualArguments);
 
         $this->assertSameValues($expectedArguments, $command->getArguments());
+    }
+
+    /**
+     * @group disconnected
+     */
+    public function testGetCommandMode(): void
+    {
+        $command = $this->getCommand();
+
+        $this->assertSame(CommandInterface::READ_MODE, $command->getCommandMode());
     }
 
     /**

@@ -12,6 +12,7 @@
 
 namespace Predis\Command\Redis;
 
+use Predis\Command\CommandInterface;
 use Predis\Response\ServerException;
 
 class HRANDFIELD_Test extends PredisCommandTestCase
@@ -45,6 +46,16 @@ class HRANDFIELD_Test extends PredisCommandTestCase
         $command->setArguments($actualArguments);
 
         $this->assertSame($expectedArguments, $command->getArguments());
+    }
+
+    /**
+     * @group disconnected
+     */
+    public function testGetCommandMode(): void
+    {
+        $command = $this->getCommand();
+
+        $this->assertSame(CommandInterface::READ_MODE, $command->getCommandMode());
     }
 
     /**

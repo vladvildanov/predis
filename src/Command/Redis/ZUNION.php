@@ -12,6 +12,7 @@
 
 namespace Predis\Command\Redis;
 
+use Predis\Command\CommandInterface;
 use Predis\Command\Traits\With\WithScores;
 
 /**
@@ -31,5 +32,13 @@ class ZUNION extends ZUNIONSTORE
     public function getId()
     {
         return 'ZUNION';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCommandMode(): string
+    {
+        return CommandInterface::READ_MODE;
     }
 }

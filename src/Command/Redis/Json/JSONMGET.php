@@ -13,6 +13,7 @@
 namespace Predis\Command\Redis\Json;
 
 use Predis\Command\Command as RedisCommand;
+use Predis\Command\CommandInterface;
 
 class JSONMGET extends RedisCommand
 {
@@ -40,5 +41,13 @@ class JSONMGET extends RedisCommand
     public function getKeys(): array
     {
         return $this->getArgumentsExceptLast();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCommandMode(): string
+    {
+        return CommandInterface::READ_MODE;
     }
 }

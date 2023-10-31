@@ -138,4 +138,15 @@ class RawCommandTest extends PredisTestCase
 
         $this->assertSame('SET', $command->getId());
     }
+
+    /**
+     * @group disconnected
+     */
+    public function testGetCommandMode(): void
+    {
+        $arguments = ['key', 'value'];
+        $command = new RawCommand('SET', $arguments, CommandInterface::READ_MODE);
+
+        $this->assertSame(CommandInterface::READ_MODE, $command->getCommandMode());
+    }
 }

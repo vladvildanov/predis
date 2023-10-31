@@ -13,6 +13,7 @@
 namespace Predis\Command\Redis;
 
 use Predis\Command\Command as RedisCommand;
+use Predis\Command\CommandInterface;
 
 /**
  * @see http://redis.io/commands/randomkey
@@ -33,5 +34,13 @@ class RANDOMKEY extends RedisCommand
     public function parseResponse($data)
     {
         return $data !== '' ? $data : null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCommandMode(): string
+    {
+        return CommandInterface::READ_MODE;
     }
 }
