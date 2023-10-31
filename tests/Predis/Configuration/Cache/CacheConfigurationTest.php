@@ -39,9 +39,11 @@ class CacheConfigurationTest extends PredisTestCase
         $configuration = new CacheConfiguration();
         $readCommand = new RawCommand('GET', ['key'], CommandInterface::READ_MODE);
         $writeCommand = new RawCommand('SET', ['key', 'value']);
+        $excludedCommand = new RawCommand('TDIGEST.MAX', ['key', 'value'], CommandInterface::READ_MODE);
 
         $this->assertTrue($configuration->isWhitelistedCommand($readCommand));
         $this->assertFalse($configuration->isWhitelistedCommand($writeCommand));
+        $this->assertFalse($configuration->isWhitelistedCommand($excludedCommand));
     }
 
     /**
