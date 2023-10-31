@@ -12,7 +12,6 @@
 
 namespace Predis\Command\Redis;
 
-use Predis\Command\Command;
 use Predis\Command\CommandInterface;
 use Predis\Command\PrefixableCommand;
 

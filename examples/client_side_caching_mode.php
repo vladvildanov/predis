@@ -24,10 +24,10 @@ $client->flushall();
 $client->set('foo', 'bar');
 
 // 3. Retrieves from Redis storage and cache response.
-echo nl2br("Value in Redis: " . $client->get('foo') . "\n");
+echo nl2br('Value in Redis: ' . $client->get('foo') . "\n");
 
 // 4. Check that command response is cached.
-echo nl2br("Value in cache: " . apcu_fetch('GET_foo') . "\n");
+echo nl2br('Value in cache: ' . apcu_fetch('GET_foo') . "\n");
 
 // 5. Set new value for the same key.
 $client->set('foo', 'baz');
@@ -36,5 +36,5 @@ $client->set('foo', 'baz');
 $client->get('baz');
 
 // 7. Retrieves updated value from Redis storage again.
-echo nl2br("New value in Redis: " . $client->get('foo') . "\n");
-echo nl2br("New value in cache: " . apcu_fetch('GET_foo') . "\n");
+echo nl2br('New value in Redis: ' . $client->get('foo') . "\n");
+echo nl2br('New value in cache: ' . apcu_fetch('GET_foo') . "\n");

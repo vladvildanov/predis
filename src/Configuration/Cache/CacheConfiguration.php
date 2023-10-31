@@ -67,7 +67,7 @@ class CacheConfiguration
     }
 
     /**
-     * @param CommandInterface $command
+     * @param  CommandInterface $command
      * @return bool
      */
     public function isWhitelistedCommand(CommandInterface $command): bool
