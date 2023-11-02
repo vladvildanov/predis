@@ -86,6 +86,7 @@ class CFSCANDUMP_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @group relay-resp3
      * @return void
      * @requiresRedisBfVersion >= 1.0.0
      */
@@ -120,6 +121,7 @@ class CFSCANDUMP_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @group relay-incompatible
      * @requiresRedisBfVersion >= 1.0.0
      */
     public function testThrowsExceptionOnWrongType(): void

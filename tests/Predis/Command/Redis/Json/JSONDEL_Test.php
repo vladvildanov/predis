@@ -74,6 +74,7 @@ class JSONDEL_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @group relay-resp3
      * @dataProvider jsonProvider
      * @param  array  $jsonArguments
      * @param  string $key
@@ -112,7 +113,7 @@ class JSONDEL_Test extends PredisCommandTestCase
         $actualResponse = $redis->jsondel('key', '$.key2');
 
         $this->assertSame(1, $actualResponse);
-        $this->assertSame([['{"key1":"value1"}']], $redis->jsonget('key'));
+        $this->assertSame('[{"key1":"value1"}]', $redis->jsonget('key'));
     }
 
     public function jsonProvider(): array

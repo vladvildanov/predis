@@ -55,7 +55,7 @@ class BFINSERT_Test extends PredisCommandTestCase
      */
     public function testGetKeys(): void
     {
-        $arguments = ['key', 'not_key'];
+        $arguments = ['key', -1, -1, -1, false, false, 'item1', 'item2'];
         $expected = ['key'];
 
         $command = $this->getCommand();
@@ -74,6 +74,7 @@ class BFINSERT_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @group relay-resp3
      * @dataProvider filtersProvider
      * @param  array  $arguments
      * @param  string $key
@@ -130,6 +131,7 @@ class BFINSERT_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @group relay-resp3
      * @return void
      * @requiresRedisBfVersion >= 1.0.0
      */
@@ -145,6 +147,7 @@ class BFINSERT_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @group relay-resp3
      * @return void
      * @requiresRedisBfVersion >= 1.0.0
      */
@@ -178,6 +181,7 @@ class BFINSERT_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @group relay-resp3
      * @dataProvider unexpectedValuesProvider
      * @param  array  $arguments
      * @param  string $expectedExceptionMessage

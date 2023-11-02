@@ -73,6 +73,7 @@ class CMSMERGE_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @group relay-resp3
      * @dataProvider sketchesProvider
      * @param  array  $mergeArguments
      * @param  string $destinationKey
@@ -124,6 +125,7 @@ class CMSMERGE_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @group relay-resp3
      * @return void
      * @requiresRedisBfVersion >= 2.0.0
      */
@@ -142,6 +144,7 @@ class CMSMERGE_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @group relay-resp3
      * @return void
      * @requiresRedisBfVersion >= 2.0.0
      */
@@ -160,6 +163,7 @@ class CMSMERGE_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @group relay-resp3
      * @return void
      * @requiresRedisBfVersion >= 2.0.0
      */

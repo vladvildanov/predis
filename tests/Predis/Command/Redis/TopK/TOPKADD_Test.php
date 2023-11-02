@@ -75,6 +75,7 @@ class TOPKADD_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @group relay-resp3
      * @dataProvider structuresProvider
      * @param  array $reserveArguments
      * @param  array $addArguments
@@ -112,6 +113,7 @@ class TOPKADD_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @group relay-resp3
      * @return void
      * @requiresRedisBfVersion >= 2.0.0
      */
