@@ -87,6 +87,7 @@ class FTSYNDUMP_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @group relay-resp3
      * @return void
      * @requiresRediSearchVersion >= 1.2.0
      */
@@ -116,7 +117,7 @@ class FTSYNDUMP_Test extends PredisCommandTestCase
     public function testDumpReturnsContentOfSynonymGroupFromGivenIndexResp3(): void
     {
         $redis = $this->getResp3Client();
-        $expectedResponse = ['term1', ['synonym1'], 'term2', ['synonym1']];
+        $expectedResponse = ['term1' => ['synonym1'], 'term2' => ['synonym1']];
 
         $this->assertEquals(
             'OK',
@@ -133,6 +134,7 @@ class FTSYNDUMP_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @group relay-incompatible
      * @return void
      * @requiresRediSearchVersion >= 1.2.0
      */

@@ -75,6 +75,7 @@ class BFLOADCHUNK_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @group relay-resp3
      * @return void
      * @requiresRedisBfVersion >= 1.0.0
      */
@@ -147,6 +148,7 @@ class BFLOADCHUNK_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @group relay-resp3
      * @requiresRedisBfVersion >= 1.0.0
      */
     public function testThrowsExceptionOnWrongType(): void
