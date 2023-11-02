@@ -13,6 +13,7 @@
 namespace Predis\Command\Redis\TimeSeries;
 
 use Predis\Command\Command as RedisCommand;
+use Predis\Command\CommandInterface;
 
 /**
  * @see https://redis.io/commands/ts.mrange/
@@ -35,5 +36,13 @@ class TSMRANGE extends RedisCommand
             [$fromTimestamp, $toTimestamp],
             $commandArguments
         ));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCommandMode(): string
+    {
+        return CommandInterface::READ_MODE;
     }
 }
