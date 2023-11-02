@@ -55,7 +55,7 @@ class BFINSERT_Test extends PredisCommandTestCase
      */
     public function testGetKeys(): void
     {
-        $arguments = ['key', 'not_key'];
+        $arguments = ['key', -1, -1, -1, false, false, 'item1', 'item2'];
         $expected = ['key'];
 
         $command = $this->getCommand();

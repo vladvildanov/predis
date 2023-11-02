@@ -55,7 +55,7 @@ class CFINSERT_Test extends PredisCommandTestCase
      */
     public function testGetKeys(): void
     {
-        $arguments = ['key', 'not_key'];
+        $arguments = ['key', -1, false, 'item1'];
         $expected = ['key'];
 
         $command = $this->getCommand();
