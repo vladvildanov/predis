@@ -1456,12 +1456,12 @@ class ClientTest extends PredisTestCase
      * @dataProvider commandsProvider
      * @group connected
      * @group relay-incompatible
-     * @param CommandInterface $writeCommand
-     * @param array $writeCommandArguments
-     * @param CommandInterface $readCommand
-     * @param array $readCommandArguments
-     * @param CommandInterface $overrideCommand
-     * @param array $overrideCommandArguments
+     * @param  CommandInterface $writeCommand
+     * @param  array            $writeCommandArguments
+     * @param  CommandInterface $readCommand
+     * @param  array            $readCommandArguments
+     * @param  CommandInterface $overrideCommand
+     * @param  array            $overrideCommandArguments
      * @return void
      * @requiresRedisVersion >= 7.2.0
      */
@@ -1513,12 +1513,12 @@ class ClientTest extends PredisTestCase
      * @group connected
      * @group relay-incompatible
      * @group realm-stack
-     * @param CommandInterface $writeCommand
-     * @param array $writeCommandArguments
-     * @param CommandInterface $readCommand
-     * @param array $readCommandArguments
-     * @param CommandInterface $overrideCommand
-     * @param array $overrideCommandArguments
+     * @param  CommandInterface $writeCommand
+     * @param  array            $writeCommandArguments
+     * @param  CommandInterface $readCommand
+     * @param  array            $readCommandArguments
+     * @param  CommandInterface $overrideCommand
+     * @param  array            $overrideCommandArguments
      * @return void
      */
     public function testModuleCommandResponseCachedAndInvalidateOnEnabledCache(
