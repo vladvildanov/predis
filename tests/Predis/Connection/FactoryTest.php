@@ -608,6 +608,7 @@ class FactoryTest extends PredisTestCase
         $connection = $factory->create($parameters);
 
         $this->assertInstanceOf(CacheProxyConnection::class, $connection);
+        $this->assertSame(3, $connection->getParameters()->protocol);
     }
 
     // ******************************************************************** //

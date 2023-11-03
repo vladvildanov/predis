@@ -15,6 +15,7 @@ namespace Predis\Connection;
 use PHPUnit\Framework\MockObject\MockObject;
 use Predis\Client;
 use Predis\Command\RawCommand;
+use Predis\CommunicationException;
 use Predis\Response\Error as ErrorResponse;
 
 class StreamConnectionTest extends PredisConnectionTestCase
@@ -213,6 +214,23 @@ class StreamConnectionTest extends PredisConnectionTestCase
 
         $connection->connect();
         $this->assertTrue(true);
+    }
+
+    /**
+     * @group connected
+     * @requiresRedisVersion < 6.2.0
+     */
+    public function testConnectThrowsExceptionOnHelloCommandError(): void
+    {
+        $connection = $this->createConnectionWithParams([]);
+        $connection->addConnectCommand(
+            new RawCommand('HELLO', [3])
+        );
+
+        $this->expectException(CommunicationException::class);
+        $this->expectExceptionMessage("Current version of Redis server does not support RESP3 protocol connection.");
+
+        $connection->connect();
     }
 
     /**
