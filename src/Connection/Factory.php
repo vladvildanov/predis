@@ -159,10 +159,6 @@ class Factory implements FactoryInterface
             $parameters += $this->defaults;
         }
 
-        if (array_key_exists('cache', $parameters) && (bool) $parameters['cache']) {
-            $parameters['protocol'] = 3;
-        }
-
         return new Parameters($parameters);
     }
 
