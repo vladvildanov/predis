@@ -234,6 +234,21 @@ class StreamConnectionTest extends PredisConnectionTestCase
     }
 
     /**
+     * @group connected
+     */
+    public function testConnectThrowsExceptionOnCommandError(): void
+    {
+        $connection = $this->createConnectionWithParams([]);
+        $connection->addConnectCommand(
+            new RawCommand('FOOBAR')
+        );
+
+        $this->expectException(CommunicationException::class);
+
+        $connection->connect();
+    }
+
+    /**
      * @group disconnected
      * @return void
      */
