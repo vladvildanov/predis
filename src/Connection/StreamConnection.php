@@ -238,7 +238,7 @@ class StreamConnection extends AbstractConnection
                 if ($response instanceof ErrorResponseInterface && ($command->getId() === 'CLIENT')) {
                     // Do nothing on CLIENT SETINFO command failure
                 } elseif ($response instanceof ErrorResponseInterface && $command->getId() === 'HELLO') {
-                    $this->onConnectionError("Current version of Redis server does not support RESP3 protocol connection.");
+                    $this->onConnectionError('Current version of Redis server does not support RESP3 protocol connection.');
                 } elseif ($response instanceof ErrorResponseInterface) {
                     $this->onConnectionError("`{$command->getId()}` failed: {$response->getMessage()}", 0);
                 }

@@ -228,7 +228,7 @@ class StreamConnectionTest extends PredisConnectionTestCase
         );
 
         $this->expectException(CommunicationException::class);
-        $this->expectExceptionMessage("Current version of Redis server does not support RESP3 protocol connection.");
+        $this->expectExceptionMessage('Current version of Redis server does not support RESP3 protocol connection.');
 
         $connection->connect();
     }
