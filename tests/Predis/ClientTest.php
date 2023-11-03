@@ -1482,7 +1482,7 @@ class ClientTest extends PredisTestCase
         $overrideCommand->setArguments($overrideCommandArguments);
 
         // 1. Setup client in cache mode and enable RESP3 protocol (required).
-        $client = new Client($this->getParameters(['protocol' => 3, 'cache' => true]));
+        $client = new Client($this->getParameters(['cache' => true]));
         $cacheKey = $readCommand->getId() . '_' . implode('_', $readCommand->getKeys());
 
         // 2. Flush database.
@@ -1538,7 +1538,7 @@ class ClientTest extends PredisTestCase
         $overrideCommand->setArguments($overrideCommandArguments);
 
         // 1. Setup client in cache mode and enable RESP3 protocol (required).
-        $client = new Client($this->getParameters(['protocol' => 3, 'cache' => true]));
+        $client = new Client($this->getParameters(['cache' => true]));
         $cacheKey = $readCommand->getId() . '_' . implode('_', $readCommand->getKeys());
 
         // 2. Flush database.
