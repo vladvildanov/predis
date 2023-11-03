@@ -14,8 +14,30 @@ namespace Predis;
 
 use Iterator;
 use PHPUnit\Framework\MockObject\MockObject;
+use Predis\Command\CommandInterface;
 use Predis\Command\Factory as CommandFactory;
 use Predis\Command\Processor\KeyPrefixProcessor;
+use Predis\Command\Redis\BITCOUNT;
+use Predis\Command\Redis\GEOADD;
+use Predis\Command\Redis\GEODIST;
+use Predis\Command\Redis\HGET;
+use Predis\Command\Redis\HSET;
+use Predis\Command\Redis\Json\JSONGET;
+use Predis\Command\Redis\Json\JSONSET;
+use Predis\Command\Redis\LINDEX;
+use Predis\Command\Redis\LPUSH;
+use Predis\Command\Redis\LSET;
+use Predis\Command\Redis\MGET;
+use Predis\Command\Redis\MSET;
+use Predis\Command\Redis\SADD;
+use Predis\Command\Redis\SET;
+use Predis\Command\Redis\SMEMBERS;
+use Predis\Command\Redis\TimeSeries\TSADD;
+use Predis\Command\Redis\TimeSeries\TSGET;
+use Predis\Command\Redis\XADD;
+use Predis\Command\Redis\XLEN;
+use Predis\Command\Redis\ZADD;
+use Predis\Command\Redis\ZCARD;
 use Predis\Connection\NodeConnectionInterface;
 use Predis\Connection\Parameters;
 use Predis\Connection\ParametersInterface;
@@ -1430,6 +1452,118 @@ class ClientTest extends PredisTestCase
         apcu_clear_cache();
     }
 
+    /**
+     * @dataProvider commandsProvider
+     * @group connected
+     * @group relay-incompatible
+     * @param  CommandInterface $writeCommand
+     * @param  array            $writeCommandArguments
+     * @param  CommandInterface $readCommand
+     * @param  array            $readCommandArguments
+     * @param  CommandInterface $overrideCommand
+     * @param  array            $overrideCommandArguments
+     * @return void
+     * @requiresRedisVersion >= 7.2.0
+     */
+    public function testCommandResponseCachedAndInvalidateOnEnabledCache(
+        CommandInterface $writeCommand,
+        array $writeCommandArguments,
+        CommandInterface $readCommand,
+        array $readCommandArguments,
+        CommandInterface $overrideCommand,
+        array $overrideCommandArguments
+    ): void {
+        $this->assertSame(CommandInterface::READ_MODE, $readCommand->getCommandMode());
+        $this->assertSame(CommandInterface::WRITE_MODE, $writeCommand->getCommandMode());
+        $this->assertSame(CommandInterface::WRITE_MODE, $overrideCommand->getCommandMode());
+
+        $readCommand->setArguments($readCommandArguments);
+        $writeCommand->setArguments($writeCommandArguments);
+        $overrideCommand->setArguments($overrideCommandArguments);
+
+        // 1. Setup client in cache mode and enable RESP3 protocol (required).
+        $client = new Client($this->getParameters(['protocol' => 3, 'cache' => true]));
+        $cacheKey = $readCommand->getId() . '_' . implode('_', $readCommand->getKeys());
+
+        // 2. Flush database.
+        $client->flushdb();
+
+        // 3. Executes write command, make sure that cache flushed as well.
+        $client->executeCommand($writeCommand);
+        $this->assertEquals(0, apcu_cache_info()['num_entries']);
+
+        // 4. Executes read command and cache response. Ensure that response exists in cache.
+        $firstExpectedResponse = $client->executeCommand($readCommand);
+        $this->assertSame($firstExpectedResponse, apcu_fetch($cacheKey));
+
+        // 5. Executes override command and send any other read command to get invalidation from server.
+        $client->executeCommand($overrideCommand);
+        $this->assertNull($client->get('non_existing_key'));
+
+        // 6. Retry read command and make sure that new value cached.
+        // Also check that previous response is different from new one
+        // to make sure that reads perform against server when it's required.
+        $secondExpectedResponse = $client->executeCommand($readCommand);
+        $this->assertSame($secondExpectedResponse, apcu_fetch($cacheKey));
+        $this->assertNotSame($secondExpectedResponse, $firstExpectedResponse);
+    }
+
+    /**
+     * @dataProvider moduleCommandsProvider
+     * @group connected
+     * @group relay-incompatible
+     * @group realm-stack
+     * @param  CommandInterface $writeCommand
+     * @param  array            $writeCommandArguments
+     * @param  CommandInterface $readCommand
+     * @param  array            $readCommandArguments
+     * @param  CommandInterface $overrideCommand
+     * @param  array            $overrideCommandArguments
+     * @return void
+     */
+    public function testModuleCommandResponseCachedAndInvalidateOnEnabledCache(
+        CommandInterface $writeCommand,
+        array $writeCommandArguments,
+        CommandInterface $readCommand,
+        array $readCommandArguments,
+        CommandInterface $overrideCommand,
+        array $overrideCommandArguments
+    ): void {
+        $this->assertSame(CommandInterface::READ_MODE, $readCommand->getCommandMode());
+        $this->assertSame(CommandInterface::WRITE_MODE, $writeCommand->getCommandMode());
+        $this->assertSame(CommandInterface::WRITE_MODE, $overrideCommand->getCommandMode());
+
+        $readCommand->setArguments($readCommandArguments);
+        $writeCommand->setArguments($writeCommandArguments);
+        $overrideCommand->setArguments($overrideCommandArguments);
+
+        // 1. Setup client in cache mode and enable RESP3 protocol (required).
+        $client = new Client($this->getParameters(['protocol' => 3, 'cache' => true]));
+        $cacheKey = $readCommand->getId() . '_' . implode('_', $readCommand->getKeys());
+
+        // 2. Flush database.
+        $client->flushdb();
+
+        // 3. Executes write command, make sure that cache flushed as well.
+        $client->executeCommand($writeCommand);
+        $this->assertEquals(0, apcu_cache_info()['num_entries']);
+
+        // 4. Executes read command and cache response. Ensure that response exists in cache.
+        $firstExpectedResponse = $client->executeCommand($readCommand);
+        $this->assertSame($firstExpectedResponse, apcu_fetch($cacheKey));
+
+        // 5. Executes override command and send any other read command to get invalidation from server.
+        $client->executeCommand($overrideCommand);
+        $this->assertNull($client->get('non_existing_key'));
+
+        // 6. Retry read command and make sure that new value cached.
+        // Also check that previous response is different from new one
+        // to make sure that reads perform against server when it's required.
+        $secondExpectedResponse = $client->executeCommand($readCommand);
+        $this->assertSame($secondExpectedResponse, apcu_fetch($cacheKey));
+        $this->assertNotSame($secondExpectedResponse, $firstExpectedResponse);
+    }
+
     // ******************************************************************** //
     // ---- HELPER METHODS ------------------------------------------------ //
     // ******************************************************************** //
@@ -1484,5 +1618,97 @@ class ClientTest extends PredisTestCase
             ->willReturn($connection);
 
         return $callable;
+    }
+
+    public function commandsProvider(): array
+    {
+        return [
+            'BITCOUNT' => [
+                new SET(),
+                ['key', 'value'],
+                new BITCOUNT(),
+                ['key'],
+                new SET(),
+                ['key', 'value_new'],
+            ],
+            'MGET' => [
+                new MSET(),
+                ['foo', 'value', 'bar', 'value'],
+                new MGET(),
+                ['foo', 'bar'],
+                new SET(),
+                ['bar', 'value_new'],
+            ],
+            'GEODIST' => [
+                new GEOADD(),
+                ['key', 10.12345, 11.12345, 'foo', 12.12345, 13.12345, 'bar'],
+                new GEODIST(),
+                ['key', 'foo', 'bar'],
+                new GEOADD(),
+                ['key', 12.98765, 13.98765, 'bar'],
+            ],
+            'HGET' => [
+                new HSET(),
+                ['key', 'foo', 'bar'],
+                new HGET(),
+                ['key', 'foo'],
+                new HSET(),
+                ['key', 'foo', 'baz'],
+            ],
+            'LINDEX' => [
+                new LPUSH(),
+                ['key', 'foo'],
+                new LINDEX(),
+                ['key', 0],
+                new LSET(),
+                ['key', 0, 'bar'],
+            ],
+            'SMEMBERS' => [
+                new SADD(),
+                ['key', 'member1'],
+                new SMEMBERS(),
+                ['key'],
+                new SADD(),
+                ['key', 'member2'],
+            ],
+            'XLEN' => [
+                new XADD(),
+                ['key', ['foo' => 'bar']],
+                new XLEN(),
+                ['key'],
+                new XADD(),
+                ['key', ['bar' => 'foo']],
+            ],
+            'ZCARD' => [
+                new ZADD(),
+                ['key', 10, 'member1'],
+                new ZCARD(),
+                ['key'],
+                new ZADD(),
+                ['key', 20, 'member2'],
+            ],
+        ];
+    }
+
+    public function moduleCommandsProvider(): array
+    {
+        return [
+            'JSON.GET' => [
+                new JSONSET(),
+                ['key', '$', '{"key":"value"}'],
+                new JSONGET(),
+                ['key'],
+                new JSONSET(),
+                ['key', '$', '{"key1":"value1"}'],
+            ],
+            'TS.GET' => [
+                new TSADD(),
+                ['key', 111111111, 20],
+                new TSGET(),
+                ['key'],
+                new TSADD(),
+                ['key', 222222222, 21],
+            ],
+        ];
     }
 }
