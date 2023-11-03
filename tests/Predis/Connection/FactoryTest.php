@@ -597,8 +597,9 @@ class FactoryTest extends PredisTestCase
     }
 
     /**
-     * @group disconnected
+     * @group connected
      * @return void
+     * @requiresRedisVersion >= 7.2.0
      */
     public function testCreatesCacheProxyConnection(): void
     {
