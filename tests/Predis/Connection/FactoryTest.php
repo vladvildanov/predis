@@ -597,8 +597,9 @@ class FactoryTest extends PredisTestCase
     }
 
     /**
-     * @group disconnected
+     * @group connected
      * @return void
+     * @requiresRedisVersion >= 7.2.0
      */
     public function testCreatesCacheProxyConnection(): void
     {
@@ -608,6 +609,7 @@ class FactoryTest extends PredisTestCase
         $connection = $factory->create($parameters);
 
         $this->assertInstanceOf(CacheProxyConnection::class, $connection);
+        $this->assertSame(3, $connection->getParameters()->protocol);
     }
 
     // ******************************************************************** //

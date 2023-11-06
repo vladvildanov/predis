@@ -1352,7 +1352,7 @@ class ClientTest extends PredisTestCase
      */
     public function testClientCachesResponseOnValidCommand(): void
     {
-        $client = new Client($this->getParameters(['protocol' => 3, 'cache' => true]));
+        $client = new Client($this->getParameters(['cache' => true]));
 
         $this->assertEquals('OK', $client->set('foo', 'bar'));
         $this->assertSame('bar', $client->get('foo'));
@@ -1369,7 +1369,7 @@ class ClientTest extends PredisTestCase
      */
     public function testClusterClientCachesResponseOnValidCommand(): void
     {
-        $client = new Client($this->getDefaultParametersArray(), ['cluster' => 'redis', 'cache' => true, 'parameters' => ['protocol' => 3]]);
+        $client = new Client($this->getDefaultParametersArray(), ['cluster' => 'redis', 'cache' => true]);
 
         $this->assertEquals('OK', $client->set('foo', 'bar'));
         $this->assertSame('bar', $client->get('foo'));
@@ -1385,7 +1385,7 @@ class ClientTest extends PredisTestCase
      */
     public function testClientInvalidateCacheOnInvalidateResponse(): void
     {
-        $client = new Client($this->getParameters(['protocol' => 3, 'cache' => true]));
+        $client = new Client($this->getParameters(['cache' => true]));
 
         $this->assertEquals('OK', $client->set('foo', 'bar'));
         $this->assertSame('bar', $client->get('foo'));
@@ -1410,7 +1410,7 @@ class ClientTest extends PredisTestCase
     {
         $url = 'redis://' . constant('REDIS_SERVER_HOST') .
             ':' . constant('REDIS_SERVER_PORT') . '?database=' . constant('REDIS_SERVER_DBNUM') .
-            '&cache=true&protocol=3';
+            '&cache=true';
 
         $client = new Client($url);
 
@@ -1436,7 +1436,7 @@ class ClientTest extends PredisTestCase
      */
     public function testClusterClientInvalidateCacheOnInvalidateResponse(): void
     {
-        $client = new Client($this->getDefaultParametersArray(), ['cluster' => 'redis', 'cache' => true, 'parameters' => ['protocol' => 3]]);
+        $client = new Client($this->getDefaultParametersArray(), ['cluster' => 'redis', 'cache' => true]);
 
         $this->assertEquals('OK', $client->set('foo', 'bar'));
         $this->assertSame('bar', $client->get('foo'));
@@ -1482,7 +1482,7 @@ class ClientTest extends PredisTestCase
         $overrideCommand->setArguments($overrideCommandArguments);
 
         // 1. Setup client in cache mode and enable RESP3 protocol (required).
-        $client = new Client($this->getParameters(['protocol' => 3, 'cache' => true]));
+        $client = new Client($this->getParameters(['cache' => true]));
         $cacheKey = $readCommand->getId() . '_' . implode('_', $readCommand->getKeys());
 
         // 2. Flush database.
@@ -1538,7 +1538,7 @@ class ClientTest extends PredisTestCase
         $overrideCommand->setArguments($overrideCommandArguments);
 
         // 1. Setup client in cache mode and enable RESP3 protocol (required).
-        $client = new Client($this->getParameters(['protocol' => 3, 'cache' => true]));
+        $client = new Client($this->getParameters(['cache' => true]));
         $cacheKey = $readCommand->getId() . '_' . implode('_', $readCommand->getKeys());
 
         // 2. Flush database.
