@@ -142,10 +142,13 @@ class ConnectionsTest extends PredisTestCase
         /** @var \Predis\Configuration\OptionsInterface|\PHPUnit\Framework\MockObject\MockObject\MockObject */
         $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
         $options
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('defined')
-            ->with('parameters')
-            ->willReturn(true);
+            ->withConsecutive(
+                ['parameters'],
+                ['cache']
+            )
+            ->willReturnOnConsecutiveCalls(true, false);
         $options
             ->expects($this->once())
             ->method('__get')
@@ -156,6 +159,58 @@ class ConnectionsTest extends PredisTestCase
         $factory = $option->getDefault($options);
 
         $this->assertSame($parameters, $factory->getDefaultParameters());
+    }
+
+    /**
+     * @group disconnected
+     */
+    public function testSetResp3ProtocolOnCacheEnabled(): void
+    {
+        $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
+        $options
+            ->expects($this->exactly(2))
+            ->method('defined')
+            ->withConsecutive(
+                ['parameters'],
+                ['cache']
+            )
+            ->willReturnOnConsecutiveCalls(false, true);
+        $options
+            ->expects($this->once())
+            ->method('__get')
+            ->with('cache')
+            ->willReturn(true);
+
+        $option = new Connections();
+        $factory = $option->getDefault($options);
+
+        $this->assertSame(3, $factory->getDefaultParameters()['protocol']);
+    }
+
+    /**
+     * @group disconnected
+     */
+    public function testDoNotSetProtocolOnCacheDisabled(): void
+    {
+        $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
+        $options
+            ->expects($this->exactly(2))
+            ->method('defined')
+            ->withConsecutive(
+                ['parameters'],
+                ['cache']
+            )
+            ->willReturnOnConsecutiveCalls(false, true);
+        $options
+            ->expects($this->once())
+            ->method('__get')
+            ->with('cache')
+            ->willReturn(false);
+
+        $option = new Connections();
+        $factory = $option->getDefault($options);
+
+        $this->assertEmpty($factory->getDefaultParameters());
     }
 
     /**

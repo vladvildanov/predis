@@ -124,10 +124,17 @@ class Connections implements OptionInterface
     public function getDefault(OptionsInterface $options)
     {
         $factory = new Factory();
+        $parameters = [];
 
         if ($options->defined('parameters')) {
-            $factory->setDefaultParameters($options->parameters);
+            $parameters = $options->parameters;
         }
+
+        if ($options->defined('cache') && (bool) $options->cache) {
+            $parameters = array_merge($parameters, ['protocol' => 3]);
+        }
+
+        $factory->setDefaultParameters($parameters);
 
         return $factory;
     }
