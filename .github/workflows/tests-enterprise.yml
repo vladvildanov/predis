@@ -41,7 +41,8 @@ jobs:
           export OSS_CLUSTER=false
           export DB_PORT=6379
 
-          ./redis-ee/build.sh
+          cd redis-ee/
+          ./build.sh
 
       - name: Checkout repository
         uses: actions/checkout@v3
