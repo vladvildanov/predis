@@ -105,6 +105,7 @@ class SUNIONSTORE_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testStoresMembersOfSetOnSingleSet(): void
     {
@@ -119,6 +120,7 @@ class SUNIONSTORE_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testStoresMembersOfSetOnSingleSetResp3(): void
     {
@@ -132,6 +134,7 @@ class SUNIONSTORE_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testStoresUnionOfMultipleSets(): void
     {
@@ -150,6 +153,7 @@ class SUNIONSTORE_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnWrongTypeOfSourceKey(): void
     {

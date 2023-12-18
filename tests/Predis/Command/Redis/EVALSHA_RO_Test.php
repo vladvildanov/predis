@@ -67,6 +67,7 @@ class EVALSHA_RO_Test extends PredisCommandTestCase
      * @param  mixed  $expectedResponse
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testExecutesReadOnlyCachedScripts(
         string $script,
@@ -85,6 +86,7 @@ class EVALSHA_RO_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testExecutesReadOnlyCachedScriptsResp3(): void
     {
@@ -99,6 +101,7 @@ class EVALSHA_RO_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testThrowsErrorOnWriteScriptExecution(): void
     {

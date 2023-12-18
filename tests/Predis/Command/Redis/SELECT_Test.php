@@ -58,6 +58,7 @@ class SELECT_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testCanSelectDifferentDatabase(): void
     {

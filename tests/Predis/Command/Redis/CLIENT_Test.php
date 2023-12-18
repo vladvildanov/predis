@@ -271,6 +271,7 @@ BUFFER;
     /**
      * @group connected
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testNoEvictTurnEnableEvictionMode(): void
     {

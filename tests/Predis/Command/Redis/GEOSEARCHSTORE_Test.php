@@ -90,6 +90,7 @@ class GEOSEARCHSTORE_Test extends PredisCommandTestCase
      * @param  array         $expectedResponse
      * @return void
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testStoresCorrectGivenGeospatialCoordinates(
         array $firstCoordinates,
@@ -129,6 +130,7 @@ class GEOSEARCHSTORE_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testStoresInSortedSetWithStoreDistArgumentProvided(): void
     {
@@ -157,6 +159,7 @@ class GEOSEARCHSTORE_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testStoresInSortedSetWithStoreDistArgumentProvidedResp3(): void
     {
@@ -189,6 +192,7 @@ class GEOSEARCHSTORE_Test extends PredisCommandTestCase
      * @param  string $expectedExceptionMessage
      * @return void
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnUnexpectedValueProvided(
         array $arguments,

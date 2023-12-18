@@ -54,6 +54,8 @@ abstract class PredisTestCase extends \PHPUnit\Framework\TestCase
         foreach ($this->modulesMapping as $module => $config) {
             $this->checkRequiredRedisModuleVersion($module);
         }
+
+        $this->markTestSkippedOnEnterpriseEnvironment();
     }
 
     /**
@@ -558,6 +560,23 @@ abstract class PredisTestCase extends \PHPUnit\Framework\TestCase
     {
         if (getenv('GITHUB_ACTIONS') || getenv('TRAVIS')) {
             $this->markTestSkipped($message);
+        }
+    }
+
+    /**
+     * Marks current test skipped in Redis Enterprise environment.
+     */
+    protected function markTestSkippedOnEnterpriseEnvironment(): void
+    {
+        $annotations = TestUtil::parseTestMethodAnnotations(
+            get_class($this),
+            $this->getName(false)
+        );
+
+        $annotationExists = isset($annotations['method']['skipEnterprise']);
+
+        if ($annotationExists && getenv('REDIS_ENTERPRISE')) {
+            $this->markTestSkipped('Test skipped on Redis Enterprise environment.');
         }
     }
 

@@ -78,6 +78,7 @@ class ACL_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testSetUserCreatesACLUser(): void
     {
@@ -90,6 +91,7 @@ class ACL_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testSetUserResp3(): void
     {
@@ -102,6 +104,7 @@ class ACL_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testDryRunSimulateExecutionOfGivenCommandByUser(): void
     {
@@ -122,6 +125,7 @@ class ACL_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testDryRunResp3(): void
     {
@@ -138,6 +142,7 @@ class ACL_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testGetUserReturnsUserDefinedRules(): void
     {
@@ -164,6 +169,7 @@ class ACL_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testGetUserResp3(): void
     {

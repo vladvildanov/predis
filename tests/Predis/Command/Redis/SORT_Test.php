@@ -223,6 +223,7 @@ class SORT_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testSortWithStoreModifier(): void
     {

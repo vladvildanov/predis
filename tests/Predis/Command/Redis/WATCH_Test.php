@@ -93,6 +93,7 @@ class WATCH_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 2.2.0
+     * @skipEnterprise
      */
     public function testAbortsTransactionOnExternalWriteOperations(): void
     {
@@ -112,6 +113,7 @@ class WATCH_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testAbortsTransactionOnExternalWriteOperationsResp3(): void
     {

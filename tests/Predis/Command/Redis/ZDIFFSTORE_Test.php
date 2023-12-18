@@ -75,6 +75,7 @@ class ZDIFFSTORE_Test extends PredisCommandTestCase
      * @param  int   $expectedResultingElements
      * @return void
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testStoresDifferenceBetweenSortedSets(
         array $firstSetDictionary,
@@ -96,6 +97,7 @@ class ZDIFFSTORE_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testStoresDifferenceBetweenSortedSetsResp3(): void
     {

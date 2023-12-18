@@ -109,6 +109,7 @@ class MIGRATE_Test extends PredisCommandTestCase
      * @group connected
      * @group relay-incompatible
      * @requiresRedisVersion >= 2.6.0
+     * @skipEnterprise
      */
     public function testReturnsStatusNOKEYOnNonExistingKey(): void
     {
@@ -122,6 +123,7 @@ class MIGRATE_Test extends PredisCommandTestCase
      * @group connected
      * @group relay-incompatible
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testReturnsStatusNOKEYOnNonExistingKeyResp3(): void
     {
@@ -135,6 +137,7 @@ class MIGRATE_Test extends PredisCommandTestCase
      * @group connected
      * @group ext-relay
      * @requiresRedisVersion >= 2.6.0
+     * @skipEnterprise
      */
     public function testReturnsStatusNOKEYOnNonExistingKeyUsingRelay(): void
     {
@@ -147,6 +150,7 @@ class MIGRATE_Test extends PredisCommandTestCase
      * @group connected
      * @requiresRedisVersion >= 2.6.0
      * @group slow
+     * @skipEnterprise
      */
     public function testReturnsErrorOnUnreacheableDestination(): void
     {

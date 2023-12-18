@@ -95,6 +95,7 @@ class MOVE_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @todo Should be improved, this test fails when REDIS_SERVER_DBNUM is 0.
+     * @skipEnterprise
      */
     public function testMovesKeysToDifferentDatabases(): void
     {
@@ -115,6 +116,7 @@ class MOVE_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testMovesKeysToDifferentDatabasesResp3(): void
     {
@@ -134,6 +136,7 @@ class MOVE_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnInvalidDatabases(): void
     {

@@ -93,6 +93,7 @@ class XREADGROUP_Test extends PredisCommandTestCase
      * @group relay-incompatible
      * @return void
      * @requiresRedisVersion >= 5.0.0
+     * @skipEnterprise
      */
     public function testReadsFromConsumerGroupFromMultipleStreams(): void
     {

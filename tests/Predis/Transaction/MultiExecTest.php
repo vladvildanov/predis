@@ -86,8 +86,6 @@ class MultiExecTest extends PredisTestCase
         $this->expectExceptionMessage('UNWATCH is not supported by the current command factory.');
 
         $commands = $this->getMockBuilder('Predis\Command\FactoryInterface')->getMock();
-
-        $commands = $this->getMockBuilder('Predis\Command\FactoryInterface')->getMock();
         $commands
             ->expects($this->exactly(2))
             ->method('supports')
@@ -806,6 +804,7 @@ class MultiExecTest extends PredisTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 2.2.0
+     * @skipEnterprise
      */
     public function testIntegrationCheckAndSetWithDiscardAndRetry(): void
     {

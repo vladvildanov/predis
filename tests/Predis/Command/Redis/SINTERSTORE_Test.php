@@ -105,6 +105,7 @@ class SINTERSTORE_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testStoresMembersOfSetOnSingleKey(): void
     {
@@ -119,6 +120,7 @@ class SINTERSTORE_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testStoresMembersOfSetOnSingleKeyResp3(): void
     {
@@ -132,6 +134,7 @@ class SINTERSTORE_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testDoesNotStoreOnNonExistingSetForIntersection(): void
     {
@@ -145,6 +148,7 @@ class SINTERSTORE_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testStoresIntersectionOfMultipleSets(): void
     {
@@ -163,6 +167,7 @@ class SINTERSTORE_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnWrongTypeOfSourceKey(): void
     {

@@ -87,6 +87,7 @@ class MSETNX_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testCreatesMultipleKeys(): void
     {
@@ -100,6 +101,7 @@ class MSETNX_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testCreatesMultipleKeysResp3(): void
     {
@@ -112,6 +114,7 @@ class MSETNX_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testCreatesMultipleKeysAndPreservesExistingOnes(): void
     {

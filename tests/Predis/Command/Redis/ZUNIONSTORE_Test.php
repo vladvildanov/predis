@@ -101,6 +101,7 @@ class ZUNIONSTORE_Test extends PredisCommandTestCase
      * @param  array  $expectedResultSortedSet
      * @return void
      * @requiresRedisVersion >= 2.0.0
+     * @skipEnterprise
      */
     public function testStoresUnionValuesOnSortedSets(
         array $firstSortedSet,
@@ -134,6 +135,7 @@ class ZUNIONSTORE_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testStoresUnionValuesOnSortedSetsResp3(): void
     {
@@ -154,6 +156,7 @@ class ZUNIONSTORE_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 2.0.0
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnWrongType(): void
     {
@@ -174,6 +177,7 @@ class ZUNIONSTORE_Test extends PredisCommandTestCase
      * @param  string $aggregate
      * @param  string $expectedExceptionMessage
      * @return void
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnUnexpectedValueGiven(
         string $destination,

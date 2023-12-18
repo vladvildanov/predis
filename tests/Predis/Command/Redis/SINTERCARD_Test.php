@@ -92,6 +92,7 @@ class SINTERCARD_Test extends PredisCommandTestCase
      * @param  int   $expectedCardinality
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testReturnsCorrectCardinalityOfGivenSetIntersection(
         array $firstSet,
@@ -112,6 +113,7 @@ class SINTERCARD_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testReturnsCorrectCardinalityOfGivenSetIntersectionResp3(): void
     {
@@ -130,6 +132,7 @@ class SINTERCARD_Test extends PredisCommandTestCase
      * @param  string $expectedExceptionMessage
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnUnexpectedValuesGiven(
         array $arguments,
@@ -147,6 +150,7 @@ class SINTERCARD_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnWrongType(): void
     {

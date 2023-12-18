@@ -87,6 +87,7 @@ class ZINTERCARD_Test extends PredisCommandTestCase
      * @param  int   $expectedResponse
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testReturnsIntersectionCardinalityOnSortedSets(
         array $firstSortedSet,
@@ -106,6 +107,7 @@ class ZINTERCARD_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testReturnsIntersectionCardinalityOnSortedSetsResp3(): void
     {
@@ -121,6 +123,7 @@ class ZINTERCARD_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testReturnsIntersectionCardinalityZeroOnEmptySortedSetGiven(): void
     {
@@ -135,6 +138,7 @@ class ZINTERCARD_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnWrongType(): void
     {
@@ -155,6 +159,7 @@ class ZINTERCARD_Test extends PredisCommandTestCase
      * @param  string $expectedExceptionMessage
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnUnexpectedValueGiven(
         $keys,

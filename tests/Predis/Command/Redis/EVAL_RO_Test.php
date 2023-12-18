@@ -93,6 +93,7 @@ class EVAL_RO_Test extends PredisCommandTestCase
      * @param  mixed  $expectedResponse
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testExecutesReadOnlyCommandsFromGivenLuaScript(
         array $dictionary,
@@ -112,6 +113,7 @@ class EVAL_RO_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testExecutesReadOnlyCommandsFromGivenLuaScriptResp3(): void
     {
@@ -126,6 +128,7 @@ class EVAL_RO_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testThrowsErrorOnWriteCommandProvided(): void
     {

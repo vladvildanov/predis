@@ -54,6 +54,7 @@ class COPY_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testSuccessfullyCopyValueOnNonExistingDestinationKey(): void
     {
@@ -70,6 +71,7 @@ class COPY_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testSuccessfullyCopyValueOnNonExistingDestinationKeyResp3(): void
     {
@@ -86,6 +88,7 @@ class COPY_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testSuccessfullyCopyValueFromSourceToAnotherDb(): void
     {
@@ -107,6 +110,7 @@ class COPY_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testDoNotCopyValueOnAlreadyExistingDestinationKey(): void
     {
@@ -124,6 +128,7 @@ class COPY_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testSuccessfullyCopyValueWithReplaceArgumentOnAlreadyExistingDestinationKey(): void
     {
