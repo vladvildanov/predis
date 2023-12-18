@@ -1334,6 +1334,7 @@ class ClientTest extends PredisTestCase
      * @group connected
      * @group relay-incompatible
      * @requiresRedisVersion >= 7.2.0
+     * @skipEnterprise
      */
     public function testSetClientInfoOnConnection(): void
     {
