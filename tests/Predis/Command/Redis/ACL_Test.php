@@ -196,6 +196,7 @@ class ACL_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testSetUserThrowsExceptionOnIncorrectRuleProvided(): void
     {

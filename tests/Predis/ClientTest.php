@@ -1341,8 +1341,8 @@ class ClientTest extends PredisTestCase
         $libName = $client->client('LIST')[0]['lib-name'];
         $libVer = $client->client('LIST')[0]['lib-ver'];
 
-        $this->assertSame('predis', $libName);
-        $this->assertSame(Client::VERSION, $libVer);
+        $this->assertEquals('predis', $libName);
+        $this->assertEquals(Client::VERSION, $libVer);
     }
 
     /**
