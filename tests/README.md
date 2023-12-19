@@ -65,7 +65,7 @@ OSS Cluster environment that are using, located in this repo within `docker/unst
 `docker-compose up -d` and you're good to go.
 
 Redis Enterprise environment (included OSS cluster) located in the separate repository
-[here](https://github.com/vladvildanov/redis-ee-docker). Follow the README.md instructions.
+[here](https://github.com/RedisLabs/redis-ee-docker). Follow the README.md instructions.
 
 If your test should be run against cluster you should add `@group cluster` annotation on it.
 However, if you need to skip a test on Enterprise environment just use `@skipEnterprise` annotation.

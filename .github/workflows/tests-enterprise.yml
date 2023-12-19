@@ -24,7 +24,7 @@ jobs:
     steps:
       - name: Clone Redis EE docker repository
         run: |
-          git clone https://github.com/vladvildanov/redis-ee-docker.git redis-ee
+          git clone https://github.com/RedisLabs/redis-ee-docker.git redis-ee
 
       - name: Install Docker-compose
         run: |
@@ -74,7 +74,7 @@ jobs:
     steps:
       - name: Clone Redis EE docker repository
         run: |
-          git clone https://github.com/vladvildanov/redis-ee-docker.git redis-ee
+          git clone https://github.com/RedisLabs/redis-ee-docker.git redis-ee
 
       - name: Install Docker-compose
         run: |
