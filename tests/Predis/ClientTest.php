@@ -979,7 +979,7 @@ class ClientTest extends PredisTestCase
      */
     public function testGetClientByMethodSupportsSelectingConnectionByCommand(): void
     {
-        $command = \Predis\Command\RawCommand::create('GET', 'key');
+        $command = Command\RawCommand::create('GET', 'key');
         $connection = $this->getMockBuilder('Predis\Connection\ConnectionInterface')->getMock();
 
         $aggregate = $this->getMockBuilder('Predis\Connection\AggregateConnectionInterface')
@@ -1286,7 +1286,7 @@ class ClientTest extends PredisTestCase
         $connection2 = $this->getMockConnection('tcp://127.0.0.1:6382');
         $connection3 = $this->getMockConnection('tcp://127.0.0.1:6383');
 
-        $aggregate = new \Predis\Connection\Cluster\PredisCluster(new Parameters());
+        $aggregate = new Connection\Cluster\PredisCluster(new Parameters());
 
         $aggregate->add($connection1);
         $aggregate->add($connection2);
