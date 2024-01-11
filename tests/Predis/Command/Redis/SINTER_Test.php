@@ -121,6 +121,7 @@ class SINTER_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testReturnsMembersOfSetOnSingleKey(): void
     {
@@ -134,6 +135,7 @@ class SINTER_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testReturnsMembersOfSetOnSingleKeyResp3(): void
     {
@@ -146,6 +148,7 @@ class SINTER_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testReturnsEmptyArrayOnNonExistingSetForIntersection(): void
     {
@@ -158,6 +161,7 @@ class SINTER_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testReturnsMembersFromIntersectionAmongSets(): void
     {
@@ -173,6 +177,7 @@ class SINTER_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnWrongType(): void
     {

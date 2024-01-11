@@ -271,6 +271,7 @@ BUFFER;
     /**
      * @group connected
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testNoEvictTurnEnableEvictionMode(): void
     {
@@ -312,7 +313,7 @@ BUFFER;
      */
     public function testToggleInvalidatedKeysTracking(): void
     {
-        $redis = $this->getClient();
+        $redis = $this->getResp3Client();
 
         $options = (new ClientTrackingOptions())
             ->broadcast()
@@ -348,7 +349,7 @@ BUFFER;
      */
     public function testGetTrackingInfo(): void
     {
-        $redis = $this->getClient();
+        $redis = $this->getResp3Client();
         $expectedResponse = ['flags' => ['on', 'bcast', 'noloop'], 'redirect' => 0, 'prefixes' => ['bar:', 'foo:']];
 
         $options = (new ClientTrackingOptions())
@@ -388,7 +389,7 @@ BUFFER;
      */
     public function testToggleManuallyCachingKeys(): void
     {
-        $redis = $this->getClient();
+        $redis = $this->getResp3Client();
 
         $options = (new ClientTrackingOptions())
             ->optIn()

@@ -117,6 +117,7 @@ class ZMPOP_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testReturnsPoppedElementsFromFirstNonEmptySortedSet(): void
     {

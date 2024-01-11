@@ -89,6 +89,7 @@ class LCS_Test extends PredisCommandTestCase
      * @param  mixed $expectedResponse
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testReturnsLongestCommonSubsequenceFromGivenStrings(
         array $stringsArguments,
@@ -106,6 +107,7 @@ class LCS_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testReturnsLongestCommonSubsequenceFromGivenStringsResp3(): void
     {

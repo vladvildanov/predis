@@ -17,7 +17,7 @@ if (PHP_SAPI !== 'fpm-fcgi') {
 }
 
 // 1. Create client with enabled cache and RESP3 connection mode.
-$client = new \Predis\Client(['cache' => true]);
+$client = new Predis\Client(['cache' => true]);
 $client->flushall();
 
 // 2. Set key into Redis storage.

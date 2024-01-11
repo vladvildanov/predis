@@ -84,6 +84,7 @@ class CONFIG_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 2.0.0
+     * @skipEnterprise
      */
     public function testReturnsListOfConfigurationValues(): void
     {
@@ -99,6 +100,7 @@ class CONFIG_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testReturnsListOfConfigurationValuesResp3(): void
     {
@@ -114,6 +116,7 @@ class CONFIG_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 2.0.0
+     * @skipEnterprise
      */
     public function testReturnsListOfOneConfigurationEntry(): void
     {
@@ -138,6 +141,7 @@ class CONFIG_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 2.0.0
+     * @skipEnterprise
      */
     public function testReturnsTrueOnSuccessfulConfiguration(): void
     {
@@ -155,6 +159,7 @@ class CONFIG_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testReturnsTrueOnSuccessfulConfigurationResp3(): void
     {
@@ -172,6 +177,7 @@ class CONFIG_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 2.0.0
+     * @skipEnterprise
      */
     public function testThrowsExceptionWhenSettingUnknownConfiguration(): void
     {
@@ -192,6 +198,7 @@ class CONFIG_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 2.0.0
+     * @skipEnterprise
      */
     public function testReturnsTrueOnResetstat(): void
     {
@@ -203,6 +210,7 @@ class CONFIG_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testReturnsTrueOnResetstatResp3(): void
     {

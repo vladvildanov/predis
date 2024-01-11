@@ -97,6 +97,7 @@ class ZINTER_Test extends PredisCommandTestCase
      * @param  array  $expectedResponse
      * @return void
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testReturnsIntersectedValuesOnSortedSets(
         array $firstSortedSet,
@@ -125,6 +126,7 @@ class ZINTER_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testReturnsIntersectedValuesOnSortedSetsResp3(): void
     {
@@ -141,6 +143,7 @@ class ZINTER_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnWrongType(): void
     {
@@ -162,6 +165,7 @@ class ZINTER_Test extends PredisCommandTestCase
      * @param  string $expectedExceptionMessage
      * @return void
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnUnexpectedValueGiven(
         $keys,

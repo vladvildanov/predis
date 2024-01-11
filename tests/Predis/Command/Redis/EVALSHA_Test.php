@@ -87,6 +87,7 @@ class EVALSHA_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 2.6.0
+     * @skipEnterprise
      */
     public function testExecutesSpecifiedLuaScript(): void
     {
@@ -103,6 +104,7 @@ class EVALSHA_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testExecutesSpecifiedLuaScriptResp3(): void
     {
@@ -119,6 +121,7 @@ class EVALSHA_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 2.6.0
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnWrongNumberOfKeys(): void
     {
@@ -136,6 +139,7 @@ class EVALSHA_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 2.6.0
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnInvalidScript(): void
     {

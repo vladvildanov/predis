@@ -37,6 +37,7 @@ class BZPOPMAX_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 5.0.0
+     * @skipEnterprise
      */
     public function testReturnsPoppedMaxElementFromGivenNonEmptySortedSet(): void
     {
@@ -55,6 +56,7 @@ class BZPOPMAX_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testReturnsPoppedMaxElementFromGivenNonEmptySortedSetResp3(): void
     {
@@ -73,6 +75,7 @@ class BZPOPMAX_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 5.0.0
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnUnexpectedValueGiven(): void
     {
@@ -87,6 +90,7 @@ class BZPOPMAX_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 5.0.0
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnWrongType(): void
     {

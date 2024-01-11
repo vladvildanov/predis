@@ -97,6 +97,7 @@ class UNWATCH_Test extends PredisCommandTestCase
      * @group connected
      * @group relay-incompatible
      * @requiresRedisVersion >= 2.2.0
+     * @skipEnterprise
      */
     public function testCanBeCalledInsideTransaction(): void
     {

@@ -91,6 +91,7 @@ class RPOPLPUSH_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testReturnsElementPoppedFromSourceAndPushesToDestination(): void
     {
@@ -109,6 +110,7 @@ class RPOPLPUSH_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testReturnsElementPoppedFromSourceAndPushesToDestinationResp3(): void
     {
@@ -126,6 +128,7 @@ class RPOPLPUSH_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testReturnsElementPoppedFromSourceAndPushesToSelf(): void
     {
@@ -142,6 +145,7 @@ class RPOPLPUSH_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testReturnsNullOnEmptySource(): void
     {
@@ -152,6 +156,7 @@ class RPOPLPUSH_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnWrongTypeOfSourceKey(): void
     {
@@ -166,6 +171,7 @@ class RPOPLPUSH_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnWrongTypeOfDestinationKey(): void
     {

@@ -92,6 +92,7 @@ class RENAMENX_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testRenamesKeys(): void
     {
@@ -107,6 +108,7 @@ class RENAMENX_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testRenamesKeysResp3(): void
     {
@@ -121,6 +123,7 @@ class RENAMENX_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testThrowsExceptionWhenRenamingNonExistingKeys(): void
     {

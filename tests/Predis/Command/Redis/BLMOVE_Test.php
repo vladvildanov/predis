@@ -66,6 +66,7 @@ class BLMOVE_Test extends PredisCommandTestCase
      * @param  array  $expectedModifiedSecondList
      * @return void
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testReturnsCorrectListElement(
         array $firstList,
@@ -92,6 +93,7 @@ class BLMOVE_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testReturnsCorrectListElementResp3(): void
     {
@@ -123,6 +125,7 @@ class BLMOVE_Test extends PredisCommandTestCase
      * @param  array  $expectedModifiedList
      * @return void
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testReturnsCorrectListElementAndListRotationPerformedOnTheSameListOperation(
         array $list,
@@ -145,6 +148,7 @@ class BLMOVE_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnWrongType(): void
     {

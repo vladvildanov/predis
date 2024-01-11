@@ -94,6 +94,7 @@ class SMOVE_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testReturnsMemberExistenceInSet(): void
     {
@@ -111,6 +112,7 @@ class SMOVE_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testReturnsMemberExistenceInSetResp3(): void
     {
@@ -127,6 +129,7 @@ class SMOVE_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnWrongTypeOfSourceKey(): void
     {
@@ -142,6 +145,7 @@ class SMOVE_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnWrongTypeOfDestinationKey(): void
     {

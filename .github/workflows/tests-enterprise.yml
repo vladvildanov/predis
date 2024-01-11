@@ -1,0 +1,103 @@
+name: Tests Enterprise
+
+on:
+  push:
+    branches:
+      - main
+      - v2.**
+      - v3.**
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  predis-enterprise:
+    name: PHP 8.0 (Redis EE)
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+
+    steps:
+      - name: Clone Redis EE docker repository
+        run: |
+          git clone https://github.com/RedisLabs/redis-ee-docker.git redis-ee
+
+      - name: Build cluster
+        env:
+          IMAGE: redislabs/redis-internal:100.0.1-64956
+          RE_USERNAME: test@test.com
+          RE_PASS: 12345
+          RE_CLUSTER_NAME: test
+          RE_USE_OSS_CLUSTER: false
+          RE_DB_PORT: 6379
+          DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          cd redis-ee/
+          ./build.sh
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup PHP with Composer and extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.0
+          extensions: relay, apcu
+          ini-values: apc.enable_cli=1
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v2
+        with:
+          dependency-versions: highest
+
+      - name: Run tests
+        run: vendor/bin/phpunit -c phpunit.enterprise.xml
+
+  predis-enterprise-oss-cluster:
+    name: PHP 8.0 (Redis EE OSS Cluster)
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+
+    steps:
+      - name: Clone Redis EE docker repository
+        run: |
+          git clone https://github.com/RedisLabs/redis-ee-docker.git redis-ee
+
+      - name: Build cluster
+        env:
+          IMAGE: redislabs/redis-internal:100.0.1-64956
+          RE_USERNAME: test@test.com
+          RE_PASS: 12345
+          RE_CLUSTER_NAME: test
+          RE_USE_OSS_CLUSTER: true
+          RE_DB_PORT: 6378
+          DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          cd redis-ee/
+          ./build.sh
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup PHP with Composer and extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.0
+          extensions: relay, apcu
+          ini-values: apc.enable_cli=1
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v2
+        with:
+          dependency-versions: highest
+
+      - name: Run tests
+        run: vendor/bin/phpunit -c phpunit.enterprise.xml --group cluster

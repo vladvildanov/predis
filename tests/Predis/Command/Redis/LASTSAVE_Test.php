@@ -55,6 +55,7 @@ class LASTSAVE_Test extends PredisCommandTestCase
 
     /**
      * @group connected
+     * @skipEnterprise
      */
     public function testReturnsIntegerValue(): void
     {
@@ -66,6 +67,7 @@ class LASTSAVE_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testReturnsIntegerValueResp3(): void
     {

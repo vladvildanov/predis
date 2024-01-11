@@ -104,6 +104,7 @@ class SCAN_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 2.8.0
+     * @skipEnterprise
      */
     public function testScanWithoutMatch(): void
     {
@@ -120,6 +121,7 @@ class SCAN_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testScanWithoutMatchResp3(): void
     {
@@ -136,6 +138,7 @@ class SCAN_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 2.8.0
+     * @skipEnterprise
      */
     public function testScanWithMatchingKeys(): void
     {
@@ -152,6 +155,7 @@ class SCAN_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 2.8.0
+     * @skipEnterprise
      */
     public function testScanWithNoMatchingKeys(): void
     {

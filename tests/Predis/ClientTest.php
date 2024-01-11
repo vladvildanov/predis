@@ -979,7 +979,7 @@ class ClientTest extends PredisTestCase
      */
     public function testGetClientByMethodSupportsSelectingConnectionByCommand(): void
     {
-        $command = \Predis\Command\RawCommand::create('GET', 'key');
+        $command = Command\RawCommand::create('GET', 'key');
         $connection = $this->getMockBuilder('Predis\Connection\ConnectionInterface')->getMock();
 
         $aggregate = $this->getMockBuilder('Predis\Connection\AggregateConnectionInterface')
@@ -1286,7 +1286,7 @@ class ClientTest extends PredisTestCase
         $connection2 = $this->getMockConnection('tcp://127.0.0.1:6382');
         $connection3 = $this->getMockConnection('tcp://127.0.0.1:6383');
 
-        $aggregate = new \Predis\Connection\Cluster\PredisCluster(new Parameters());
+        $aggregate = new Connection\Cluster\PredisCluster(new Parameters());
 
         $aggregate->add($connection1);
         $aggregate->add($connection2);
@@ -1334,6 +1334,7 @@ class ClientTest extends PredisTestCase
      * @group connected
      * @group relay-incompatible
      * @requiresRedisVersion >= 7.2.0
+     * @skipEnterprise
      */
     public function testSetClientInfoOnConnection(): void
     {
@@ -1341,8 +1342,8 @@ class ClientTest extends PredisTestCase
         $libName = $client->client('LIST')[0]['lib-name'];
         $libVer = $client->client('LIST')[0]['lib-ver'];
 
-        $this->assertSame('predis', $libName);
-        $this->assertSame(Client::VERSION, $libVer);
+        $this->assertEquals('predis', $libName);
+        $this->assertEquals(Client::VERSION, $libVer);
     }
 
     /**

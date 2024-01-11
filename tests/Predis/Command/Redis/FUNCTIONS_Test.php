@@ -330,6 +330,7 @@ class FUNCTIONS_Test extends PredisCommandTestCase
      * @group relay-incompatible
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testListReturnsListOfAvailableFunctions(): void
     {
@@ -357,6 +358,7 @@ class FUNCTIONS_Test extends PredisCommandTestCase
      * @group relay-incompatible
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testStatsReturnsInformationAboutRunningScript(): void
     {

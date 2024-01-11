@@ -53,6 +53,23 @@ disable integration tests by excluding the __connected__ group:
 $ phpunit --exclude-group connected
 ```
 
+### Testing environments ####
+
+Our tests are running against multiple environments in CI (Redis single instance, Redis OSS cluster,
+Redis Enterprise, Redis Enterprise OSS Cluster).
+
+Single redis instance is easy to get, you could visit official [repository](https://github.com/redis/redis) or find
+docker images on [DockerHub](https://hub.docker.com/_/redis).
+
+OSS Cluster environment that are using, located in this repo within `docker/unstable_cluster` directory. Just run
+`docker-compose up -d` and you're good to go.
+
+Redis Enterprise environment (included OSS cluster) located in the separate repository
+[here](https://github.com/RedisLabs/redis-ee-docker). Follow the README.md instructions.
+
+If your test should be run against cluster you should add `@group cluster` annotation on it.
+However, if you need to skip a test on Enterprise environment just use `@skipEnterprise` annotation.
+
 ### Slow tests ###
 
 Certain tests can slow down the execution of the suite. These tests can be disabled by excluding the

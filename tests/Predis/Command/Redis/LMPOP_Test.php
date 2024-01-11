@@ -84,6 +84,7 @@ class LMPOP_Test extends PredisCommandTestCase
      * @param  array      $expectedModifiedList
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testPopElementsFromGivenList(
         array $listArguments,
@@ -106,6 +107,7 @@ class LMPOP_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testPopElementsFromGivenListResp3(): void
     {

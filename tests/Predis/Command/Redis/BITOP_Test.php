@@ -111,6 +111,7 @@ class BITOP_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 2.6.0
+     * @skipEnterprise
      */
     public function testCanPerformBitwiseAND(): void
     {
@@ -126,6 +127,7 @@ class BITOP_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testCanPerformBitwiseANDResp3(): void
     {
@@ -141,6 +143,7 @@ class BITOP_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 2.6.0
+     * @skipEnterprise
      */
     public function testCanPerformBitwiseOR(): void
     {
@@ -156,6 +159,7 @@ class BITOP_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 2.6.0
+     * @skipEnterprise
      */
     public function testCanPerformBitwiseXOR(): void
     {
@@ -171,6 +175,7 @@ class BITOP_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 2.6.0
+     * @skipEnterprise
      */
     public function testCanPerformBitwiseNOT(): void
     {
@@ -185,6 +190,7 @@ class BITOP_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 2.6.0
+     * @skipEnterprise
      */
     public function testBitwiseNOTAcceptsOnlyOneSourceKey(): void
     {
@@ -197,6 +203,7 @@ class BITOP_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 2.6.0
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnInvalidOperation(): void
     {
@@ -209,6 +216,7 @@ class BITOP_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 2.6.0
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnInvalidSourceKey(): void
     {
@@ -224,6 +232,7 @@ class BITOP_Test extends PredisCommandTestCase
     /**
      * @group connected
      * @requiresRedisVersion >= 2.6.0
+     * @skipEnterprise
      */
     public function testDoesNotThrowExceptionOnInvalidDestinationKey(): void
     {

@@ -81,6 +81,7 @@ class ZRANGESTORE_Test extends PredisCommandTestCase
      * @param array       $expectedResponse
      * @requiresRedisVersion >= 6.2.0
      * @return void
+     * @skipEnterprise
      */
     public function testStoresSortedSetRanges(
         array $actualSortedSet,
@@ -117,6 +118,7 @@ class ZRANGESTORE_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 6.0.0
+     * @skipEnterprise
      */
     public function testStoresSortedSetRangesResp3(): void
     {
@@ -147,6 +149,7 @@ class ZRANGESTORE_Test extends PredisCommandTestCase
      * @param  string      $expectedExceptionMessage
      * @return void
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnUnexpectedValuesGiven(
         $min,

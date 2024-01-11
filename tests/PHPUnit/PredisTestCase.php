@@ -21,7 +21,7 @@ use Predis\Connection;
 /**
  * Base test case class for the Predis test suite.
  */
-abstract class PredisTestCase extends \PHPUnit\Framework\TestCase
+abstract class PredisTestCase extends PHPUnit\Framework\TestCase
 {
     protected $redisServerVersion;
     protected $redisJsonVersion;
@@ -54,6 +54,8 @@ abstract class PredisTestCase extends \PHPUnit\Framework\TestCase
         foreach ($this->modulesMapping as $module => $config) {
             $this->checkRequiredRedisModuleVersion($module);
         }
+
+        $this->markTestSkippedOnEnterpriseEnvironment();
     }
 
     /**
@@ -151,7 +153,7 @@ abstract class PredisTestCase extends \PHPUnit\Framework\TestCase
      * Asserts that a string matches a given regular expression.
      *
      * @throws ExpectationFailedException
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     * @throws SebastianBergmann\RecursionContext\InvalidArgumentException
      */
     public static function assertMatchesRegularExpression(string $pattern, string $string, $message = ''): void
     {
@@ -296,7 +298,7 @@ abstract class PredisTestCase extends \PHPUnit\Framework\TestCase
         if (!is_a($interface, '\Predis\Connection\NodeConnectionInterface', true)) {
             $method = __METHOD__;
 
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 "Argument `\$interface` for $method() expects a type implementing Predis\Connection\NodeConnectionInterface"
             );
         }
@@ -424,7 +426,7 @@ abstract class PredisTestCase extends \PHPUnit\Framework\TestCase
      * decorates test methods while the version of the Redis server used to run
      * integration tests is retrieved directly from the server by using `INFO`.
      *
-     * @throws \PHPUnit\Framework\SkippedTestError When the required Redis server version is not met
+     * @throws PHPUnit\Framework\SkippedTestError When the required Redis server version is not met
      */
     protected function checkRequiredRedisServerVersion(): void
     {
@@ -558,6 +560,23 @@ abstract class PredisTestCase extends \PHPUnit\Framework\TestCase
     {
         if (getenv('GITHUB_ACTIONS') || getenv('TRAVIS')) {
             $this->markTestSkipped($message);
+        }
+    }
+
+    /**
+     * Marks current test skipped in Redis Enterprise environment.
+     */
+    protected function markTestSkippedOnEnterpriseEnvironment(): void
+    {
+        $annotations = TestUtil::parseTestMethodAnnotations(
+            get_class($this),
+            $this->getName(false)
+        );
+
+        $annotationExists = isset($annotations['method']['skipEnterprise']);
+
+        if ($annotationExists && getenv('REDIS_ENTERPRISE')) {
+            $this->markTestSkipped('Test skipped on Redis Enterprise environment.');
         }
     }
 

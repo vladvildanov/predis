@@ -126,6 +126,7 @@ class SORT_RO_Test extends PredisCommandTestCase
      * @param  array $expectedSortedResponse
      * @return void
      * @requiresRedisVersion >= 7.0.0
+     * @skipEnterprise
      */
     public function testSortItemsWithExternalKeysWithinGivenList(
         array $localKeys,

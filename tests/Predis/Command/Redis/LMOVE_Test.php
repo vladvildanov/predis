@@ -84,6 +84,7 @@ class LMOVE_Test extends PredisCommandTestCase
      * @param  array  $expectedModifiedSecondList
      * @return void
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testReturnsCorrectListElement(
         array $firstList,
@@ -110,6 +111,7 @@ class LMOVE_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testReturnsCorrectListElementResp3(): void
     {
@@ -129,6 +131,7 @@ class LMOVE_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testReturnsNullAndNoOperationPerformedOnNonExistingSource(): void
     {
@@ -175,6 +178,7 @@ class LMOVE_Test extends PredisCommandTestCase
      * @group connected
      * @return void
      * @requiresRedisVersion >= 6.2.0
+     * @skipEnterprise
      */
     public function testThrowsExceptionOnWrongType(): void
     {
