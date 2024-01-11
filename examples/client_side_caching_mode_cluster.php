@@ -27,6 +27,7 @@ $client = new Client(
     ], [
     'cluster' => 'redis',
     'cache' => true,
+    'parameters' => ['protocol' => 3],
 ]);
 $client->flushdb();
 

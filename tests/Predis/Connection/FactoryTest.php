@@ -18,6 +18,7 @@ use Predis\Connection\Cache\CacheProxyConnection;
 use PredisTestCase;
 use ReflectionObject;
 use stdClass;
+use UnexpectedValueException;
 
 class FactoryTest extends PredisTestCase
 {
@@ -603,13 +604,30 @@ class FactoryTest extends PredisTestCase
      */
     public function testCreatesCacheProxyConnection(): void
     {
-        $parameters = ['cache' => true];
+        $parameters = ['protocol' => 3, 'cache' => true];
 
         $factory = new Factory();
         $connection = $factory->create($parameters);
 
         $this->assertInstanceOf(CacheProxyConnection::class, $connection);
         $this->assertSame(3, $connection->getParameters()->protocol);
+    }
+
+    /**
+     * @group connected
+     * @return void
+     * @requiresRedisVersion >= 7.2.0
+     */
+    public function testThrowsExceptionOnCacheEnabledWithoutResp3(): void
+    {
+        $parameters = ['cache' => true];
+
+        $factory = new Factory();
+
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage('Client caching only supports with RESP3 protocol');
+
+        $factory->create($parameters);
     }
 
     // ******************************************************************** //

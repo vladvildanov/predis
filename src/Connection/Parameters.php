@@ -42,10 +42,6 @@ class Parameters implements ParametersInterface
      */
     public function __construct(array $parameters = [])
     {
-        if (array_key_exists('cache', $parameters) && (bool) $parameters['cache']) {
-            $parameters['protocol'] = 3;
-        }
-
         $this->parameters = $this->filter($parameters + static::$defaults);
     }
 
