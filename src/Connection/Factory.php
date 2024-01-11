@@ -94,7 +94,7 @@ class Factory implements FactoryInterface
             throw new InvalidArgumentException("Unknown connection scheme: '$scheme'.");
         }
 
-        if ($parameters->cache && $parameters->protocol !== 3) {
+        if ($parameters->cache && (int)$parameters->protocol !== 3) {
             throw new UnexpectedValueException('Client caching only supports with RESP3 protocol');
         }
 
