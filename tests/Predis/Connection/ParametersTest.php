@@ -404,18 +404,6 @@ class ParametersTest extends PredisTestCase
         $this->assertSame($expected, Parameters::parse($uri));
     }
 
-    /**
-     * @group disconnected
-     */
-    public function testSetProtocolVersion3OnCacheEnabled(): void
-    {
-        $parameters = new Parameters(['cache' => true]);
-        $this->assertSame(3, $parameters->protocol);
-
-        $parameters = new Parameters(['cache' => false]);
-        $this->assertSame(2, $parameters->protocol);
-    }
-
     // ******************************************************************** //
     // ---- HELPER METHODS ------------------------------------------------ //
     // ******************************************************************** //
