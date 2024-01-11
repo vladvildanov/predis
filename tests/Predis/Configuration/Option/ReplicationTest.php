@@ -356,7 +356,7 @@ class ReplicationTest extends PredisTestCase
         $mockConnection
             ->expects($this->once())
             ->method('executeCommand')
-            ->with(new RawCommand('CLIENT', ['TRACKING', 'ON', 'OPTIN']))
+            ->with(new RawCommand('CLIENT', ['TRACKING', 'ON']))
             ->willReturn('OK');
 
         $callback = function () use ($mockConnection) {

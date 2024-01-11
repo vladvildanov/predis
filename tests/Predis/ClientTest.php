@@ -1444,7 +1444,7 @@ class ClientTest extends PredisTestCase
         $this->assertSame('bar', apcu_fetch('GET_foo'));
 
         $this->assertEquals('OK', $client->set('foo', 'baz'));
-        $this->assertNull($client->get('baz'));
+        $this->assertNull($client->get('non_existing_key'));
         $this->assertFalse(apcu_exists('GET_foo'));
 
         $this->assertSame('baz', $client->get('foo'));

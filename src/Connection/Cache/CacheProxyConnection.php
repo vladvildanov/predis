@@ -16,6 +16,7 @@ use Predis\Cache\CacheWithMetadataInterface;
 use Predis\Command\CommandInterface;
 use Predis\Command\RawCommand;
 use Predis\Configuration\Cache\CacheConfiguration;
+use Predis\Connection\Cluster\ClusterInterface;
 use Predis\Connection\ConnectionInterface;
 use Predis\Connection\NodeConnectionInterface;
 use Predis\Connection\Traits\PushNotificationListener;
@@ -113,7 +114,6 @@ class CacheProxyConnection implements ConnectionInterface
         }
 
         if ($this->isAllowedToBeCached()) {
-            $this->retryOnInvalidation(new RawCommand('CLIENT', ['CACHING', 'YES']));
             $response = $this->retryOnInvalidation($command);
             $this->cache->add($cacheKey, $response, $ttl);
         } else {
@@ -159,7 +159,12 @@ class CacheProxyConnection implements ConnectionInterface
      */
     private function setupInvalidationTracking(): void
     {
-        $this->connection->executeCommand(new RawCommand('CLIENT', ['TRACKING', 'ON', 'OPTIN']));
+        if ($this->connection instanceof ClusterInterface) {
+            $this->connection->executeCommandOnEachNode(new RawCommand('CLIENT', ['TRACKING', 'ON']));
+        } else {
+            $this->connection->executeCommand(new RawCommand('CLIENT', ['TRACKING', 'ON']));
+        }
+
         $this->onPushNotification([
             PushResponseInterface::INVALIDATE_DATA_TYPE => function (array $payload) {
                 $invalidatedKeys = $payload[0];

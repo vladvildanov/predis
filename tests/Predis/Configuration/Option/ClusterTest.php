@@ -347,9 +347,9 @@ class ClusterTest extends PredisTestCase
 
         $mockConnection
             ->expects($this->once())
-            ->method('executeCommand')
-            ->with(new RawCommand('CLIENT', ['TRACKING', 'ON', 'OPTIN']))
-            ->willReturn('OK');
+            ->method('executeCommandOnEachNode')
+            ->with(new RawCommand('CLIENT', ['TRACKING', 'ON']))
+            ->willReturn(['OK']);
 
         $callback = function () use ($mockConnection) {
             return $mockConnection;
