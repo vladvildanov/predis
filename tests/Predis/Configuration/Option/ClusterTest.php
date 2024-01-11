@@ -346,13 +346,10 @@ class ClusterTest extends PredisTestCase
         $mockConnection = $this->getMockBuilder(ClusterInterface::class)->getMock();
 
         $mockConnection
-            ->expects($this->exactly(2))
-            ->method('executeCommand')
-            ->withConsecutive(
-                [new RawCommand('CLIENT', ['TRACKING', 'ON'])],
-                [new RawCommand('CLIENT', ['CACHING', 'YES'])]
-            )
-            ->willReturnOnConsecutiveCalls('OK', 'OK');
+            ->expects($this->once())
+            ->method('executeCommandOnEachNode')
+            ->with(new RawCommand('CLIENT', ['TRACKING', 'ON']))
+            ->willReturn(['OK']);
 
         $callback = function () use ($mockConnection) {
             return $mockConnection;

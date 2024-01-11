@@ -354,13 +354,10 @@ class ReplicationTest extends PredisTestCase
         $mockConnection = $this->getMockBuilder(SentinelReplication::class)->disableOriginalConstructor()->getMock();
 
         $mockConnection
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('executeCommand')
-            ->withConsecutive(
-                [new RawCommand('CLIENT', ['TRACKING', 'ON'])],
-                [new RawCommand('CLIENT', ['CACHING', 'YES'])]
-            )
-            ->willReturnOnConsecutiveCalls('OK', 'OK');
+            ->with(new RawCommand('CLIENT', ['TRACKING', 'ON']))
+            ->willReturn('OK');
 
         $callback = function () use ($mockConnection) {
             return $mockConnection;
