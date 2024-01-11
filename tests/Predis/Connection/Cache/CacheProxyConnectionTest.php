@@ -327,10 +327,10 @@ class CacheProxyConnectionTest extends PredisTestCase
             ->willReturn(true);
 
         $this->mockConnection
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('executeCommand')
-            ->withConsecutive([$this->cachingCommand], [$this->mockCommand])
-            ->willReturnOnConsecutiveCalls('OK', 'value');
+            ->with($this->mockCommand)
+            ->willReturn('value');
 
         $this->mockCommand
             ->expects($this->once())
@@ -450,13 +450,10 @@ class CacheProxyConnectionTest extends PredisTestCase
             ->willReturn(true);
 
         $this->mockConnection
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('executeCommand')
-            ->withConsecutive(
-                [$this->cachingCommand],
-                [$this->mockCommand]
-            )->willReturnOnConsecutiveCalls(
-                'OK',
+            ->with($this->mockCommand)
+            ->willReturn(
                 new PushResponse([PushResponseInterface::INVALIDATE_DATA_TYPE, ['foo']])
             );
 
@@ -534,13 +531,10 @@ class CacheProxyConnectionTest extends PredisTestCase
             ->willReturn(true);
 
         $this->mockConnection
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('executeCommand')
-            ->withConsecutive(
-                [$this->cachingCommand],
-                [$this->mockCommand]
-            )->willReturnOnConsecutiveCalls(
-                'OK',
+            ->with($this->mockCommand)
+            ->willReturn(
                 new PushResponse([PushResponseInterface::INVALIDATE_DATA_TYPE, ['foo']])
             );
 
@@ -626,13 +620,10 @@ class CacheProxyConnectionTest extends PredisTestCase
             ->willReturn(true);
 
         $this->mockConnection
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('executeCommand')
-            ->withConsecutive(
-                [$this->cachingCommand],
-                [$this->mockCommand]
-            )->willReturnOnConsecutiveCalls(
-                'OK',
+            ->with($this->mockCommand)
+            ->willReturn(
                 new PushResponse([PushResponseInterface::INVALIDATE_DATA_TYPE, null])
             );
 

@@ -113,7 +113,6 @@ class CacheProxyConnection implements ConnectionInterface
         }
 
         if ($this->isAllowedToBeCached()) {
-            $this->retryOnInvalidation(new RawCommand('CLIENT', ['CACHING', 'YES']));
             $response = $this->retryOnInvalidation($command);
             $this->cache->add($cacheKey, $response, $ttl);
         } else {
@@ -159,7 +158,8 @@ class CacheProxyConnection implements ConnectionInterface
      */
     private function setupInvalidationTracking(): void
     {
-        $this->connection->executeCommand(new RawCommand('CLIENT', ['TRACKING', 'ON', 'OPTIN']));
+        $this->connection->executeCommand(new RawCommand('CLIENT', ['TRACKING', 'ON']));
+        $this->connection->executeCommand(new RawCommand('CLIENT', ['CACHING', 'YES']));
         $this->onPushNotification([
             PushResponseInterface::INVALIDATE_DATA_TYPE => function (array $payload) {
                 $invalidatedKeys = $payload[0];
