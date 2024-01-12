@@ -88,7 +88,11 @@ class Aggregate implements OptionInterface
             }
 
             if ((bool) $options->cache) {
-                return new CacheProxyConnection($connection, new CacheConfiguration($options->cache_config), new ApcuCache());
+                $cacheConfiguration = array_filter($options->getInput(), function ($item) {
+                    return 0 === strpos($item, 'cache_');
+                }, ARRAY_FILTER_USE_KEY);
+
+                return new CacheProxyConnection($connection, new CacheConfiguration($cacheConfiguration), new ApcuCache());
             }
 
             return $connection;

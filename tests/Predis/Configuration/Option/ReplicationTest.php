@@ -366,16 +366,15 @@ class ReplicationTest extends PredisTestCase
         /** @var OptionsInterface|MockObject */
         $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
         $options
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('__get')
-            ->withConsecutive(
-                ['cache'],
-                ['cache_config']
-            )
-            ->willReturnOnConsecutiveCalls(
-                true,
-                null
-            );
+            ->with('cache')
+            ->willReturn(true);
+
+        $options
+            ->expects($this->once())
+            ->method('getInput')
+            ->willReturn([]);
 
         $parameters = [
             $this->getMockBuilder('Predis\Connection\NodeConnectionInterface')->getMock(),

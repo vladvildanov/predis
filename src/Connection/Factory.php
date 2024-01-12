@@ -115,7 +115,11 @@ class Factory implements FactoryInterface
         }
 
         if ((bool) $parameters->cache) {
-            return new CacheProxyConnection($connection, new CacheConfiguration($parameters->cache_config), new ApcuCache());
+            $cacheConfiguration = array_filter($parameters->toArray(), function ($item) {
+                return 0 === strpos($item, 'cache_');
+            }, ARRAY_FILTER_USE_KEY);
+
+            return new CacheProxyConnection($connection, new CacheConfiguration($cacheConfiguration), new ApcuCache());
         }
 
         return $connection;

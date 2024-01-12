@@ -229,7 +229,7 @@ class CacheProxyConnectionTest extends PredisTestCase
 
         $this->mockCacheConfiguration
             ->expects($this->never())
-            ->method('isExceedsMaxCount')
+            ->method('isExceedsMaxSize')
             ->withAnyParameters();
 
         $this->mockCacheWithMetadata
@@ -286,7 +286,7 @@ class CacheProxyConnectionTest extends PredisTestCase
 
         $this->mockCacheConfiguration
             ->expects($this->never())
-            ->method('isExceedsMaxCount')
+            ->method('isExceedsMaxSize')
             ->withAnyParameters();
 
         $this->mockCacheWithMetadata
@@ -346,7 +346,7 @@ class CacheProxyConnectionTest extends PredisTestCase
 
         $this->mockCacheConfiguration
             ->expects($this->once())
-            ->method('isExceedsMaxCount')
+            ->method('isExceedsMaxSize')
             ->with(101)
             ->willReturn(false);
 
@@ -407,7 +407,7 @@ class CacheProxyConnectionTest extends PredisTestCase
 
         $this->mockCacheConfiguration
             ->expects($this->once())
-            ->method('isExceedsMaxCount')
+            ->method('isExceedsMaxSize')
             ->with(101)
             ->willReturn(true);
 
@@ -488,7 +488,7 @@ class CacheProxyConnectionTest extends PredisTestCase
 
         $this->mockCacheConfiguration
             ->expects($this->once())
-            ->method('isExceedsMaxCount')
+            ->method('isExceedsMaxSize')
             ->with(101)
             ->willReturn(false);
 
@@ -577,7 +577,7 @@ class CacheProxyConnectionTest extends PredisTestCase
 
         $this->mockCacheConfiguration
             ->expects($this->once())
-            ->method('isExceedsMaxCount')
+            ->method('isExceedsMaxSize')
             ->with(101)
             ->willReturn(false);
 
@@ -662,7 +662,7 @@ class CacheProxyConnectionTest extends PredisTestCase
 
         $this->mockCacheConfiguration
             ->expects($this->once())
-            ->method('isExceedsMaxCount')
+            ->method('isExceedsMaxSize')
             ->with(101)
             ->willReturn(false);
 

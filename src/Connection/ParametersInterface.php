@@ -33,7 +33,8 @@ namespace Predis\Connection;
  * @property bool   $async_connect      Performs the connect() operation asynchronously.
  * @property bool   $tcp_nodelay        Toggles the Nagle's algorithm for coalescing.
  * @property bool   $cache              Whether to use in-memory caching.
- * @property array  $cache_config       Configuration for in-memory caching.
+ * @property int    $cache_max_size     Maximal numbers of items stored in a cache. Default: 10000
+ * @property int    $cache_ttl          TTL for keys stored within a cache. Default: 0 (Never expires)
  * @property string $serializer         (Relay only) Serializer used for data serialization.
  * @property string $compression        (Relay only) Algorithm used for data compression.
  */
