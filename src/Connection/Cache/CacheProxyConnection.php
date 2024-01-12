@@ -147,7 +147,7 @@ class CacheProxyConnection implements ConnectionInterface
     {
         $totalCount = $this->cache->getTotalCount();
 
-        if ($this->cacheConfiguration->isExceedsMaxCount($totalCount + 1)) {
+        if ($this->cacheConfiguration->isExceedsMaxSize($totalCount + 1)) {
             return false;
         }
 

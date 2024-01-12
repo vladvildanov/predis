@@ -342,7 +342,7 @@ class ClusterTest extends PredisTestCase
     public function testCreatesCacheProxyConnectionOnAnyCluster(): void
     {
         $option = new Cluster();
-        $parameters = ['cache' => 1, 'cache_config' => ['ttl' => 200]];
+        $parameters = ['cache' => 1, 'cache_ttl' => 200];
         $mockConnection = $this->getMockBuilder(ClusterInterface::class)->getMock();
 
         $mockConnection
@@ -359,16 +359,15 @@ class ClusterTest extends PredisTestCase
         $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
 
         $options
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('__get')
-            ->withConsecutive(
-                ['cache'],
-                ['cache_config']
-            )
-            ->willReturnOnConsecutiveCalls(
-                true,
-                null
-            );
+            ->with('cache')
+            ->willReturn(true);
+
+        $options
+            ->expects($this->once())
+            ->method('getInput')
+            ->willReturn($parameters);
 
         $this->assertInstanceOf(Closure::class, $initializer = $option->filter($options, $callback));
         $this->assertInstanceOf(

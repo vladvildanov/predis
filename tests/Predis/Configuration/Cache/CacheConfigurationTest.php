@@ -25,7 +25,7 @@ class CacheConfigurationTest extends PredisTestCase
      */
     public function testGetTTl(): void
     {
-        $configuration = new CacheConfiguration(['ttl' => 100]);
+        $configuration = new CacheConfiguration(['cache_ttl' => 100]);
 
         $this->assertSame(100, $configuration->getTTl());
     }
@@ -50,12 +50,12 @@ class CacheConfigurationTest extends PredisTestCase
      * @group disconnected
      * @return void
      */
-    public function testIsExceedsMaxCount(): void
+    public function testIsExceedsMaxSize(): void
     {
-        $configuration = new CacheConfiguration(['max_count' => 2]);
+        $configuration = new CacheConfiguration(['cache_max_size' => 2]);
 
-        $this->assertFalse($configuration->isExceedsMaxCount(2));
-        $this->assertTrue($configuration->isExceedsMaxCount(3));
+        $this->assertFalse($configuration->isExceedsMaxSize(2));
+        $this->assertTrue($configuration->isExceedsMaxSize(3));
     }
 
     /**
@@ -69,8 +69,8 @@ class CacheConfigurationTest extends PredisTestCase
 
         $this->assertTrue($configuration->isWhitelistedCommand($readCommand));
         $this->assertSame(0, $configuration->getTTl());
-        $this->assertFalse($configuration->isExceedsMaxCount(1000));
-        $this->assertTrue($configuration->isExceedsMaxCount(1001));
+        $this->assertFalse($configuration->isExceedsMaxSize(10000));
+        $this->assertTrue($configuration->isExceedsMaxSize(10001));
     }
 
     /**

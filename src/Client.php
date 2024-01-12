@@ -15,6 +15,8 @@ namespace Predis;
 use ArrayIterator;
 use InvalidArgumentException;
 use IteratorAggregate;
+use Predis\Cache\ApcuCache;
+use Predis\Cache\CacheWithMetadataInterface;
 use Predis\Command\CommandInterface;
 use Predis\Command\Container\ContainerFactory;
 use Predis\Command\Container\ContainerInterface;
@@ -66,6 +68,11 @@ class Client implements ClientInterface, IteratorAggregate
     private $commands;
 
     /**
+     * @var CacheWithMetadataInterface
+     */
+    public $cache;
+
+    /**
      * @param mixed $parameters Connection parameters for one or more servers.
      * @param mixed $options    Options to configure some behaviours of the client.
      */
@@ -74,6 +81,7 @@ class Client implements ClientInterface, IteratorAggregate
         $this->options = static::createOptions($options ?? new Options());
         $this->connection = static::createConnection($this->options, $parameters ?? new Parameters());
         $this->commands = $this->options->commands;
+        $this->cache = new ApcuCache();
     }
 
     /**

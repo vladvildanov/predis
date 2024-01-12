@@ -1364,6 +1364,46 @@ class ClientTest extends PredisTestCase
 
     /**
      * @group connected
+     * @group relay-incompatible
+     * @requiresRedisVersion >= 7.2.0
+     */
+    public function testInvalidateCacheOnGivenTTL(): void
+    {
+        $client = new Client($this->getParameters(['protocol' => 3, 'cache' => true, 'cache_ttl' => 1]));
+
+        $this->assertEquals('OK', $client->set('foo', 'bar'));
+        $this->assertSame('bar', $client->get('foo'));
+        $this->assertSame('bar', apcu_fetch('GET_foo'));
+
+        sleep(2);
+
+        $this->assertFalse(apcu_fetch('GET_foo'));
+
+        apcu_clear_cache();
+    }
+
+    /**
+     * @group connected
+     * @group relay-incompatible
+     * @requiresRedisVersion >= 7.2.0
+     */
+    public function testDoNotCacheOnExceededMaxSize(): void
+    {
+        $client = new Client($this->getParameters(['protocol' => 3, 'cache' => true, 'cache_max_size' => 1]));
+
+        $this->assertEquals('OK', $client->set('foo', 'bar'));
+        $this->assertSame('bar', $client->get('foo'));
+        $this->assertSame('bar', apcu_fetch('GET_foo'));
+
+        $this->assertEquals('OK', $client->set('bar', 'foo'));
+        $this->assertSame('foo', $client->get('bar'));
+        $this->assertFalse(apcu_fetch('GET_bar'));
+
+        apcu_clear_cache();
+    }
+
+    /**
+     * @group connected
      * @group cluster
      * @group relay-incompatible
      * @requiresRedisVersion >= 7.2.0
@@ -1375,6 +1415,52 @@ class ClientTest extends PredisTestCase
         $this->assertEquals('OK', $client->set('foo', 'bar'));
         $this->assertSame('bar', $client->get('foo'));
         $this->assertSame('bar', apcu_fetch('GET_foo'));
+
+        apcu_clear_cache();
+    }
+
+    /**
+     * @group connected
+     * @group cluster
+     * @group relay-incompatible
+     * @requiresRedisVersion >= 7.2.0
+     */
+    public function testClusterInvalidateCacheOnGivenTTL(): void
+    {
+        $client = new Client($this->getDefaultParametersArray(), [
+            'cluster' => 'redis', 'cache' => true, 'cache_ttl' => 1, 'parameters' => ['protocol' => 3],
+        ]);
+
+        $this->assertEquals('OK', $client->set('foo', 'bar'));
+        $this->assertSame('bar', $client->get('foo'));
+        $this->assertSame('bar', apcu_fetch('GET_foo'));
+
+        sleep(2);
+
+        $this->assertFalse(apcu_fetch('GET_foo'));
+
+        apcu_clear_cache();
+    }
+
+    /**
+     * @group connected
+     * @group cluster
+     * @group relay-incompatible
+     * @requiresRedisVersion >= 7.2.0
+     */
+    public function testClusterDoNotCacheOnExceededMaxSize(): void
+    {
+        $client = new Client($this->getDefaultParametersArray(), [
+            'cluster' => 'redis', 'cache' => true, 'cache_max_size' => 1, 'parameters' => ['protocol' => 3],
+        ]);
+
+        $this->assertEquals('OK', $client->set('foo', 'bar'));
+        $this->assertSame('bar', $client->get('foo'));
+        $this->assertSame('bar', apcu_fetch('GET_foo'));
+
+        $this->assertEquals('OK', $client->set('bar', 'foo'));
+        $this->assertSame('foo', $client->get('bar'));
+        $this->assertFalse(apcu_fetch('GET_bar'));
 
         apcu_clear_cache();
     }

@@ -113,4 +113,12 @@ class Options implements OptionsInterface
 
         return;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getInput(): array
+    {
+        return $this->input;
+    }
 }

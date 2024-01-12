@@ -229,4 +229,19 @@ class OptionsTest extends PredisTestCase
             spl_autoload_unregister($autoload);
         }
     }
+
+    /**
+     * @group disconnected
+     */
+    public function testGetInput(): void
+    {
+        $input = [
+            'cache_ttl' => 1,
+            'cache_max_size' => 1,
+        ];
+
+        $options = new Options($input);
+
+        $this->assertSame($input, $options->getInput());
+    }
 }

@@ -23,7 +23,7 @@ class CacheConfiguration
      *
      * @var int
      */
-    private $maxCount;
+    private $maxSize;
 
     /**
      * Time-to-live in seconds for the record stored in a cache.
@@ -45,8 +45,8 @@ class CacheConfiguration
      * @var array
      */
     private $propertiesMapping = [
-        'max_count' => 'maxCount',
-        'ttl' => 'ttl',
+        'cache_max_size' => 'maxSize',
+        'cache_ttl' => 'ttl',
     ];
 
     /**
@@ -97,9 +97,9 @@ class CacheConfiguration
      * @param  int  $count
      * @return bool
      */
-    public function isExceedsMaxCount(int $count): bool
+    public function isExceedsMaxSize(int $count): bool
     {
-        return $count > $this->maxCount;
+        return $count > $this->maxSize;
     }
 
     /**
@@ -130,7 +130,7 @@ class CacheConfiguration
      */
     private function setDefaultConfiguration(): void
     {
-        $this->maxCount = 1000;
+        $this->maxSize = 10000;
         $this->ttl = 0;
         $this->whitelistCallback = $this->getDefaultWhitelistCallback();
     }
