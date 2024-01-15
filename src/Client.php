@@ -655,7 +655,7 @@ class Client implements ClientInterface, IteratorAggregate
         }
 
         if (!extension_loaded('apcu')) {
-            return;
+            throw new NotSupportedException('APCu extension is not installed.');
         }
 
         if ($this->connection instanceof RelayConnection) {
