@@ -57,7 +57,7 @@ class AtomicTest extends PredisTestCase
             );
 
         $connection
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getParameters')
             ->willReturn(new Parameters(['protocol' => 2]));
 
@@ -248,7 +248,7 @@ class AtomicTest extends PredisTestCase
             );
 
         $connection
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getParameters')
             ->willReturn(new Parameters(['protocol' => 2]));
 

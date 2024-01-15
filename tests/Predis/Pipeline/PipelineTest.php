@@ -89,7 +89,7 @@ class PipelineTest extends PredisTestCase
             ->willReturn($object);
 
         $connection
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getParameters')
             ->willReturn(new Parameters(['protocol' => 2]));
 
@@ -117,7 +117,7 @@ class PipelineTest extends PredisTestCase
             ->willReturn($error);
 
         $connection
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getParameters')
             ->willReturn(new Parameters(['protocol' => 2]));
 
@@ -143,7 +143,7 @@ class PipelineTest extends PredisTestCase
             ->willReturn($error);
 
         $connection
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getParameters')
             ->willReturn(new Parameters(['protocol' => 2]));
 
@@ -225,7 +225,7 @@ class PipelineTest extends PredisTestCase
             ->willReturnCallback($this->getReadCallback());
 
         $connection
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getParameters')
             ->willReturn(new Parameters(['protocol' => 2]));
 
@@ -271,7 +271,7 @@ class PipelineTest extends PredisTestCase
             ->willReturnCallback($this->getReadCallback());
 
         $connection
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(3))
             ->method('getParameters')
             ->willReturn(new Parameters(['protocol' => 2]));
 
@@ -305,7 +305,7 @@ class PipelineTest extends PredisTestCase
             ->method('readResponse')
             ->willReturn($pong);
         $connection
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getParameters')
             ->willReturn(new Parameters(['protocol' => 2]));
 
@@ -375,7 +375,7 @@ class PipelineTest extends PredisTestCase
             ->method('readResponse')
             ->willReturnCallback($this->getReadCallback());
         $connection
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getParameters')
             ->willReturn(new Parameters(['protocol' => 2]));
 

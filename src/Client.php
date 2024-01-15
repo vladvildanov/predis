@@ -68,7 +68,7 @@ class Client implements ClientInterface, IteratorAggregate
     private $commands;
 
     /**
-     * @var CacheWithMetadataInterface
+     * @var CacheWithMetadataInterface|null
      */
     public $cache;
 
@@ -79,9 +79,11 @@ class Client implements ClientInterface, IteratorAggregate
     public function __construct($parameters = null, $options = null)
     {
         $this->options = static::createOptions($options ?? new Options());
-        $this->connection = static::createConnection($this->options, $parameters ?? new Parameters());
+        $parameters = $parameters ?? new Parameters();
+
+        $this->connection = static::createConnection($this->options, $parameters);
         $this->commands = $this->options->commands;
-        $this->cache = new ApcuCache();
+        $this->setCache();
     }
 
     /**
@@ -633,5 +635,29 @@ class Client implements ClientInterface, IteratorAggregate
         }
 
         return new ArrayIterator($clients);
+    }
+
+    /**
+     * Set cache object if cache is enabled.
+     *
+     * @return void
+     */
+    private function setCache(): void
+    {
+        $parameters = (null !== $this->connection) ? $this->connection->getParameters() : null;
+
+        if (null === $parameters) {
+            return;
+        }
+
+        if (false === (bool) $parameters->cache) {
+            return;
+        }
+
+        if ($this->connection instanceof RelayConnection) {
+            return;
+        }
+
+        $this->cache = new ApcuCache();
     }
 }

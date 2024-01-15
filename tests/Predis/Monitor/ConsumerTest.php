@@ -94,7 +94,7 @@ class ConsumerTest extends PredisTestCase
         $connection = $this->getMockBuilder('Predis\Connection\NodeConnectionInterface')->getMock();
 
         $connection
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getParameters')
             ->willReturn(new Parameters(['protocol' => 2]));
 
@@ -120,7 +120,7 @@ class ConsumerTest extends PredisTestCase
         $connection = $this->getMockBuilder('Predis\Connection\NodeConnectionInterface')->getMock();
 
         $connection
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getParameters')
             ->willReturn(new Parameters(['protocol' => 2]));
 
@@ -152,7 +152,7 @@ class ConsumerTest extends PredisTestCase
             ->willReturn($message);
 
         $connection
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getParameters')
             ->willReturn(new Parameters(['protocol' => 2]));
 
@@ -182,7 +182,7 @@ class ConsumerTest extends PredisTestCase
             ->willReturn($message);
 
         $connection
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getParameters')
             ->willReturn(new Parameters(['protocol' => 2]));
 

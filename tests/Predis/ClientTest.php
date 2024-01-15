@@ -14,6 +14,7 @@ namespace Predis;
 
 use Iterator;
 use PHPUnit\Framework\MockObject\MockObject;
+use Predis\Cache\CacheWithMetadataInterface;
 use Predis\Command\CommandInterface;
 use Predis\Command\Factory as CommandFactory;
 use Predis\Command\Processor\KeyPrefixProcessor;
@@ -38,9 +39,11 @@ use Predis\Command\Redis\XADD;
 use Predis\Command\Redis\XLEN;
 use Predis\Command\Redis\ZADD;
 use Predis\Command\Redis\ZCARD;
+use Predis\Connection\ConnectionInterface;
 use Predis\Connection\NodeConnectionInterface;
 use Predis\Connection\Parameters;
 use Predis\Connection\ParametersInterface;
+use Predis\Connection\RelayConnection;
 use Predis\Connection\Replication\MasterSlaveReplication;
 use PredisTestCase;
 use ReflectionProperty;
@@ -572,7 +575,7 @@ class ClientTest extends PredisTestCase
             );
 
         $connection
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(3))
             ->method('getParameters')
             ->willReturn(new Parameters(['protocol' => 2]));
 
@@ -606,7 +609,7 @@ class ClientTest extends PredisTestCase
             );
 
         $connection
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(3))
             ->method('getParameters')
             ->willReturn(new Parameters(['protocol' => 3]));
 
@@ -672,7 +675,7 @@ class ClientTest extends PredisTestCase
             ->willReturn('PONG');
 
         $connection
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getParameters')
             ->willReturn(new Parameters(['protocol' => 2]));
 
@@ -1227,7 +1230,7 @@ class ClientTest extends PredisTestCase
     {
         $connection = $this->getMockBuilder('Predis\Connection\NodeConnectionInterface')->getMock();
         $connection
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getParameters')
             ->willReturn(new Parameters(['protocol' => 2]));
 
@@ -1268,7 +1271,7 @@ class ClientTest extends PredisTestCase
             );
 
         $connection
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(3))
             ->method('getParameters')
             ->willReturn(new Parameters(['protocol' => 2]));
 
@@ -1328,6 +1331,92 @@ class ClientTest extends PredisTestCase
         $this->assertInstanceOf('\Predis\Client', $nodeClient = $iterator->current());
         $this->assertSame($connection, $nodeClient->getConnection());
         $this->assertSame('127.0.0.1:6381', $iterator->key());
+    }
+
+    /**
+     * @group disconnected
+     * @return void
+     */
+    public function testSetUpCache(): void
+    {
+        $connection = $this->getMockBuilder(ConnectionInterface::class)->getMock();
+        $parameters = new Parameters(['cache' => true]);
+
+        $connection
+            ->expects($this->once())
+            ->method('getParameters')
+            ->willReturn($parameters);
+
+        $client = new Client($connection);
+
+        $this->assertInstanceOf(CacheWithMetadataInterface::class, $client->cache);
+    }
+
+    /**
+     * @group disconnected
+     * @return void
+     */
+    public function testDoNotSetUpCache(): void
+    {
+        $connection = $this->getMockBuilder(ConnectionInterface::class)->getMock();
+        $parameters = new Parameters(['cache' => false]);
+
+        $connection
+            ->expects($this->once())
+            ->method('getParameters')
+            ->willReturn($parameters);
+
+        $client = new Client($connection);
+
+        $this->assertNull($client->cache);
+    }
+
+    /**
+     * @group disconnected
+     * @return void
+     */
+    public function testDoNotSetUpCacheOnNullParameters(): void
+    {
+        $connection = $this->getMockBuilder(ConnectionInterface::class)->getMock();
+
+        $connection
+            ->expects($this->once())
+            ->method('getParameters')
+            ->willReturn(null);
+
+        $client = new Client($connection);
+
+        $this->assertNull($client->cache);
+    }
+
+    /**
+     * @group disconnected
+     * @return void
+     */
+    public function testDoNotSetUpCacheOnRelayConnection(): void
+    {
+        $connection = $this->getMockBuilder(RelayConnection::class)->disableOriginalConstructor()->getMock();
+        $parameters = new Parameters(['cache' => true]);
+
+        $connection
+            ->expects($this->once())
+            ->method('getParameters')
+            ->willReturn($parameters);
+
+        $client = new Client($connection);
+
+        $this->assertNull($client->cache);
+    }
+
+    /**
+     * @group disconnected
+     * @return void
+     */
+    public function testDoNotSetUpCacheOnNullConnection(): void
+    {
+        $client = new Client(null);
+
+        $this->assertNull($client->cache);
     }
 
     /**
