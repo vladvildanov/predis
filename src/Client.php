@@ -654,6 +654,10 @@ class Client implements ClientInterface, IteratorAggregate
             return;
         }
 
+        if (!extension_loaded('apcu')) {
+            return;
+        }
+
         if ($this->connection instanceof RelayConnection) {
             return;
         }
