@@ -28,7 +28,7 @@ jobs:
 
       - name: Build cluster
         env:
-          IMAGE: redislabs/redis-internal:100.0.1-64956
+          IMAGE: redislabs/redis-internal:edge.focal
           RE_USERNAME: test@test.com
           RE_PASS: 12345
           RE_CLUSTER_NAME: test
@@ -72,7 +72,7 @@ jobs:
 
       - name: Build cluster
         env:
-          IMAGE: redislabs/redis-internal:100.0.1-64956
+          IMAGE: redislabs/redis-internal:edge.focal
           RE_USERNAME: test@test.com
           RE_PASS: 12345
           RE_CLUSTER_NAME: test
