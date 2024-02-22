@@ -77,7 +77,7 @@ abstract class PredisTestCase extends PHPUnit\Framework\TestCase
      *
      * @return RedisCommandConstraint
      */
-    public function isRedisCommand($command = null, array $arguments = null): RedisCommandConstraint
+    public function isRedisCommand($command = null, ?array $arguments = null): RedisCommandConstraint
     {
         return new RedisCommandConstraint($command, $arguments);
     }
@@ -246,7 +246,7 @@ abstract class PredisTestCase extends PHPUnit\Framework\TestCase
      *
      * @return Client
      */
-    protected function createClient(array $parameters = null, array $options = null, ?bool $flushdb = true): Client
+    protected function createClient(?array $parameters = null, ?array $options = null, ?bool $flushdb = true): Client
     {
         $parameters = array_merge(
             $this->getDefaultParametersArray(),
