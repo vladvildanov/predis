@@ -63,7 +63,7 @@ class CacheConfiguration
         'TDIGEST.REVRANK', 'TDIGEST.TRIMMED_MEAN', 'TOPK.INFO', 'TOPK.LIST', 'TOPK.QUERY', 'TTL',
     ];
 
-    public function __construct(array $configuration = null)
+    public function __construct(?array $configuration = null)
     {
         $this->setDefaultConfiguration();
 
@@ -108,7 +108,7 @@ class CacheConfiguration
      * @param  array|null $configuration
      * @return void
      */
-    private function mapConfiguration(array $configuration = null): void
+    private function mapConfiguration(?array $configuration = null): void
     {
         $unexpectedKeys = array_filter(array_keys($configuration), function ($key) {
             return !array_key_exists($key, $this->propertiesMapping);
