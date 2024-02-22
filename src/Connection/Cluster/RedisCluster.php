@@ -90,8 +90,8 @@ class RedisCluster implements ClusterInterface, IteratorAggregate, Countable
     public function __construct(
         FactoryInterface $connections,
         ParametersInterface $parameters,
-        StrategyInterface $strategy = null,
-        int $readTimeout = null
+        ?StrategyInterface $strategy = null,
+        ?int $readTimeout = null
     ) {
         $this->connections = $connections;
         $this->connectionParameters = $parameters;
@@ -299,7 +299,7 @@ class RedisCluster implements ClusterInterface, IteratorAggregate, Countable
      *
      * @param NodeConnectionInterface $connection Optional connection instance.
      */
-    public function askSlotMap(NodeConnectionInterface $connection = null)
+    public function askSlotMap(?NodeConnectionInterface $connection = null)
     {
         if (!$connection && !$connection = $this->getRandomConnection()) {
             return;
