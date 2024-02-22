@@ -1494,4 +1494,86 @@ class RedisClusterTest extends PredisTestCase
 
         $this->assertEquals(['response1', 'response2', 'response3'], $cluster->executeCommandOnEachNode($mockCommand));
     }
+
+    /**
+     * @group disconnected
+     */
+    public function testHasDataToRead(): void
+    {
+        $factory = $this->getMockBuilder(FactoryInterface::class)->getMock();
+
+        $connection1 = $this->getMockConnection('tcp://127.0.0.1:7001');
+        $connection2 = $this->getMockConnection('tcp://127.0.0.1:7002');
+        $connection3 = $this->getMockConnection('tcp://127.0.0.1:7003');
+
+        $connection1
+            ->expects($this->once())
+            ->method('hasDataToRead')
+            ->withAnyParameters()
+            ->willReturn(false);
+
+        $connection2
+            ->expects($this->once())
+            ->method('hasDataToRead')
+            ->withAnyParameters()
+            ->willReturn(false);
+
+        $connection3
+            ->expects($this->once())
+            ->method('hasDataToRead')
+            ->withAnyParameters()
+            ->willReturn(true);
+
+        $cluster = new RedisCluster($factory, new Parameters());
+
+        $cluster->add($connection1);
+        $cluster->add($connection2);
+        $cluster->add($connection3);
+
+        $this->assertTrue($cluster->hasDataToRead());
+    }
+
+    /**
+     * @group disconnected
+     */
+    public function testRead(): void
+    {
+        $factory = $this->getMockBuilder(FactoryInterface::class)->getMock();
+
+        $connection1 = $this->getMockConnection('tcp://127.0.0.1:7001');
+        $connection2 = $this->getMockConnection('tcp://127.0.0.1:7002');
+        $connection3 = $this->getMockConnection('tcp://127.0.0.1:7003');
+
+        $connection1
+            ->expects($this->once())
+            ->method('hasDataToRead')
+            ->withAnyParameters()
+            ->willReturn(false);
+
+        $connection2
+            ->expects($this->once())
+            ->method('hasDataToRead')
+            ->withAnyParameters()
+            ->willReturn(false);
+
+        $connection3
+            ->expects($this->once())
+            ->method('hasDataToRead')
+            ->withAnyParameters()
+            ->willReturn(true);
+
+        $connection3
+            ->expects($this->once())
+            ->method('read')
+            ->withAnyParameters()
+            ->willReturn('bar');
+
+        $cluster = new RedisCluster($factory, new Parameters());
+
+        $cluster->add($connection1);
+        $cluster->add($connection2);
+        $cluster->add($connection3);
+
+        $this->assertSame('bar', $cluster->read());
+    }
 }

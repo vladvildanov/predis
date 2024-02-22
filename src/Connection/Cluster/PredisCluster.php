@@ -56,14 +56,26 @@ class PredisCluster implements ClusterInterface, IteratorAggregate, Countable
     private $connectionParameters;
 
     /**
+     * @var int
+     */
+    private $readTimeout = 1000;
+
+    /**
      * @param ParametersInterface    $parameters
      * @param StrategyInterface|null $strategy   Optional cluster strategy.
      */
-    public function __construct(ParametersInterface $parameters, ?StrategyInterface $strategy = null)
-    {
+    public function __construct(
+        ParametersInterface $parameters,
+        ?StrategyInterface $strategy = null,
+        ?int $readTimeout = null
+    ) {
         $this->connectionParameters = $parameters;
         $this->strategy = $strategy ?: new PredisStrategy();
         $this->distributor = $this->strategy->getDistributor();
+
+        if (!is_null($readTimeout)) {
+            $this->readTimeout = $readTimeout;
+        }
     }
 
     /**
@@ -284,5 +296,37 @@ class PredisCluster implements ClusterInterface, IteratorAggregate, Countable
         }
 
         return $responses;
+    }
+
+    /**
+     * Loop over connections until there's data to read.
+     *
+     * @return mixed
+     */
+    public function read()
+    {
+        while (true) {
+            foreach ($this->pool as $connection) {
+                if ($connection->hasDataToRead()) {
+                    return $connection->read();
+                }
+            }
+
+            usleep($this->readTimeout);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasDataToRead(): bool
+    {
+        foreach ($this->pool as $connection) {
+            if ($connection->hasDataToRead()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

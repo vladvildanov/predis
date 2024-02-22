@@ -71,11 +71,20 @@ class MasterSlaveReplication implements ReplicationInterface
     protected $connectionFactory;
 
     /**
+     * @var int
+     */
+    private $readTimeout = 1000;
+
+    /**
      * {@inheritdoc}
      */
-    public function __construct(?ReplicationStrategy $strategy = null)
+    public function __construct(?ReplicationStrategy $strategy = null, ?int $readTimeout = null)
     {
         $this->strategy = $strategy ?: new ReplicationStrategy();
+
+        if (!is_null($readTimeout)) {
+            $this->readTimeout = $readTimeout;
+        }
     }
 
     /**
@@ -568,5 +577,37 @@ class MasterSlaveReplication implements ReplicationInterface
         }
 
         return null;
+    }
+
+    /**
+     * Loop over connections until there's data to read.
+     *
+     * @return mixed
+     */
+    public function read()
+    {
+        while (true) {
+            foreach ($this->pool as $connection) {
+                if ($connection->hasDataToRead()) {
+                    return $connection->read();
+                }
+            }
+
+            usleep($this->readTimeout);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasDataToRead(): bool
+    {
+        foreach ($this->pool as $connection) {
+            if ($connection->hasDataToRead()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

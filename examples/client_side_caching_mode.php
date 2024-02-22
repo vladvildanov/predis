@@ -12,9 +12,9 @@
 
 require __DIR__ . '/../autoload.php';
 
-if (PHP_SAPI !== 'fpm-fcgi') {
-    exit('This example available only in FPM mode.');
-}
+//if (PHP_SAPI !== 'fpm-fcgi') {
+//    exit('This example available only in FPM mode.');
+//}
 
 // 1. Create client with enabled cache and RESP3 connection mode.
 $client = new Predis\Client(['protocol' => 3, 'cache' => true]);
@@ -32,9 +32,6 @@ echo nl2br('Value in cache: ' . apcu_fetch('GET_foo') . "\n");
 // 5. Set new value for the same key.
 $client->set('foo', 'baz');
 
-// 6. Send any other read command, so invalidation message will be received.
-$client->get('baz');
-
-// 7. Retrieves updated value from Redis storage again.
+// 6. Retrieves updated value from Redis storage again.
 echo nl2br('New value in Redis: ' . $client->get('foo') . "\n");
 echo nl2br('New value in cache: ' . apcu_fetch('GET_foo') . "\n");

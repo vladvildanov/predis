@@ -1545,6 +1545,86 @@ class SentinelReplicationTest extends PredisTestCase
         $this->assertSame($sentinel->getParameters(), $replication->getParameters());
     }
 
+    /**
+     * @group disconnected
+     */
+    public function testHasDataToRead(): void
+    {
+        $connection1 = $this->getMockConnection('tcp://127.0.0.1:7001');
+        $connection2 = $this->getMockConnection('tcp://127.0.0.1:7002');
+        $connection3 = $this->getMockConnection('tcp://127.0.0.1:7003');
+        $sentinel = $this->getMockSentinelConnection('tcp://127.0.0.1:5381?role=sentinel');
+
+        $connection1
+            ->expects($this->once())
+            ->method('hasDataToRead')
+            ->withAnyParameters()
+            ->willReturn(false);
+
+        $connection2
+            ->expects($this->once())
+            ->method('hasDataToRead')
+            ->withAnyParameters()
+            ->willReturn(false);
+
+        $connection3
+            ->expects($this->once())
+            ->method('hasDataToRead')
+            ->withAnyParameters()
+            ->willReturn(true);
+
+        $replication = $this->getReplicationConnection('srv', [$sentinel]);
+
+        $replication->add($connection1);
+        $replication->add($connection2);
+        $replication->add($connection3);
+
+        $this->assertTrue($replication->hasDataToRead());
+    }
+
+    /**
+     * @group disconnected
+     */
+    public function testRead(): void
+    {
+        $connection1 = $this->getMockConnection('tcp://127.0.0.1:7001');
+        $connection2 = $this->getMockConnection('tcp://127.0.0.1:7002');
+        $connection3 = $this->getMockConnection('tcp://127.0.0.1:7003');
+        $sentinel = $this->getMockSentinelConnection('tcp://127.0.0.1:5381?role=sentinel');
+
+        $connection1
+            ->expects($this->once())
+            ->method('hasDataToRead')
+            ->withAnyParameters()
+            ->willReturn(false);
+
+        $connection2
+            ->expects($this->once())
+            ->method('hasDataToRead')
+            ->withAnyParameters()
+            ->willReturn(false);
+
+        $connection3
+            ->expects($this->once())
+            ->method('hasDataToRead')
+            ->withAnyParameters()
+            ->willReturn(true);
+
+        $connection3
+            ->expects($this->once())
+            ->method('read')
+            ->withAnyParameters()
+            ->willReturn('bar');
+
+        $replication = $this->getReplicationConnection('srv', [$sentinel]);
+
+        $replication->add($connection1);
+        $replication->add($connection2);
+        $replication->add($connection3);
+
+        $this->assertSame('bar', $replication->read());
+    }
+
     public function connectionsProvider(): array
     {
         return [

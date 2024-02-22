@@ -736,4 +736,18 @@ class RedisCluster implements ClusterInterface, IteratorAggregate, Countable
             usleep($this->readTimeout);
         }
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasDataToRead(): bool
+    {
+        foreach ($this->pool as $connection) {
+            if ($connection->hasDataToRead()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

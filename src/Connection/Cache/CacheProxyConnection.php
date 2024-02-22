@@ -99,12 +99,13 @@ class CacheProxyConnection implements ConnectionInterface
      */
     public function executeCommand(CommandInterface $command)
     {
-        $commandId = $command->getId();
+        $this->processPendingNotifications();
 
         if (!$this->cacheConfiguration->isWhitelistedCommand($command)) {
             return $this->retryOnInvalidation($command);
         }
 
+        $commandId = $command->getId();
         $keys = $command->getKeys();
         $cacheKey = $commandId . '_' . implode('_', $keys);
         $ttl = $this->cacheConfiguration->getTTl();
@@ -203,5 +204,38 @@ class CacheProxyConnection implements ConnectionInterface
         }
 
         return $response;
+    }
+
+    /**
+     * Process pending notifications from server.
+     *
+     * @return void
+     * @throws PushNotificationException
+     */
+    private function processPendingNotifications(): void
+    {
+        while ($this->hasDataToRead()) {
+            $response = $this->read();
+
+            if ($response instanceof PushResponseInterface) {
+                $this->dispatchNotification($response);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hasDataToRead(): bool
+    {
+        return $this->connection->hasDataToRead();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function read()
+    {
+        return $this->connection->read();
     }
 }

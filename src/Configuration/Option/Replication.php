@@ -69,7 +69,7 @@ class Replication extends Aggregate
             case 'sentinel':
             case 'redis-sentinel':
                 return function ($parameters, $options) {
-                    return new SentinelReplication($options->service, $parameters, $options->connections);
+                    return new SentinelReplication($options->service, $parameters, $options->connections, null, $options->readTimeout);
                 };
 
             case 'predis':
@@ -92,7 +92,7 @@ class Replication extends Aggregate
     protected function getDefaultConnectionInitializer()
     {
         return function ($parameters, $options) {
-            $connection = new MasterSlaveReplication();
+            $connection = new MasterSlaveReplication(null, $options->readTimeout);
 
             if ($options->autodiscovery) {
                 $connection->setConnectionFactory($options->connections);

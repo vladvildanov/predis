@@ -115,6 +115,11 @@ class SentinelReplication implements ReplicationInterface
     protected $updateSentinels = false;
 
     /**
+     * @var int
+     */
+    private $readTimeout = 1000;
+
+    /**
      * @param string                     $service           Name of the service for autodiscovery.
      * @param array                      $sentinels         Sentinel servers connection parameters.
      * @param ConnectionFactoryInterface $connectionFactory Connection factory instance.
@@ -124,12 +129,17 @@ class SentinelReplication implements ReplicationInterface
         $service,
         array $sentinels,
         ConnectionFactoryInterface $connectionFactory,
-        ?ReplicationStrategy $strategy = null
+        ?ReplicationStrategy $strategy = null,
+        ?int $readTimeout = null
     ) {
         $this->sentinels = $sentinels;
         $this->service = $service;
         $this->connectionFactory = $connectionFactory;
         $this->strategy = $strategy ?: new ReplicationStrategy();
+
+        if (!is_null($readTimeout)) {
+            $this->readTimeout = $readTimeout;
+        }
     }
 
     /**
@@ -789,5 +799,37 @@ class SentinelReplication implements ReplicationInterface
         }
 
         return null;
+    }
+
+    /**
+     * Loop over connections until there's data to read.
+     *
+     * @return mixed
+     */
+    public function read()
+    {
+        while (true) {
+            foreach ($this->pool as $connection) {
+                if ($connection->hasDataToRead()) {
+                    return $connection->read();
+                }
+            }
+
+            usleep($this->readTimeout);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasDataToRead(): bool
+    {
+        foreach ($this->pool as $connection) {
+            if ($connection->hasDataToRead()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
