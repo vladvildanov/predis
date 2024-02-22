@@ -12,9 +12,9 @@
 
 require __DIR__ . '/../autoload.php';
 
-//if (PHP_SAPI !== 'fpm-fcgi') {
-//    exit('This example available only in FPM mode.');
-//}
+if (PHP_SAPI !== 'fpm-fcgi') {
+    exit('This example available only in FPM mode.');
+}
 
 // 1. Create client with enabled cache and RESP3 connection mode.
 $client = new Predis\Client(['protocol' => 3, 'cache' => true]);
