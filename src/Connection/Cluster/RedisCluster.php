@@ -28,6 +28,7 @@ use Predis\Connection\ConnectionException;
 use Predis\Connection\FactoryInterface;
 use Predis\Connection\NodeConnectionInterface;
 use Predis\Connection\ParametersInterface;
+use Predis\Connection\Traits\Retry;
 use Predis\NotSupportedException;
 use Predis\Response\Error as ErrorResponse;
 use Predis\Response\ErrorInterface as ErrorResponseInterface;
@@ -58,6 +59,8 @@ use Traversable;
  */
 class RedisCluster extends AbstractAggregateConnection implements ClusterInterface, IteratorAggregate, Countable
 {
+    use Retry;
+
     private $useClusterSlots = true;
 
     /**
@@ -72,6 +75,8 @@ class RedisCluster extends AbstractAggregateConnection implements ClusterInterfa
     private $retryInterval = 10;
 
     /**
+     * @see OptionsInterface::$readTimeout
+     *
      * @var int
      */
     private $readTimeout = 1000;
@@ -534,54 +539,43 @@ class RedisCluster extends AbstractAggregateConnection implements ClusterInterfa
      * have to agree that something changed in the configuration of the cluster.
      *
      * @param CommandInterface $command Command instance.
-     * @param string           $method  Actual method.
+     * @param string $method Actual method.
      *
      * @return mixed
+     * @throws Throwable
      */
     private function retryCommandOnFailure(CommandInterface $command, $method)
     {
-        $retries = 0;
-        $retryAfter = $this->retryInterval;
+        $callback = function () use ($command, $method) {
+            $response = $this->getConnectionByCommand($command)->$method($command);
 
-        while ($retries <= $this->retryLimit) {
-            try {
-                $response = $this->getConnectionByCommand($command)->$method($command);
+            if ($response instanceof ErrorResponse) {
+                $message = $response->getMessage();
 
-                if ($response instanceof ErrorResponse) {
-                    $message = $response->getMessage();
-
-                    if (strpos($message, 'CLUSTERDOWN') !== false) {
-                        throw new ServerException($message);
-                    }
+                if (strpos($message, 'CLUSTERDOWN') !== false) {
+                    throw new ServerException($message);
                 }
-
-                break;
-            } catch (Throwable $exception) {
-                usleep($retryAfter * 1000);
-                $retryAfter *= 2;
-
-                if ($exception instanceof ConnectionException) {
-                    $connection = $exception->getConnection();
-
-                    if ($connection) {
-                        $connection->disconnect();
-                        $this->remove($connection);
-                    }
-                }
-
-                if ($retries === $this->retryLimit) {
-                    throw $exception;
-                }
-
-                if ($this->useClusterSlots) {
-                    $this->askSlotMap();
-                }
-
-                ++$retries;
             }
-        }
 
-        return $response;
+            return $response;
+        };
+
+        $onCatchCallback = function (Throwable $e) {
+            if ($e instanceof ConnectionException) {
+                $connection = $e->getConnection();
+
+                if ($connection) {
+                    $connection->disconnect();
+                    $this->remove($connection);
+                }
+            }
+
+            if ($this->useClusterSlots) {
+                $this->askSlotMap();
+            }
+        };
+
+        return $this->retryOnError($callback, $onCatchCallback, $this->retryLimit, $this->readTimeout);
     }
 
     /**
@@ -725,14 +719,14 @@ class RedisCluster extends AbstractAggregateConnection implements ClusterInterfa
      */
     public function read()
     {
-        while (true) {
+        return $this->retryOnFalse(function () {
             foreach ($this->pool as $connection) {
                 if ($connection->hasDataToRead()) {
                     return $connection->read();
                 }
             }
 
-            usleep($this->readTimeout);
-        }
+            return false;
+        }, 3, $this->readTimeout);
     }
 }

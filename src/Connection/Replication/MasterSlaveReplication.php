@@ -22,9 +22,11 @@ use Predis\Connection\ConnectionException;
 use Predis\Connection\FactoryInterface;
 use Predis\Connection\NodeConnectionInterface;
 use Predis\Connection\ParametersInterface;
+use Predis\Connection\Traits\Retry;
 use Predis\Replication\MissingMasterException;
 use Predis\Replication\ReplicationStrategy;
 use Predis\Response\ErrorInterface as ResponseErrorInterface;
+use Throwable;
 
 /**
  * Aggregate connection handling replication of Redis nodes configured in a
@@ -32,6 +34,8 @@ use Predis\Response\ErrorInterface as ResponseErrorInterface;
  */
 class MasterSlaveReplication extends AbstractAggregateConnection implements ReplicationInterface
 {
+    use Retry;
+
     /**
      * @var ReplicationStrategy
      */
@@ -73,11 +77,22 @@ class MasterSlaveReplication extends AbstractAggregateConnection implements Repl
     protected $connectionFactory;
 
     /**
+     * @see OptionsInterface::$readTimeout
+     *
+     * @var int
+     */
+    private $readTimeout = 1000;
+
+    /**
      * {@inheritdoc}
      */
-    public function __construct(?ReplicationStrategy $strategy = null)
+    public function __construct(?ReplicationStrategy $strategy = null, ?int $readTimeout = null)
     {
         $this->strategy = $strategy ?: new ReplicationStrategy();
+
+        if (!is_null($readTimeout)) {
+            $this->readTimeout = $readTimeout;
+        }
     }
 
     /**
@@ -473,53 +488,60 @@ class MasterSlaveReplication extends AbstractAggregateConnection implements Repl
      * Retries the execution of a command upon slave failure.
      *
      * @param CommandInterface $command Command instance.
-     * @param string           $method  Actual method.
+     * @param string $method Actual method.
      *
      * @return mixed
+     * @throws Throwable
      */
     private function retryCommandOnFailure(CommandInterface $command, $method)
     {
-        while (true) {
-            try {
-                $connection = $this->getConnectionByCommand($command);
-                $response = $connection->$method($command);
+        $callback = function () use ($command, $method) {
+            $connection = $this->getConnectionByCommand($command);
+            $response = $connection->$method($command);
 
-                if ($response instanceof ResponseErrorInterface && $response->getErrorType() === 'LOADING') {
-                    throw new ConnectionException($connection, "Redis is loading the dataset in memory [$connection]");
-                }
+            if ($response instanceof ResponseErrorInterface && $response->getErrorType() === 'LOADING') {
+                throw new ConnectionException($connection, "Redis is loading the dataset in memory [$connection]");
+            }
 
-                break;
-            } catch (ConnectionException $exception) {
-                $connection = $exception->getConnection();
+            return $response;
+        };
+
+        $onCatchCallback = function (Throwable $e) {
+            if ($e instanceof ConnectionException) {
+                $connection = $e->getConnection();
                 $connection->disconnect();
 
                 if ($connection === $this->master && !$this->autoDiscovery) {
                     // Throw immediately when master connection is failing, even
                     // when the command represents a read-only operation, unless
                     // automatic discovery has been enabled.
-                    throw $exception;
-                } else {
-                    // Otherwise remove the failing slave and attempt to execute
-                    // the command again on one of the remaining slaves...
-                    $this->remove($connection);
+                    throw $e;
                 }
+
+                // Otherwise remove the failing slave and attempt to execute
+                // the command again on one of the remaining slaves...
+                $this->remove($connection);
 
                 // ... that is, unless we have no more connections to use.
                 if (!$this->slaves && !$this->master) {
-                    throw $exception;
-                } elseif ($this->autoDiscovery) {
+                    throw $e;
+                }
+
+                if ($this->autoDiscovery) {
                     $this->discover();
                 }
-            } catch (MissingMasterException $exception) {
+            }
+
+            if ($e instanceof MissingMasterException) {
                 if ($this->autoDiscovery) {
                     $this->discover();
                 } else {
-                    throw $exception;
+                    throw $e;
                 }
             }
-        }
+        };
 
-        return $response;
+        return $this->retryOnError($callback, $onCatchCallback, 3, $this->readTimeout, 1);
     }
 
     /**
@@ -570,5 +592,37 @@ class MasterSlaveReplication extends AbstractAggregateConnection implements Repl
         }
 
         return null;
+    }
+
+    /**
+     * Loop over connections until there's data to read.
+     *
+     * @return mixed
+     */
+    public function read()
+    {
+        return $this->retryOnFalse(function () {
+            foreach ($this->pool as $connection) {
+                if ($connection->hasDataToRead()) {
+                    return $connection->read();
+                }
+            }
+
+            return false;
+        }, 3, $this->readTimeout);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasDataToRead(): bool
+    {
+        foreach ($this->pool as $connection) {
+            if ($connection->hasDataToRead()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
