@@ -1568,8 +1568,6 @@ class ClientTest extends PredisTestCase
         $this->assertSame('bar', apcu_fetch('GET_foo'));
 
         $this->assertEquals('OK', $client->set('foo', 'baz'));
-        $this->assertNull($client->get('baz'));
-        $this->assertFalse(apcu_exists('GET_foo'));
 
         $this->assertSame('baz', $client->get('foo'));
         $this->assertSame('baz', apcu_fetch('GET_foo'));
@@ -1595,8 +1593,6 @@ class ClientTest extends PredisTestCase
         $this->assertSame('bar', apcu_fetch('GET_foo'));
 
         $this->assertEquals('OK', $client->set('foo', 'baz'));
-        $this->assertNull($client->get('baz'));
-        $this->assertFalse(apcu_exists('GET_foo'));
 
         $this->assertSame('baz', $client->get('foo'));
         $this->assertSame('baz', apcu_fetch('GET_foo'));
@@ -1619,8 +1615,6 @@ class ClientTest extends PredisTestCase
         $this->assertSame('bar', apcu_fetch('GET_foo'));
 
         $this->assertEquals('OK', $client->set('foo', 'baz'));
-        $this->assertNull($client->get('non_existing_key'));
-        $this->assertFalse(apcu_exists('GET_foo'));
 
         $this->assertSame('baz', $client->get('foo'));
         $this->assertSame('baz', apcu_fetch('GET_foo'));
@@ -1672,9 +1666,8 @@ class ClientTest extends PredisTestCase
         $firstExpectedResponse = $client->executeCommand($readCommand);
         $this->assertSame($firstExpectedResponse, apcu_fetch($cacheKey));
 
-        // 5. Executes override command and send any other read command to get invalidation from server.
+        // 5. Executes override command.
         $client->executeCommand($overrideCommand);
-        $this->assertNull($client->get('non_existing_key'));
 
         // 6. Retry read command and make sure that new value cached.
         // Also check that previous response is different from new one
@@ -1728,9 +1721,8 @@ class ClientTest extends PredisTestCase
         $firstExpectedResponse = $client->executeCommand($readCommand);
         $this->assertSame($firstExpectedResponse, apcu_fetch($cacheKey));
 
-        // 5. Executes override command and send any other read command to get invalidation from server.
+        // 5. Executes override command.
         $client->executeCommand($overrideCommand);
-        $this->assertNull($client->get('non_existing_key'));
 
         // 6. Retry read command and make sure that new value cached.
         // Also check that previous response is different from new one
@@ -1785,9 +1777,8 @@ class ClientTest extends PredisTestCase
         $firstExpectedResponse = $client->executeCommand($readCommand);
         $this->assertSame($firstExpectedResponse, apcu_fetch($cacheKey));
 
-        // 5. Executes override command and send any other read command to get invalidation from server.
+        // 5. Executes override command.
         $client->executeCommand($overrideCommand);
-        $this->assertNull($client->get('non_existing_key'));
 
         // 6. Retry read command and make sure that new value cached.
         // Also check that previous response is different from new one

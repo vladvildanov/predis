@@ -69,4 +69,18 @@ interface ConnectionInterface
      * @return ParametersInterface
      */
     public function getParameters();
+
+    /**
+     * Checks if current connection has data to read from server.
+     *
+     * @return bool
+     */
+    public function hasDataToRead(): bool;
+
+    /**
+     * Reads a response from the server.
+     *
+     * @return mixed
+     */
+    public function read();
 }

@@ -47,18 +47,4 @@ interface NodeConnectionInterface extends ConnectionInterface
      * @param CommandInterface $command Instance of a Redis command.
      */
     public function addConnectCommand(CommandInterface $command);
-
-    /**
-     * Reads a response from the server.
-     *
-     * @return mixed
-     */
-    public function read();
-
-    /**
-     * Checks if current connection has data to read from server.
-     *
-     * @return bool
-     */
-    public function hasDataToRead(): bool;
 }

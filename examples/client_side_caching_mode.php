@@ -32,9 +32,6 @@ echo nl2br('Value in cache: ' . apcu_fetch('GET_foo') . "\n");
 // 5. Set new value for the same key.
 $client->set('foo', 'baz');
 
-// 6. Send any other read command, so invalidation message will be received.
-$client->get('baz');
-
-// 7. Retrieves updated value from Redis storage again.
+// 6. Retrieves updated value from Redis storage again.
 echo nl2br('New value in Redis: ' . $client->get('foo') . "\n");
 echo nl2br('New value in cache: ' . apcu_fetch('GET_foo') . "\n");

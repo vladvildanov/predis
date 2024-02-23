@@ -26,7 +26,7 @@ use Predis\Command\Processor\ProcessorInterface;
  * @property int                                 $protocol       Version of RESP protocol.
  * @property \Predis\Command\FactoryInterface    $commands       Command factory for creating Redis commands
  * @property callable                            $replication    Aggregate connection initializer for replication
- * @property int                                 $readTimeout    Timeout in milliseconds between read operations on reading from multiple connections.
+ * @property int                                 $readTimeout    Timeout in microseconds between read operations on reading from multiple connections.
  */
 interface OptionsInterface
 {

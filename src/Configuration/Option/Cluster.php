@@ -92,7 +92,7 @@ class Cluster extends Aggregate
         return static function ($parameters, $options, $option) {
             $optionsParameters = $options->parameters ?? [];
 
-            return new PredisCluster(new Parameters($optionsParameters));
+            return new PredisCluster(new Parameters($optionsParameters), null, $options->readTimeout);
         };
     }
 

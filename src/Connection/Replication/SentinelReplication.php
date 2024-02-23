@@ -16,16 +16,19 @@ use InvalidArgumentException;
 use Predis\Command\CommandInterface;
 use Predis\Command\RawCommand;
 use Predis\CommunicationException;
+use Predis\Configuration\OptionsInterface;
 use Predis\Connection\ConnectionException;
 use Predis\Connection\FactoryInterface as ConnectionFactoryInterface;
 use Predis\Connection\NodeConnectionInterface;
 use Predis\Connection\Parameters;
 use Predis\Connection\ParametersInterface;
+use Predis\Connection\Traits\Retry;
 use Predis\Replication\ReplicationStrategy;
 use Predis\Replication\RoleException;
 use Predis\Response\Error;
 use Predis\Response\ErrorInterface as ErrorResponseInterface;
 use Predis\Response\ServerException;
+use Throwable;
 
 /**
  * @author Daniele Alessandri <suppakilla@gmail.com>
@@ -33,6 +36,8 @@ use Predis\Response\ServerException;
  */
 class SentinelReplication implements ReplicationInterface
 {
+    use Retry;
+
     /**
      * @var NodeConnectionInterface
      */
@@ -115,6 +120,13 @@ class SentinelReplication implements ReplicationInterface
     protected $updateSentinels = false;
 
     /**
+     * @see OptionsInterface::$readTimeout
+     *
+     * @var int
+     */
+    private $readTimeout = 1000;
+
+    /**
      * @param string                     $service           Name of the service for autodiscovery.
      * @param array                      $sentinels         Sentinel servers connection parameters.
      * @param ConnectionFactoryInterface $connectionFactory Connection factory instance.
@@ -124,12 +136,17 @@ class SentinelReplication implements ReplicationInterface
         $service,
         array $sentinels,
         ConnectionFactoryInterface $connectionFactory,
-        ?ReplicationStrategy $strategy = null
+        ?ReplicationStrategy $strategy = null,
+        ?int $readTimeout = null
     ) {
         $this->sentinels = $sentinels;
         $this->service = $service;
         $this->connectionFactory = $connectionFactory;
         $this->strategy = $strategy ?: new ReplicationStrategy();
+
+        if (!is_null($readTimeout)) {
+            $this->readTimeout = $readTimeout;
+        }
     }
 
     /**
@@ -701,30 +718,22 @@ class SentinelReplication implements ReplicationInterface
      * @param string           $method  Actual method.
      *
      * @return mixed
+     * @throws Throwable
      */
     private function retryCommandOnFailure(CommandInterface $command, $method)
     {
-        $retries = 0;
+        $callback = function () use ($command, $method) {
+            return $this->getConnectionByCommand($command)->$method($command);
+        };
 
-        while ($retries <= $this->retryLimit) {
-            try {
-                $response = $this->getConnectionByCommand($command)->$method($command);
-                break;
-            } catch (CommunicationException $exception) {
+        $onCatchCallback = function (Throwable $e) {
+            if ($e instanceof CommunicationException) {
                 $this->wipeServerList();
-                $exception->getConnection()->disconnect();
-
-                if ($retries === $this->retryLimit) {
-                    throw $exception;
-                }
-
-                usleep($this->retryWait * 1000);
-
-                ++$retries;
+                $e->getConnection()->disconnect();
             }
-        }
+        };
 
-        return $response;
+        return $this->retryOnError($callback, $onCatchCallback, $this->retryLimit, $this->retryWait * 1000, 1);
     }
 
     /**
@@ -789,5 +798,37 @@ class SentinelReplication implements ReplicationInterface
         }
 
         return null;
+    }
+
+    /**
+     * Loop over connections until there's data to read.
+     *
+     * @return mixed
+     */
+    public function read()
+    {
+        return $this->retryOnFalse(function () {
+            foreach ($this->pool as $connection) {
+                if ($connection->hasDataToRead()) {
+                    return $connection->read();
+                }
+            }
+
+            return false;
+        }, 3, $this->readTimeout);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasDataToRead(): bool
+    {
+        foreach ($this->pool as $connection) {
+            if ($connection->hasDataToRead()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

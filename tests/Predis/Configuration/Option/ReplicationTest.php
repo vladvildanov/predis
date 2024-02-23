@@ -49,14 +49,16 @@ class ReplicationTest extends PredisTestCase
         /** @var OptionsInterface|MockObject */
         $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
         $options
-            ->expects($this->exactly(3))
+            ->expects($this->exactly(4))
             ->method('__get')
             ->withConsecutive(
+                ['readTimeout'],
                 ['autodiscovery'],
                 ['connections'],
                 ['cache']
             )
             ->willReturnOnConsecutiveCalls(
+                2000,
                 true,
                 $connectionFactory,
                 false
@@ -322,16 +324,18 @@ class ReplicationTest extends PredisTestCase
         /** @var OptionsInterface|MockObject */
         $options = $this->getMockBuilder('Predis\Configuration\OptionsInterface')->getMock();
         $options
-            ->expects($this->exactly(3))
+            ->expects($this->exactly(4))
             ->method('__get')
             ->withConsecutive(
                 ['service'],
                 ['connections'],
+                ['readTimeout'],
                 ['cache']
             )
             ->willReturnOnConsecutiveCalls(
                 'mymaster',
                 $this->getMockBuilder('Predis\Connection\FactoryInterface')->getMock(),
+                2000,
                 false
             );
 
