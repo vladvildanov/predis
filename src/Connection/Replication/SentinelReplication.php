@@ -715,7 +715,7 @@ class SentinelReplication implements ReplicationInterface
      * configuration to one of the sentinels.
      *
      * @param CommandInterface $command Command instance.
-     * @param string $method Actual method.
+     * @param string           $method  Actual method.
      *
      * @return mixed
      * @throws Throwable
