@@ -539,7 +539,7 @@ class RedisCluster implements ClusterInterface, IteratorAggregate, Countable
      * have to agree that something changed in the configuration of the cluster.
      *
      * @param CommandInterface $command Command instance.
-     * @param string $method Actual method.
+     * @param string           $method  Actual method.
      *
      * @return mixed
      * @throws Throwable
