@@ -1497,22 +1497,22 @@ repl_backlog_histlen:12978
         $connection3 = $this->getMockConnection('tcp://127.0.0.1:7003');
 
         $connection1
-            ->expects($this->once())
+            ->expects($this->exactly(3))
             ->method('hasDataToRead')
             ->withAnyParameters()
-            ->willReturn(false);
+            ->willReturnOnConsecutiveCalls(false, false, false);
 
         $connection2
-            ->expects($this->once())
+            ->expects($this->exactly(3))
             ->method('hasDataToRead')
             ->withAnyParameters()
-            ->willReturn(false);
+            ->willReturnOnConsecutiveCalls(false, false, false);
 
         $connection3
-            ->expects($this->once())
+            ->expects($this->exactly(3))
             ->method('hasDataToRead')
             ->withAnyParameters()
-            ->willReturn(true);
+            ->willReturnOnConsecutiveCalls(false, false, true);
 
         $connection3
             ->expects($this->once())

@@ -1593,22 +1593,22 @@ class SentinelReplicationTest extends PredisTestCase
         $sentinel = $this->getMockSentinelConnection('tcp://127.0.0.1:5381?role=sentinel');
 
         $connection1
-            ->expects($this->once())
+            ->expects($this->exactly(3))
             ->method('hasDataToRead')
             ->withAnyParameters()
-            ->willReturn(false);
+            ->willReturnOnConsecutiveCalls(false, false, false);
 
         $connection2
-            ->expects($this->once())
+            ->expects($this->exactly(3))
             ->method('hasDataToRead')
             ->withAnyParameters()
-            ->willReturn(false);
+            ->willReturnOnConsecutiveCalls(false, false, false);
 
         $connection3
-            ->expects($this->once())
+            ->expects($this->exactly(3))
             ->method('hasDataToRead')
             ->withAnyParameters()
-            ->willReturn(true);
+            ->willReturnOnConsecutiveCalls(false, false, true);
 
         $connection3
             ->expects($this->once())

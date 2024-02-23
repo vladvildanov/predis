@@ -20,6 +20,7 @@ use Predis\Cluster\StrategyInterface;
 use Predis\Command\CommandInterface;
 use Predis\Connection\NodeConnectionInterface;
 use Predis\Connection\ParametersInterface;
+use Predis\Connection\Traits\Retry;
 use Predis\NotSupportedException;
 use ReturnTypeWillChange;
 use Traversable;
@@ -30,6 +31,8 @@ use Traversable;
  */
 class PredisCluster implements ClusterInterface, IteratorAggregate, Countable
 {
+    use Retry;
+
     /**
      * @var NodeConnectionInterface[]
      */
@@ -56,6 +59,8 @@ class PredisCluster implements ClusterInterface, IteratorAggregate, Countable
     private $connectionParameters;
 
     /**
+     * @see OptionsInterface::$readTimeout
+     *
      * @var int
      */
     private $readTimeout = 1000;
@@ -305,15 +310,15 @@ class PredisCluster implements ClusterInterface, IteratorAggregate, Countable
      */
     public function read()
     {
-        while (true) {
+        return $this->retryOnFalse(function () {
             foreach ($this->pool as $connection) {
                 if ($connection->hasDataToRead()) {
                     return $connection->read();
                 }
             }
 
-            usleep($this->readTimeout);
-        }
+            return false;
+        }, 3, $this->readTimeout);
     }
 
     /**
