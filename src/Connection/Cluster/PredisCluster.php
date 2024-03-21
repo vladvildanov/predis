@@ -17,7 +17,6 @@ use Countable;
 use IteratorAggregate;
 use Predis\Cluster\PredisStrategy;
 use Predis\Cluster\StrategyInterface;
-use Predis\Command\Command;
 use Predis\Command\CommandInterface;
 use Predis\Connection\AbstractAggregateConnection;
 use Predis\Connection\NodeConnectionInterface;
@@ -321,19 +320,5 @@ class PredisCluster extends AbstractAggregateConnection implements ClusterInterf
 
             return false;
         }, 3, $this->readTimeout);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasDataToRead(): bool
-    {
-        foreach ($this->pool as $connection) {
-            if ($connection->hasDataToRead()) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

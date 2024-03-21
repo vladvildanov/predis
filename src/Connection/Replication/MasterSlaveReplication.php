@@ -14,7 +14,6 @@ namespace Predis\Connection\Replication;
 
 use InvalidArgumentException;
 use Predis\ClientException;
-use Predis\Command\Command;
 use Predis\Command\CommandInterface;
 use Predis\Command\RawCommand;
 use Predis\Connection\AbstractAggregateConnection;
@@ -610,19 +609,5 @@ class MasterSlaveReplication extends AbstractAggregateConnection implements Repl
 
             return false;
         }, 3, $this->readTimeout);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasDataToRead(): bool
-    {
-        foreach ($this->pool as $connection) {
-            if ($connection->hasDataToRead()) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

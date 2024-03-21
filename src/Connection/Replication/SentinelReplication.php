@@ -13,12 +13,11 @@
 namespace Predis\Connection\Replication;
 
 use InvalidArgumentException;
-use Predis\Command\Command;
 use Predis\Command\CommandInterface;
 use Predis\Command\RawCommand;
 use Predis\CommunicationException;
-use Predis\Connection\AbstractAggregateConnection;
 use Predis\Configuration\OptionsInterface;
+use Predis\Connection\AbstractAggregateConnection;
 use Predis\Connection\ConnectionException;
 use Predis\Connection\FactoryInterface as ConnectionFactoryInterface;
 use Predis\Connection\NodeConnectionInterface;
@@ -716,7 +715,7 @@ class SentinelReplication extends AbstractAggregateConnection implements Replica
      * configuration to one of the sentinels.
      *
      * @param CommandInterface $command Command instance.
-     * @param string $method Actual method.
+     * @param string           $method  Actual method.
      *
      * @return mixed
      * @throws Throwable
@@ -817,19 +816,5 @@ class SentinelReplication extends AbstractAggregateConnection implements Replica
 
             return false;
         }, 3, $this->readTimeout);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasDataToRead(): bool
-    {
-        foreach ($this->pool as $connection) {
-            if ($connection->hasDataToRead()) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }
