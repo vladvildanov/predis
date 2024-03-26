@@ -13,7 +13,6 @@
 namespace Predis\Configuration;
 
 use Predis\Command\Processor\ProcessorInterface;
-use Predis\Connection\ParametersInterface;
 
 /**
  * @property callable                            $aggregate      Custom aggregate connection initializer

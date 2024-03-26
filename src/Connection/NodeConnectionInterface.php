@@ -13,6 +13,7 @@
 namespace Predis\Connection;
 
 use Predis\Command\CommandInterface;
+use Predis\CommunicationException;
 
 /**
  * Defines a connection used to communicate with a single Redis node.
@@ -58,6 +59,7 @@ interface NodeConnectionInterface extends ConnectionInterface
     /**
      * Reads a response from the server.
      *
+     * @throws CommunicationException
      * @return mixed
      */
     public function read();

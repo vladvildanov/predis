@@ -15,6 +15,8 @@ namespace Predis\Connection;
 use InvalidArgumentException;
 use Predis\Command\CommandInterface;
 use Predis\Command\RawCommand;
+use Predis\CommunicationException;
+use Predis\Connection\Traits\Retry;
 use Predis\Consumer\Push\PushNotificationException;
 use Predis\Consumer\Push\PushResponse;
 use Predis\Protocol\Parser\Strategy\Resp2Strategy;
@@ -22,6 +24,7 @@ use Predis\Protocol\Parser\Strategy\Resp3Strategy;
 use Predis\Protocol\Parser\UnexpectedTypeException;
 use Predis\Response\Error;
 use Predis\Response\ErrorInterface as ErrorResponseInterface;
+use Throwable;
 
 /**
  * Standard connection to Redis servers implemented on top of PHP's streams.
@@ -40,6 +43,8 @@ use Predis\Response\ErrorInterface as ErrorResponseInterface;
  */
 class StreamConnection extends AbstractConnection
 {
+    use Retry;
+
     /**
      * Disconnects from the server and destroys the underlying resource when the
      * garbage collector kicks in only if the connection has not been marked as
@@ -280,8 +285,31 @@ class StreamConnection extends AbstractConnection
     /**
      * {@inheritdoc}
      * @throws PushNotificationException
+     * @throws CommunicationException|Throwable
      */
     public function read()
+    {
+        try {
+            return $this->readFromSocket();
+        } catch (CommunicationException $exception) {
+            // Retries only on communication exception.
+            return $this->retryOnError(
+                [$this, 'readFromSocket'],
+                function (Throwable $e) {
+                    if (!$e instanceof CommunicationException) {
+                        throw $e;
+                    }
+                }
+            );
+        }
+    }
+
+    /**
+     * @return mixed
+     * @throws CommunicationException|Throwable
+     * @throws PushNotificationException
+     */
+    protected function readFromSocket()
     {
         $socket = $this->getResource();
         $chunk = fgets($socket);

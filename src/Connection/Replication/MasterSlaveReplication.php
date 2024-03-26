@@ -487,7 +487,7 @@ class MasterSlaveReplication extends AbstractAggregateConnection implements Repl
      * Retries the execution of a command upon slave failure.
      *
      * @param CommandInterface $command Command instance.
-     * @param string $method Actual method.
+     * @param string           $method  Actual method.
      *
      * @return mixed
      * @throws Throwable

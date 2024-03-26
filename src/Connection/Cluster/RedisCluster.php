@@ -538,7 +538,7 @@ class RedisCluster extends AbstractAggregateConnection implements ClusterInterfa
      * have to agree that something changed in the configuration of the cluster.
      *
      * @param CommandInterface $command Command instance.
-     * @param string $method Actual method.
+     * @param string           $method  Actual method.
      *
      * @return mixed
      * @throws Throwable

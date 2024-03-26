@@ -13,6 +13,7 @@
 namespace Predis\Connection;
 
 use Predis\Command\CommandInterface;
+use Throwable;
 
 /**
  * Defines a connection object used to communicate with one or multiple
@@ -49,6 +50,7 @@ interface ConnectionInterface
      *
      * @param CommandInterface $command Command instance.
      *
+     * @throws Throwable
      * @return mixed
      */
     public function readResponse(CommandInterface $command);
